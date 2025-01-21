@@ -1,10 +1,21 @@
 import Button from '@/components/common/button';
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 import ActivitiesCard from './activities-card';
+import ActivitiesRegister, {IFormInput} from './activities-register';
 
 export default function MyActivities() {
   const [content, setContent] = useState<'manage' | 'register'>('manage');
-  const handleRegister = () => {};
+  const formRef = useRef<{submitForm: () => void} | null>(null);
+
+  const handleSubmit = (data: IFormInput) => {
+    console.log('Form Data from Parent:', data);
+  };
+
+  const triggerSubmit = () => {
+    if (formRef.current) {
+      formRef.current.submitForm();
+    }
+  };
 
   return (
     <>
@@ -21,26 +32,27 @@ export default function MyActivities() {
           </>
         ) : (
           <Button
-            onClick={() => handleRegister}
+            onClick={triggerSubmit} // 버튼 클릭 시 자식 컴포넌트의 폼 제출 트리거
             className="h-[48px] w-[120px] gap-[4px] rounded-[4px] bg-primary pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white"
           >
             등록하기
           </Button>
         )}
       </div>
+
       {content === 'manage' && (
+        <div className="flex flex-col gap-6">
+          <ActivitiesCard />
+          <ActivitiesCard />
+          <ActivitiesCard />
+        </div>
+      )}
+
+      {content === 'register' && (
         <>
-          <div className="flex flex-col gap-6">
-            <ActivitiesCard />
-            <ActivitiesCard />
-            <ActivitiesCard />
-          </div>
+          <ActivitiesRegister ref={formRef} onSubmitParent={handleSubmit} />
         </>
       )}
-      {/* <div className="mt-60pxr flex flex-col items-center">
-        <Image src={emptyImg} alt="데이터없습니다"></Image>
-        <div className="text-2xl font-medium text-gray-700">아직 등록한 체험이 없어요</div>
-      </div> */}
     </>
   );
 }
