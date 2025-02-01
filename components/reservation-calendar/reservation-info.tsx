@@ -49,10 +49,10 @@ export default function ReservationInfo({reservationStatus, reservedScheduleData
     ? reservations.filter(reservation => `${reservation.startTime} ~ ${reservation.endTime}` === selectedTime)
     : reservations;
 
-  const renderChip = () => {
+  const renderChip = (reservationId: number) => {
     switch (reservationStatus) {
       case 'pending':
-        return <ConfirmButton />;
+        return <ConfirmButton activityId={activityId} reservationId={reservationId} />;
       case 'confirmed':
         return <ConfirmChip method={`confirm`} />;
       case 'declined':
@@ -101,7 +101,7 @@ export default function ReservationInfo({reservationStatus, reservedScheduleData
                   <div className="mb-6pxr text-lg font-semibold text-gray-700">
                     인원 <span className="ml-10pxr font-medium text-black-100">{reservation.headCount}명</span>
                   </div>
-                  <div>{renderChip()}</div>
+                  <div>{renderChip(reservation.id)}</div>
                 </div>
               ))
             : '선택한 시간에 대한 예약 내역이 없습니다.'}
