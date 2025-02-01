@@ -18,18 +18,23 @@ export default function ReservationInfo({reservationStatus, reservedScheduleData
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const selectedSchedule = reservedScheduleData.find(schedule => `${schedule.startTime} ~ ${schedule.endTime}` === selectedTime);
+  const selectedScheduleId = selectedSchedule ? selectedSchedule.scheduleId : null;
+
   const {data} = useQuery<ReservationsResponse>({
-    queryKey: ['myReservations', activityId, reservationStatus],
-    queryFn: () => getReservations({activityId, size: 10, scheduleId: reservedScheduleData[0].scheduleId, status: reservationStatus}),
+    queryKey: ['myReservations', activityId, reservationStatus, selectedTime],
+    queryFn: () =>
+      getReservations({activityId, size: 10, scheduleId: selectedScheduleId ?? reservedScheduleData[0].scheduleId, status: reservationStatus}),
     enabled: !!activityId,
   });
 
   const reservations = data?.reservations || [];
   const reservationsData = reservations.filter(reservation => reservation.status === reservationStatus);
+  console.log(reservations);
   console.log(reservationsData);
   console.log(reservedScheduleData);
 
-  const times = Array.from(new Set(reservations.map(reservation => `${reservation.startTime} ~ ${reservation.endTime}`)));
+  const times = Array.from(new Set(reservedScheduleData.map(reservation => `${reservation.startTime} ~ ${reservation.endTime}`)));
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
