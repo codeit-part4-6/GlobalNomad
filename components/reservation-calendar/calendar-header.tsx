@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {Dayjs} from 'dayjs';
 
 interface CalendarHeaderProps {
@@ -11,6 +11,11 @@ interface CalendarHeaderProps {
 const CalendarHeader: React.FC<CalendarHeaderProps> = ({value, onChange, setYear, setMonth}) => {
   const year = value.year();
   const month = value.month() + 1;
+
+  useEffect(() => {
+    setYear(year.toString());
+    setMonth(`0${month.toString()}`);
+  });
 
   const handlePrev = () => {
     const newValue = value.subtract(1, 'month');

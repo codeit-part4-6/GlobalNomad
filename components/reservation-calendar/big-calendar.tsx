@@ -22,8 +22,8 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTablet, setIsTablet] = useState<boolean | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
-  const [year, setYear] = useState<string>('2025');
-  const [month, setMonth] = useState<string>('01');
+  const [year, setYear] = useState<string>('');
+  const [month, setMonth] = useState<string>('');
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   const {data} = useQuery<ReservationDashboardData>({
@@ -136,7 +136,8 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
       weekdaysMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     },
   };
-
+  console.log(year);
+  console.log(month);
   return (
     <div className="tablet:relative" ref={modalRef}>
       {isModalOpen && !isTablet && (

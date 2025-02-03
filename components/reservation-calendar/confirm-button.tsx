@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import Button from '../common/button';
 import {useMutation} from '@tanstack/react-query';
 import {patchReservations} from '@/service/api/reservation-calendar/patchReservations.api';
+import {ScaleLoader} from 'react-spinners';
 
 interface patchReservationsProps {
   reservationId: number | null;
@@ -45,7 +46,7 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
         className="h-38pxr w-82pxr rounded-md bg-nomad-black px-10pxr align-middle text-md font-bold leading-none text-white"
         type="button"
       >
-        승인하기
+        <div className="flex items-center justify-center gap-3">{loading ? <ScaleLoader width={3} height={20} color="#ffffff" /> : '승인하기'}</div>
       </Button>
       <Button
         onClick={handleDeclinedClick}
