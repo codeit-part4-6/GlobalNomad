@@ -1,7 +1,7 @@
 import {useFieldArray, useForm, Controller, useFormContext} from 'react-hook-form';
 import Input from '../common/Input';
 import SelectBox from '../common/selectbox';
-import generateTimeOptions from '@/service/lib/fotmatted-hour-time';
+import {findOverlappingSchedules, generateTimeOptions} from '@/service/lib/fotmatted-hour-time';
 import Image from 'next/image';
 import minusBtn from '@/public/icon/ic_minus_btn.svg';
 import plusBtn from '@/public/icon/ic_plus_btn.svg';
@@ -30,39 +30,30 @@ export default function TimeList() {
     remove(index);
   };
 
-  const findOverlappingSchedules = (schedules: {date?: string; startTime?: string; endTime?: string}[]) => {
-    return schedules
-      .map((a, i) =>
-        schedules.some(
-          (b, j) =>
-            i !== j &&
-            a.date === b.date &&
-            a.startTime &&
-            a.endTime &&
-            b.startTime &&
-            b.endTime &&
-            ((a.startTime < b.endTime && b.startTime < a.endTime) || (a.startTime === b.startTime && a.endTime === b.endTime)),
-        )
-          ? i
-          : -1,
-      )
-      .filter(i => i !== -1);
-  };
   const watchedField = watch('schedules');
 
   const handleChange = (field: any, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index: number) => {
     const newValue = e.target.value;
 
+    if (newValue === '') {
+      return;
+    }
+
     field.onChange(newValue);
 
     const invalidSchedules = findOverlappingSchedules(watchedField);
-    invalidSchedules.forEach(i => {
-      if (i === index) {
-        setInvalidDateError(i, setError);
-      } else {
-        clearErrors(`schedules.${i}.date`);
-      }
-    });
+
+    if (invalidSchedules.length === 0) {
+      clearErrors('schedules');
+    } else {
+      invalidSchedules.forEach(i => {
+        if (i === index) {
+          setInvalidDateError(i, setError);
+        } else {
+          clearErrors(`schedules.${i}.date`);
+        }
+      });
+    }
   };
 
   const setInvalidDateError = (index: number, setError: any) => {
