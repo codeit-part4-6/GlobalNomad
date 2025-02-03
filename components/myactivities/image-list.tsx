@@ -9,9 +9,10 @@ import {useMutation} from '@tanstack/react-query';
 interface ImageListType {
   maxImages?: number;
   name?: string;
+  trigger?: (names: any) => void;
 }
 
-export default function ImageList({maxImages = 5, name = 'defaultName'}: ImageListType) {
+export default function ImageList({maxImages = 5, name = 'defaultName', trigger}: ImageListType) {
   const [imageUrls, setImageUrls] = useState<(string | ArrayBuffer)[]>([]);
   const [apiImageUrls, setApiImageUrls] = useState<string | string[]>('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -51,9 +52,8 @@ export default function ImageList({maxImages = 5, name = 'defaultName'}: ImageLi
     },
   });
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-
     if (files && files.length + selectedFiles.length > maxImages) {
       setError(name, {type: 'manual', message: `최대 ${maxImages}개의 이미지만 선택할 수 있습니다.`});
       return;
@@ -62,24 +62,38 @@ export default function ImageList({maxImages = 5, name = 'defaultName'}: ImageLi
 
     if (files) {
       const newFiles = Array.from(files);
+
       setSelectedFiles(prevFiles => [...prevFiles, ...newFiles]);
 
-      newFiles.forEach(file => {
-        const formData = new FormData();
-        formData.append('image', file);
-        mutation.mutate(formData);
+      const filePromises = newFiles.map(file => {
+        return new Promise<void>((resolve, reject) => {
+          const formData = new FormData();
+          formData.append('image', file);
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const fileUrl = reader.result as string;
-          if (!imageUrls.includes(fileUrl)) {
-            setImageUrls(prevUrls => [...prevUrls, fileUrl]);
-          }
-        };
-        reader.readAsDataURL(file);
+          mutation.mutate(formData, {
+            onSuccess: () => resolve(),
+            onError: () => reject(),
+          });
+
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const fileUrl = reader.result as string;
+            if (!imageUrls.includes(fileUrl)) {
+              setImageUrls(prevUrls => [...prevUrls, fileUrl]);
+            }
+            resolve();
+          };
+          reader.onerror = () => reject();
+          reader.readAsDataURL(file);
+        });
       });
 
-      e.target.value = '';
+      try {
+        await Promise.all(filePromises);
+        e.target.value = '';
+      } catch (error) {
+        console.error('파일 처리 중 오류 발생:', error);
+      }
     }
   };
 
@@ -100,6 +114,7 @@ export default function ImageList({maxImages = 5, name = 'defaultName'}: ImageLi
 
   useEffect(() => {
     setValue(name, apiImageUrls);
+    if (trigger) trigger(name); // 유효성 수동 trigger
   }, [apiImageUrls]);
 
   return (

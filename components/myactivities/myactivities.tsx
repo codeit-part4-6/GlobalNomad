@@ -14,7 +14,7 @@ import {useMutation} from '@tanstack/react-query';
 
 export default function MyActivities({onclose}: {onclose: () => void}) {
   const [content, setContent] = useState<'manage' | 'register'>('manage');
-  const formRef = useRef<{submitForm: () => void; isValid: boolean} | null>(null);
+  const formRef = useRef<{submitForm: () => void} | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const mutation = useMutation({
@@ -51,13 +51,6 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
     setIsOpen(false);
     onclose();
   };
-
-  useEffect(() => {
-    console.log(isValid);
-    if (formRef.current?.isValid) {
-      setIsValid(true);
-    }
-  }, [formRef.current?.isValid]);
 
   return (
     <>
@@ -110,7 +103,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
 
           {content === 'register' && (
             <>
-              <ActivitiesRegister ref={formRef} onSubmitParent={handleSubmit} />
+              <ActivitiesRegister ref={formRef} onSubmitParent={handleSubmit} onValidChange={setIsValid} />
             </>
           )}
         </div>

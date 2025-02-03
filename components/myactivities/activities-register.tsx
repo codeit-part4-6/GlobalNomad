@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';
 import {Controller, FormProvider, SubmitHandler, useFieldArray, useForm} from 'react-hook-form';
@@ -10,9 +10,10 @@ import TimeList from './time-list';
 
 interface ActivitiesRegisterProps {
   onSubmitParent?: (data: PostActivitiesBody) => void;
+  onValidChange: (isValid: boolean) => void;
 }
 
-const ActivitiesRegister = forwardRef<{submitForm: () => void; isValid: boolean}, ActivitiesRegisterProps>(({onSubmitParent}, ref) => {
+const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegisterProps>(({onSubmitParent, onValidChange}, ref) => {
   const methods = useForm<PostActivitiesBody>({
     mode: 'onChange',
     defaultValues: {
@@ -33,6 +34,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void; isValid: boolean}
     formState: {errors, isValid},
     setValue,
     clearErrors,
+    trigger,
   } = methods;
 
   const [isFocused, setIsFocused] = useState(false);
@@ -62,10 +64,11 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void; isValid: boolean}
 
   useImperativeHandle(ref, () => ({
     submitForm: handleSubmit(onSubmit),
-    get isValid() {
-      return isValid;
-    },
   }));
+
+  useEffect(() => {
+    onValidChange(isValid); // ref 로전달불가 props로 직접전달
+  }, [isValid]);
 
   const options = [
     {value: '문화 · 예술', label: '문화 · 예술'},
@@ -188,11 +191,11 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void; isValid: boolean}
           <TimeList />
           <div className="mb-4">
             <label className="mb-3 block text-xl font-bold tablet:text-2xl">배너 이미지</label>
-            <ImageList maxImages={1} name="bannerImageUrl" />
+            <ImageList trigger={trigger} maxImages={1} name="bannerImageUrl" />
           </div>
           <div className="mb-4">
             <label className="mb-3 block text-xl font-bold tablet:text-2xl">소개 이미지</label>
-            <ImageList maxImages={4} name="subImageUrls" />
+            <ImageList trigger={trigger} maxImages={4} name="subImageUrls" />
             <div className="mt-5 text-2lg font-normal text-gray-800">*이미지를 최대 4개까지 제출해주세요.</div>
           </div>
         </form>
