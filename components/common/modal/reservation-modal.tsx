@@ -21,7 +21,7 @@ export default function ReservationModal({onClose, selectedDate, activityId, onU
     queryFn: () => getReservedSchedule({activityId, date: selectedDate}),
     enabled: !!activityId,
   });
-  console.log(data);
+
   const reservedScheduleData = useMemo(() => (Array.isArray(data) ? data : []), [data]);
 
   const selectedSchedule = reservedScheduleData.find(schedule => `${schedule.startTime} ~ ${schedule.endTime}` === selectedTime);
@@ -31,10 +31,10 @@ export default function ReservationModal({onClose, selectedDate, activityId, onU
   const declinedCount = selectedSchedule?.count.declined ?? 0;
 
   useEffect(() => {
-    if (reservedScheduleData.length > 0) {
+    if (reservedScheduleData.length > 0 && selectedTime === null) {
       setSelectedTime(`${reservedScheduleData[0].startTime} ~ ${reservedScheduleData[0].endTime}`);
     }
-  }, [reservedScheduleData]);
+  }, [reservedScheduleData, selectedTime]);
 
   return (
     <div

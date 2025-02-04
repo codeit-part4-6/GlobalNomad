@@ -11,7 +11,6 @@ import enUS from 'antd/es/calendar/locale/en_US';
 import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {getReservationDashboard} from '@/service/api/reservation-calendar/getReservationDashboard.api';
 import {ReservationDashboardData} from '@/types/reservation-dashboard';
-import {renderStore} from '@/service/store/renderStore';
 
 dayjs.extend(updateLocale);
 
@@ -27,7 +26,6 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
   const [month, setMonth] = useState<string>('');
   const modalRef = useRef<HTMLDivElement | null>(null);
   const queryClient = useQueryClient();
-  const updateRender = renderStore(state => state.updateRender);
 
   const {data} = useQuery<ReservationDashboardData>({
     queryKey: ['reservationDashboard', activityId, year, month],
@@ -38,7 +36,6 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
   const reservationsData: ReservationDashboardData[] = Array.isArray(data) ? data : [];
 
   const onUpdate = () => {
-    updateRender();
     queryClient.invalidateQueries({
       queryKey: ['reservationDashboard'],
     });
@@ -56,9 +53,9 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
     }
   };
 
-  const handleDateClick = (clickedDate: string) => {
-    const hasReservation = reservationsData.some(reservation => reservation.date === clickedDate);
-    if (!hasReservation) return;
+  const handleDateClick = () => {
+    // const hasReservation = reservationsData.some(reservation => reservation.date === clickedDate);
+    // if (!hasReservation) return;
     setIsModalOpen(prev => !prev);
   };
 
@@ -101,7 +98,7 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
       <div>
         <div
           onClick={() => {
-            handleDateClick(date.format('YYYY-MM-DD'));
+            handleDateClick();
           }}
           className="relative h-154pxr border-collapse border border-gray-900 hover:bg-green-50"
         >
