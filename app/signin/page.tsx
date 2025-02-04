@@ -80,6 +80,11 @@ export default function Page() {
     setIsModalOpen(false);
   };
 
+  const handleKakaoLogin = () => {
+    const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI}&response_type=code`;
+    window.location.href = kakaoAuthURL;
+  }
+
   return (
     <>
       <div className="flex flex-col items-center max-w-[40rem] m-auto pt-[6.875rem] gap-[1.5rem] tablet:pt-[7.875rem] tablet:gap-[2.5rem] desktop:pt-[7.375rem] desktop:gap-[3.5rem]">
@@ -167,7 +172,7 @@ export default function Page() {
                 <button type="button" onClick={() => alert("Google 로그인 기능이 일시적으로 제한되어 있습니다")}>
                   <Image src={GoogleIcon} alt="google icon" />
                 </button>
-                <button type="button">
+                <button type="button" onClick={handleKakaoLogin}>
                   <Image src={KakaoIcon} alt="kakao icon" />
                 </button>
               </div>
