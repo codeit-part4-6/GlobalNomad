@@ -19,7 +19,7 @@ export default function ReservationCalendar({onClose}: {onClose: () => void}) {
   const myActivities = useMemo(() => data?.activities || [], [data]);
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  console.log(selectedId);
+
   useEffect(() => {
     if (myActivities.length > 0) {
       setSelectedTitle(myActivities[0].title);

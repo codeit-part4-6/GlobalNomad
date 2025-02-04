@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, {useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import closeButton from '@/public/icon/ic_close_button.svg';
 import ReservationInfo from '@/components/reservation-calendar/reservation-info';
 import {useQuery} from '@tanstack/react-query';
@@ -14,19 +14,31 @@ interface ReservationModalProps {
 
 export default function ReservationModal({onClose, selectedDate, activityId}: ReservationModalProps) {
   const [reservationStatus, setReservationStatus] = useState('pending');
-
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const {data} = useQuery<Schedules>({
     queryKey: ['reservedSchedule', selectedDate],
     queryFn: () => getReservedSchedule({activityId, date: selectedDate}),
     enabled: !!activityId,
   });
+  console.log(data);
+  const reservedScheduleData = useMemo(() => (Array.isArray(data) ? data : []), [data]);
 
-  const reservedScheduleData: Schedules = Array.isArray(data) ? data : [];
+  const selectedSchedule = reservedScheduleData.find(schedule => `${schedule.startTime} ~ ${schedule.endTime}` === selectedTime);
+
+  const pendingCount = selectedSchedule?.count.pending ?? 0;
+  const confirmedCount = selectedSchedule?.count.confirmed ?? 0;
+  const declinedCount = selectedSchedule?.count.declined ?? 0;
+
+  useEffect(() => {
+    if (reservedScheduleData.length > 0) {
+      setSelectedTime(`${reservedScheduleData[0].startTime} ~ ${reservedScheduleData[0].endTime}`);
+    }
+  }, [reservedScheduleData]);
 
   return (
     <div
       onClick={e => e.stopPropagation()}
-      className="h-full w-full overflow-y-auto border-gray-200 bg-white tablet:absolute tablet:z-[60] tablet:max-h-697pxr tablet:rounded-3xl tablet:border pc:h-[70%] pc:max-h-697pxr pc:w-429pxr"
+      className="no-scrollbar h-full w-full overflow-y-auto border-gray-200 bg-white tablet:absolute tablet:z-[60] tablet:max-h-697pxr tablet:rounded-3xl tablet:border pc:h-[70%] pc:max-h-697pxr pc:w-429pxr"
     >
       <div className="h-full w-full pt-6">
         <div className="mb-19pxr flex items-center justify-between px-6 tablet:mb-27pxr">
@@ -41,23 +53,30 @@ export default function ReservationModal({onClose, selectedDate, activityId}: Re
               onClick={() => setReservationStatus('pending')}
               className={`relative cursor-pointer pb-15pxr text-xl ${reservationStatus === 'pending' ? 'z-10 -mb-1pxr border-b-2 border-green-100 font-semibold text-green-100' : 'font-regular text-gray-800'} `}
             >
-              신청 {reservedScheduleData.reduce((sum, schedule) => sum + schedule.count.pending, 0)}
+              신청 {pendingCount}
             </div>
             <div
               onClick={() => setReservationStatus('confirmed')}
               className={`relative cursor-pointer pb-15pxr text-xl ${reservationStatus === 'confirmed' ? 'z-10 -mb-1pxr border-b-2 border-green-100 font-semibold text-green-100' : 'font-regular text-gray-800'}`}
             >
-              승인 {reservedScheduleData.reduce((sum, schedule) => sum + schedule.count.confirmed, 0)}
+              승인 {confirmedCount}
             </div>
             <div
               onClick={() => setReservationStatus('declined')}
               className={`relative cursor-pointer pb-15pxr text-xl ${reservationStatus === 'declined' ? 'z-10 -mb-1pxr border-b-2 border-green-100 font-semibold text-green-100' : 'font-regular text-gray-800'}`}
             >
-              거절 {reservedScheduleData.reduce((sum, schedule) => sum + schedule.count.declined, 0)}
+              거절 {declinedCount}
             </div>
           </div>
         </div>
-        <ReservationInfo reservationStatus={reservationStatus} reservedScheduleData={reservedScheduleData} activityId={activityId} />
+        <ReservationInfo
+          reservationStatus={reservationStatus}
+          reservedScheduleData={reservedScheduleData}
+          activityId={activityId}
+          selectedDate={selectedDate}
+          setSelectedTime={setSelectedTime}
+          selectedTime={selectedTime}
+        />
       </div>
     </div>
   );

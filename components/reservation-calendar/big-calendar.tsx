@@ -39,6 +39,7 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
       setIsModalOpen(false);
     }
   };
+  console.log(reservationsData);
 
   const handleDateClick = (clickedDate: string) => {
     const hasReservation = reservationsData.some(reservation => reservation.date === clickedDate);
@@ -80,6 +81,7 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
 
   const DateCell = (date: Dayjs) => {
     const reservationData = reservationsData.find(reservation => reservation.date === date.format('YYYY-MM-DD'));
+
     return (
       <div>
         <div
@@ -136,8 +138,7 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
       weekdaysMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     },
   };
-  console.log(year);
-  console.log(month);
+
   return (
     <div className="tablet:relative" ref={modalRef}>
       {isModalOpen && !isTablet && (

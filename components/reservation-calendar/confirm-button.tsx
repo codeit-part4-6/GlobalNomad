@@ -10,7 +10,8 @@ interface patchReservationsProps {
 }
 
 export default function ConfirmButton({reservationId, activityId}: patchReservationsProps) {
-  const [loading, setLoading] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [declineLoading, setDeclinedLoading] = useState(false);
 
   const handleConfirmedClick = () => {
     mutation.mutate('confirmed');
@@ -26,15 +27,21 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
         await patchReservations({activityId, reservationId, status});
       }
     },
-    onMutate: () => {
-      setLoading(true);
+    onMutate: (status: string) => {
+      if (status === 'confirmed') {
+        setConfirmLoading(true);
+      } else {
+        setDeclinedLoading(true);
+      }
     },
     onSuccess: () => {
-      setLoading(false);
+      setConfirmLoading(false);
+      setDeclinedLoading(false);
       alert('요청을 처리했습니다');
     },
     onError: () => {
-      setLoading(false);
+      setConfirmLoading(false);
+      setDeclinedLoading(false);
       alert('실패했어요');
     },
   });
@@ -46,14 +53,18 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
         className="h-38pxr w-82pxr rounded-md bg-nomad-black px-10pxr align-middle text-md font-bold leading-none text-white"
         type="button"
       >
-        <div className="flex items-center justify-center gap-3">{loading ? <ScaleLoader width={3} height={20} color="#ffffff" /> : '승인하기'}</div>
+        <div className="flex items-center justify-center gap-3">
+          {confirmLoading ? <ScaleLoader width={2} height={10} color="#ffffff" /> : '승인하기'}
+        </div>
       </Button>
       <Button
         onClick={handleDeclinedClick}
         className="h-38pxr w-82pxr rounded-md border border-nomad-black px-10pxr text-md font-bold leading-none text-nomad-black"
         type="button"
       >
-        거절하기
+        <div className="flex items-center justify-center gap-3">
+          {declineLoading ? <ScaleLoader width={2} height={10} color="#112211" /> : '거절하기'}
+        </div>
       </Button>
     </div>
   );
