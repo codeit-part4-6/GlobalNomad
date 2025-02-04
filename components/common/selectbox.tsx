@@ -3,9 +3,9 @@ import Image from 'next/image';
 
 export interface SelectBoxType {
   className?: string;
-  options: {value: string; label: string}[];
+  options: {value: string; label: string; disabled?: boolean}[];
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   selectButtonImage?: string;
   onDelete?: () => void;
   label?: string;
@@ -36,13 +36,13 @@ export default function SelectBox({className = '', options, value, onChange, sel
   const handleToggleDropdown = () => setIsOpen(prev => !prev);
 
   const handleOptionSelect = (value: string) => {
-    const event = {target: {value}} as React.ChangeEvent<HTMLInputElement>;
+    const event = {target: {value}} as React.ChangeEvent<HTMLSelectElement>;
     onChange(event);
     setIsOpen(false);
   };
 
   const handleDelete = () => {
-    const event = {target: {value: ''}} as React.ChangeEvent<HTMLInputElement>;
+    const event = {target: {value: ''}} as React.ChangeEvent<HTMLSelectElement>;
     onChange(event);
     if (onDelete) onDelete();
   };

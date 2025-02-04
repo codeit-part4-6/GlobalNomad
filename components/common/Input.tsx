@@ -93,7 +93,7 @@ const Input: React.FC<InputProps> = ({
   const labelClassNames = labelClassName || INPUT_STYLES.label;
 
   return (
-    <div className="mb-4">
+    <div>
       {/* Label (Optional) */}
       {label && (
         <label htmlFor={props.name} className={labelClassNames}>
@@ -125,7 +125,7 @@ const Input: React.FC<InputProps> = ({
         )}
       </div>
       {/* Error message */}
-      {error && <span className={INPUT_STYLES.errorMessage}>{error}</span>}
+      <span className={`${INPUT_STYLES.errorMessage} ${error ? 'visible opacity-100' : 'invisible opacity-0'}`}>{error}</span>
     </div>
   );
 };

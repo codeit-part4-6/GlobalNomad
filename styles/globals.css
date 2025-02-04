@@ -58,6 +58,11 @@ body {
   .custom-scrollbar::-webkit-scrollbar-track {
     background-color: #f0f0f0;
   }
+
+  .placehorder::placeholder {
+    font-size: 1rem;
+    color: #a1a1a1;
+  }
 }
 
 @layer base {
