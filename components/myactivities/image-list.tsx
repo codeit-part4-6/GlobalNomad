@@ -12,8 +12,13 @@ interface ImageListType {
   trigger?: (names: any) => void;
 }
 
+interface ImageWithId {
+  id?: number;
+  imageUrl: string;
+}
+
 export default function ImageList({maxImages = 5, name = 'defaultName', trigger}: ImageListType) {
-  const [imageUrls, setImageUrls] = useState<(string | ArrayBuffer)[]>([]);
+  const [imageUrls, setImageUrls] = useState<ImageWithId[]>([]);
   const [apiImageUrls, setApiImageUrls] = useState<string | string[]>('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,8 +29,8 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
     setError,
     clearErrors,
     setValue,
+    watch,
   } = useFormContext();
-
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
       const response = await postImage(formData);
@@ -78,8 +83,8 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
           const reader = new FileReader();
           reader.onloadend = () => {
             const fileUrl = reader.result as string;
-            if (!imageUrls.includes(fileUrl)) {
-              setImageUrls(prevUrls => [...prevUrls, fileUrl]);
+            if (!imageUrls.some(image => image.imageUrl === fileUrl)) {
+              setImageUrls(prevUrls => [...prevUrls, {imageUrl: fileUrl}]);
             }
             resolve();
           };
@@ -111,6 +116,19 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
       setApiImageUrls('');
     }
   };
+
+  useEffect(() => {
+    const initialImageUrls = watch(name);
+
+    if (!initialImageUrls || (Array.isArray(initialImageUrls) && initialImageUrls.length === 0)) {
+      setImageUrls([]);
+    } else if (Array.isArray(initialImageUrls)) {
+      const validImageUrls = initialImageUrls.filter((url: string) => url && url !== '');
+      setImageUrls(validImageUrls);
+    } else {
+      setImageUrls([{imageUrl: initialImageUrls}]);
+    }
+  }, [watch(name)]);
 
   useEffect(() => {
     setValue(name, apiImageUrls);
@@ -153,14 +171,16 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
           )}
         />
         {/* 이미지 미리보기 및 삭제 버튼 */}
-        {imageUrls.map((imageUrl, index) => (
-          <div key={index} className="relative h-167pxr w-167pxr tablet:h-206pxr tablet:w-206pxr pc:h-180pxr pc:w-180pxr">
-            <Image src={typeof imageUrl === 'string' ? imageUrl : ''} alt={`이미지 ${index + 1}`} fill className="rounded-3xl" />
-            <div className="absolute right-[-16px] top-[-18px] cursor-pointer p-2" onClick={() => handleRemoveImage(index)}>
-              <Image src={cancleBtn} width={24} height={24} alt="이미지삭제" />
+        {imageUrls.map((imageUrl, index) =>
+          imageUrl ? (
+            <div key={index} className="relative h-167pxr w-167pxr tablet:h-206pxr tablet:w-206pxr pc:h-180pxr pc:w-180pxr">
+              <Image src={imageUrl.imageUrl} alt={`이미지 ${index + 1}`} fill className="rounded-3xl" />
+              <div className="absolute right-[-16px] top-[-18px] cursor-pointer p-2" onClick={() => handleRemoveImage(index)}>
+                <Image src={cancleBtn} width={24} height={24} alt="이미지삭제" />
+              </div>
             </div>
-          </div>
-        ))}
+          ) : null,
+        )}
         {/* 오류 메시지 */}
         {typeof errors[name]?.message === 'string' && <span className="error-message">{errors[name]?.message}</span>}
       </div>

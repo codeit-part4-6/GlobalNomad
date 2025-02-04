@@ -11,12 +11,14 @@ import ActivitiesCard from './activities-card';
 import {postActivities} from '@/service/api/myactivities/postActivities';
 import {PostActivitiesBody} from '@/types/postActivities.types';
 import {useMutation} from '@tanstack/react-query';
+import ActivitiesModify from './activities-modify';
 
 export default function MyActivities({onclose}: {onclose: () => void}) {
-  const [content, setContent] = useState<'manage' | 'register'>('manage');
+  const [content, setContent] = useState<'manage' | 'register' | 'modify'>('manage');
   const formRef = useRef<{submitForm: () => void} | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isValid, setIsValid] = useState(false);
+  const [modifyId, setModifyId] = useState(0);
   const mutation = useMutation({
     mutationFn: async (body: PostActivitiesBody) => {
       const response = await postActivities(body);
@@ -35,10 +37,19 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
     },
   });
 
+  const handleClickModify = (id: number) => {
+    setContent('modify');
+    setModifyId(id);
+  };
+
   const handleSubmit = (data: PostActivitiesBody) => {
     console.log('Form Data from Parent:', data);
 
     mutation.mutate(data);
+  };
+
+  const handleModifySubmit = () => {
+    alert(1);
   };
 
   const triggerSubmit = () => {
@@ -70,7 +81,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
                   체험 등록하기
                 </Button>
               </>
-            ) : (
+            ) : content === 'register' ? (
               <Button
                 onClick={triggerSubmit} // 버튼 클릭 시 자식 컴포넌트의 폼 제출 트리거
                 className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white ${
@@ -78,6 +89,15 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
                 }`}
               >
                 등록하기
+              </Button>
+            ) : (
+              <Button
+                onClick={triggerSubmit}
+                className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white ${
+                  isValid ? 'bg-primary' : 'bg-gray-500'
+                }`}
+              >
+                수정하기
               </Button>
             )}
           </div>
@@ -92,7 +112,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
                   {group.pages.flatMap(page =>
                     page.map((data: Activity) => (
                       <Fragment key={data.id}>
-                        <ActivitiesCard data={data} />
+                        <ActivitiesCard data={data} onClickModify={() => handleClickModify(data.id)} />
                       </Fragment>
                     )),
                   )}
@@ -104,6 +124,11 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
           {content === 'register' && (
             <>
               <ActivitiesRegister ref={formRef} onSubmitParent={handleSubmit} onValidChange={setIsValid} />
+            </>
+          )}
+          {content === 'modify' && (
+            <>
+              <ActivitiesModify ref={formRef} modifyId={modifyId} onSubmitParent={handleModifySubmit} onValidChange={setIsValid} />
             </>
           )}
         </div>
