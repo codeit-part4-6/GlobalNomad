@@ -164,8 +164,12 @@ export default function Page() {
                 <hr className="w-[5rem] border border-gray-300" />
               </div>
               <div className="flex justify-center gap-[1rem]">
-                <Image src={GoogleIcon} alt="google icon" />
-                <Image src={KakaoIcon} alt="kakao icon" />
+                <button type="button" onClick={() => alert("Google 로그인 기능이 일시적으로 제한되어 있습니다")}>
+                  <Image src={GoogleIcon} alt="google icon" />
+                </button>
+                <button type="button">
+                  <Image src={KakaoIcon} alt="kakao icon" />
+                </button>
               </div>
             </div>
           </div>
