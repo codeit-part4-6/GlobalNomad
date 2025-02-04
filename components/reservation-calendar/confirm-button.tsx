@@ -7,9 +7,10 @@ import {ScaleLoader} from 'react-spinners';
 interface patchReservationsProps {
   reservationId: number | null;
   activityId: number | null;
+  onUpdate: () => void;
 }
 
-export default function ConfirmButton({reservationId, activityId}: patchReservationsProps) {
+export default function ConfirmButton({reservationId, activityId, onUpdate}: patchReservationsProps) {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [declineLoading, setDeclinedLoading] = useState(false);
 
@@ -37,6 +38,7 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
     onSuccess: () => {
       setConfirmLoading(false);
       setDeclinedLoading(false);
+      onUpdate();
       alert('요청을 처리했습니다');
     },
     onError: () => {

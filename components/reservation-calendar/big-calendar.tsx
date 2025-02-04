@@ -8,9 +8,10 @@ import {calendarStatusLabels} from '@/constant/reservation-list-constant';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import enUS from 'antd/es/calendar/locale/en_US';
-import {useQuery} from '@tanstack/react-query';
+import {useQuery, useQueryClient} from '@tanstack/react-query';
 import {getReservationDashboard} from '@/service/api/reservation-calendar/getReservationDashboard.api';
 import {ReservationDashboardData} from '@/types/reservation-dashboard';
+import {renderStore} from '@/service/store/renderStore';
 
 dayjs.extend(updateLocale);
 
@@ -25,6 +26,8 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
   const [year, setYear] = useState<string>('');
   const [month, setMonth] = useState<string>('');
   const modalRef = useRef<HTMLDivElement | null>(null);
+  const queryClient = useQueryClient();
+  const updateRender = renderStore(state => state.updateRender);
 
   const {data} = useQuery<ReservationDashboardData>({
     queryKey: ['reservationDashboard', activityId, year, month],
@@ -34,12 +37,24 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
 
   const reservationsData: ReservationDashboardData[] = Array.isArray(data) ? data : [];
 
+  const onUpdate = () => {
+    updateRender();
+    queryClient.invalidateQueries({
+      queryKey: ['reservationDashboard'],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['reservedSchedule'],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['myReservations'],
+    });
+  };
+
   const handleClickOutside = (event: MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
       setIsModalOpen(false);
     }
   };
-  console.log(reservationsData);
 
   const handleDateClick = (clickedDate: string) => {
     const hasReservation = reservationsData.some(reservation => reservation.date === clickedDate);
@@ -143,12 +158,12 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
     <div className="tablet:relative" ref={modalRef}>
       {isModalOpen && !isTablet && (
         <ReservationContainer onClose={() => setIsModalOpen(false)}>
-          <ReservationModal onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
+          <ReservationModal onUpdate={onUpdate} onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
         </ReservationContainer>
       )}
       {isModalOpen && isTablet && (
         <div>
-          <ReservationModal onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
+          <ReservationModal onUpdate={onUpdate} onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
         </div>
       )}
       <Calendar

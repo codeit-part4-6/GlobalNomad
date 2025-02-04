@@ -10,9 +10,10 @@ interface ReservationModalProps {
   onClose: () => void;
   selectedDate: string;
   activityId: number | null;
+  onUpdate: () => void;
 }
 
-export default function ReservationModal({onClose, selectedDate, activityId}: ReservationModalProps) {
+export default function ReservationModal({onClose, selectedDate, activityId, onUpdate}: ReservationModalProps) {
   const [reservationStatus, setReservationStatus] = useState('pending');
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const {data} = useQuery<Schedules>({
@@ -76,6 +77,7 @@ export default function ReservationModal({onClose, selectedDate, activityId}: Re
           selectedDate={selectedDate}
           setSelectedTime={setSelectedTime}
           selectedTime={selectedTime}
+          onUpdate={onUpdate}
         />
       </div>
     </div>

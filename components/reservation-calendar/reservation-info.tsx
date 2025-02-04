@@ -17,6 +17,7 @@ interface ReservationProps {
   selectedDate: string;
   setSelectedTime: (time: string) => void;
   selectedTime: string | null;
+  onUpdate: () => void;
 }
 
 export default function ReservationInfo({
@@ -26,6 +27,7 @@ export default function ReservationInfo({
   reservedScheduleData,
   activityId,
   selectedDate,
+  onUpdate,
 }: ReservationProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -54,7 +56,7 @@ export default function ReservationInfo({
   const renderChip = (reservationId: number) => {
     switch (reservationStatus) {
       case 'pending':
-        return <ConfirmButton activityId={activityId} reservationId={reservationId} />;
+        return <ConfirmButton onUpdate={onUpdate} activityId={activityId} reservationId={reservationId} />;
       case 'confirmed':
         return <ConfirmChip method={`confirm`} />;
       case 'declined':
