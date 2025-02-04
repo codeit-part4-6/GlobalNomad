@@ -30,6 +30,7 @@ export default function ReservationInfo({
   onUpdate,
 }: ReservationProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [cursorId, setCursorId] = useState(null);
 
   const selectedSchedule = reservedScheduleData.find(schedule => `${schedule.startTime} ~ ${schedule.endTime}` === selectedTime);
   const selectedScheduleId = selectedSchedule ? selectedSchedule.scheduleId : null;
@@ -37,7 +38,13 @@ export default function ReservationInfo({
   const {data, isFetching} = useQuery<ReservationsResponse>({
     queryKey: ['myReservations', activityId, reservationStatus, selectedTime],
     queryFn: () =>
-      getReservations({activityId, size: 1000, scheduleId: selectedScheduleId ?? reservedScheduleData[0].scheduleId, status: reservationStatus}),
+      getReservations({
+        activityId,
+        size: 10,
+        scheduleId: selectedScheduleId ?? reservedScheduleData[0].scheduleId,
+        status: reservationStatus,
+        cursorId,
+      }),
     enabled: !!activityId,
   });
 

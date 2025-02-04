@@ -19,5 +19,5 @@ export interface Reservations {
 export interface ReservationsResponse {
   reservations: Reservations[];
   totalCount: number;
-  cursorId: number;
+  cursorId?: number;
 }

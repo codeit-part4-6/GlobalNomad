@@ -54,8 +54,6 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
   };
 
   const handleDateClick = () => {
-    // const hasReservation = reservationsData.some(reservation => reservation.date === clickedDate);
-    // if (!hasReservation) return;
     setIsModalOpen(prev => !prev);
   };
 
@@ -132,9 +130,13 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
                           : 'bg-orange-50 text-orange-100'
                     } text-ellipsis whitespace-nowrap rounded px-2 py-1 text-left text-xs font-medium tablet:text-md`}
                   >
-                    <span>
-                      {calendarStatusLabels[status]} {count}
-                    </span>
+                    {status === 'pending' ? (
+                      <span>{calendarStatusLabels[status]} 1</span>
+                    ) : (
+                      <span>
+                        {calendarStatusLabels[status]} {count}
+                      </span>
+                    )}
                   </div>
                 ))}
           </div>

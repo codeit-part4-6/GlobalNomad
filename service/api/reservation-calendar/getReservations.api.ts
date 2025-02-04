@@ -7,17 +7,20 @@ export async function getReservations({
   size,
   scheduleId,
   status,
+  cursorId,
 }: {
   activityId: number | null;
   size?: number;
   scheduleId: number;
   status: string;
+  cursorId?: number | null;
 }): Promise<ReservationsResponse> {
   const accessToken = getAccessToken();
   const params = new URLSearchParams({
     ...(size !== undefined && {size: size.toString()}),
     ...(scheduleId !== undefined && {scheduleId: scheduleId.toString()}),
     ...(status !== undefined && {status: status.toString()}),
+    ...(typeof cursorId === 'number' ? {cursorId: cursorId.toString()} : {}),
   });
   const response = await INSTANCE_URL.get(`/my-activities/${activityId}/reservations?${params}`, {
     headers: {
