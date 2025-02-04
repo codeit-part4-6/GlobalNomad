@@ -12,7 +12,7 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
   return (
     <>
       <div className="tablet:mb-18 mx-auto mb-16 flex flex-col items-center justify-center">
-        <section className="mb-40pxr mt-101pxr flex flex-col gap-3 tablet:mt-110pxr pc:mt-126pxr pc:gap-8">
+        <section className="mb-40pxr mt-101pxr flex flex-col items-start gap-3 tablet:mt-110pxr pc:mt-126pxr pc:gap-8">
           <h2 className="text-[1.5rem]/[1.75rem] font-regular text-black-100 tablet:text-[2rem]/[2.375rem]">
             <span className="font-bold">{keyword}</span>(으)로 검색한 결과입니다.
           </h2>
