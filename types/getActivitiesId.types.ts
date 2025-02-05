@@ -1,7 +1,7 @@
 import {Schedule} from './postActivities.types';
 
 export interface SubImage {
-  id: number;
+  id?: number;
   imageUrl: string;
 }
 

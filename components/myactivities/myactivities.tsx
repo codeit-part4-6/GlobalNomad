@@ -12,6 +12,8 @@ import {postActivities} from '@/service/api/myactivities/postActivities';
 import {PostActivitiesBody} from '@/types/postActivities.types';
 import {useMutation} from '@tanstack/react-query';
 import ActivitiesModify from './activities-modify';
+import {PatchActivitiesBody} from '@/types/patchActivities.types';
+import {patchActivities} from '@/service/api/myactivities/patchActivities.api';
 
 export default function MyActivities({onclose}: {onclose: () => void}) {
   const [content, setContent] = useState<'manage' | 'register' | 'modify'>('manage');
@@ -19,9 +21,27 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [modifyId, setModifyId] = useState(0);
-  const mutation = useMutation({
+  const postActivitiesMutation = useMutation({
     mutationFn: async (body: PostActivitiesBody) => {
       const response = await postActivities(body);
+      return response;
+    },
+    onMutate: () => {
+      // setLoading(true);
+    },
+
+    onSuccess: data => {
+      // setLoading(false);
+      setIsOpen(true);
+    },
+    onError: error => {
+      alert(`${error.message}`);
+    },
+  });
+
+  const patchActivitiesMutation = useMutation({
+    mutationFn: async ({id, body}: {id: number; body: PatchActivitiesBody}) => {
+      const response = await patchActivities(id, body);
       return response;
     },
     onMutate: () => {
@@ -45,11 +65,22 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
   const handleSubmit = (data: PostActivitiesBody) => {
     console.log('Form Data from Parent:', data);
 
-    mutation.mutate(data);
+    postActivitiesMutation.mutate(data);
   };
 
-  const handleModifySubmit = () => {
-    alert(1);
+  const handleModifySubmit = (data: PatchActivitiesBody) => {
+    const params = {
+      title: data.title,
+      category: data.category,
+      description: data.description,
+      price: data.price,
+      bannerImageUrl: data.bannerImageUrl.toString(),
+      subImageIdsToRemove: data.subImageIdsToRemove,
+      subImageUrlsToAdd: data.subImages || [],
+      scheduleIdsToRemove: data.scheduleIdsToRemove,
+      schedulesToAdd: data.schedulesToAdd,
+    };
+    patchActivitiesMutation.mutate({id: modifyId, body: params});
   };
 
   const triggerSubmit = () => {
@@ -133,7 +164,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
           )}
         </div>
       </div>
-      {isOpen && <Modal type="big" message="체험 등록이 완료되었습니다" onClose={handleClose} />}
+      {isOpen && <Modal type="big" message={`체험 ${content === 'modify' ? '수정' : '등록'}이 완료되었습니다`} onClose={handleClose} />}
     </>
   );
 }

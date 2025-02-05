@@ -1,9 +1,10 @@
 import {ServerError} from '@/types/server-error.types';
 import INSTANCE_URL from '../instance';
+import {PatchActivitiesBody} from '@/types/patchActivities.types';
 
-export async function patchActivities(activityId: number) {
+export async function patchActivities(activityId: number, body: PatchActivitiesBody) {
   try {
-    const response = await INSTANCE_URL.patch(`/my-activities/${activityId}`);
+    const response = await INSTANCE_URL.patch(`/my-activities/${activityId}`, body);
     return response.data;
   } catch (error: unknown) {
     const serverError = error as ServerError;

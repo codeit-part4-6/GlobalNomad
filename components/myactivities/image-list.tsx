@@ -5,22 +5,21 @@ import {Controller, useFormContext} from 'react-hook-form';
 import {useState, useRef, useEffect} from 'react';
 import {postImage} from '@/service/api/myactivities/postImage.api';
 import {useMutation} from '@tanstack/react-query';
+import {SubImage} from '@/types/getActivitiesId.types';
 
 interface ImageListType {
   maxImages?: number;
   name?: string;
   trigger?: (names: any) => void;
+  bannerImageUrl?: string;
+  subImages?: SubImage[];
 }
 
-interface ImageWithId {
-  id?: number;
-  imageUrl: string;
-}
-
-export default function ImageList({maxImages = 5, name = 'defaultName', trigger}: ImageListType) {
-  const [imageUrls, setImageUrls] = useState<ImageWithId[]>([]);
+export default function ImageList({maxImages = 5, name = 'defaultName', trigger, bannerImageUrl, subImages}: ImageListType) {
+  const [imageUrls, setImageUrls] = useState<SubImage[]>(subImages || []);
   const [apiImageUrls, setApiImageUrls] = useState<string | string[]>('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [IsRequired, setIsRequired] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -30,6 +29,7 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
     clearErrors,
     setValue,
     watch,
+    getValues,
   } = useFormContext();
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
@@ -42,14 +42,16 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
 
     onSuccess: data => {
       // setLoading(false);
-      if (name === 'subImageUrls') {
-        setApiImageUrls(prev => {
-          const updatedUrls = [...prev, data.activityImageUrl];
-          return updatedUrls;
-        });
-      } else {
-        setApiImageUrls(data.activityImageUrl);
+      // 수정시
+      if (name === 'subImges') {
+        const prevIds = getValues('subImageUrlsToAdd') || [];
+        setValue('subImageUrlsToAdd', [...prevIds, data.activityImageUrl]);
       }
+
+      setApiImageUrls(prev => {
+        const updatedUrls = [...prev, data.activityImageUrl];
+        return updatedUrls;
+      });
     },
     onError: error => {
       // setLoading(false);
@@ -102,7 +104,7 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
     }
   };
 
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveImage = (index: number, id?: number) => {
     const updatedFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(updatedFiles);
 
@@ -115,25 +117,33 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
     } else {
       setApiImageUrls('');
     }
-  };
 
-  useEffect(() => {
-    const initialImageUrls = watch(name);
+    setValue(name, updatedImageUrls);
+    if (trigger) trigger(name);
 
-    if (!initialImageUrls || (Array.isArray(initialImageUrls) && initialImageUrls.length === 0)) {
-      setImageUrls([]);
-    } else if (Array.isArray(initialImageUrls)) {
-      const validImageUrls = initialImageUrls.filter((url: string) => url && url !== '');
-      setImageUrls(validImageUrls);
-    } else {
-      setImageUrls([{imageUrl: initialImageUrls}]);
+    // 수정시
+    if (id != null) {
+      const prevIds = getValues('subImageIdsToRemove') || [];
+      setValue('subImageIdsToRemove', [...prevIds, id], {shouldValidate: false});
     }
-  }, [watch(name)]);
+  };
 
   useEffect(() => {
     setValue(name, apiImageUrls);
     if (trigger) trigger(name); // 유효성 수동 trigger
   }, [apiImageUrls]);
+
+  useEffect(() => {
+    if (subImages) {
+      setValue(name, []);
+      setIsRequired(true);
+      setImageUrls(subImages);
+    }
+
+    if (bannerImageUrl) {
+      setImageUrls([{imageUrl: bannerImageUrl}]);
+    }
+  }, [subImages, bannerImageUrl]);
 
   return (
     <>
@@ -153,7 +163,7 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
           name={name}
           control={control}
           rules={{
-            required: '필수 값 입니다.',
+            required: !IsRequired ? '필수 값 입니다.' : false,
             validate: {
               maxImages: () => selectedFiles.length <= maxImages || `최대 ${maxImages}개의 이미지만 선택할 수 있습니다.`,
             },
@@ -171,16 +181,19 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
           )}
         />
         {/* 이미지 미리보기 및 삭제 버튼 */}
-        {imageUrls.map((imageUrl, index) =>
-          imageUrl ? (
-            <div key={index} className="relative h-167pxr w-167pxr tablet:h-206pxr tablet:w-206pxr pc:h-180pxr pc:w-180pxr">
-              <Image src={imageUrl.imageUrl} alt={`이미지 ${index + 1}`} fill className="rounded-3xl" />
-              <div className="absolute right-[-16px] top-[-18px] cursor-pointer p-2" onClick={() => handleRemoveImage(index)}>
-                <Image src={cancleBtn} width={24} height={24} alt="이미지삭제" />
+        {imageUrls.map((imageUrl, index) => {
+          if (imageUrl?.imageUrl) {
+            return (
+              <div key={index} className="relative h-167pxr w-167pxr tablet:h-206pxr tablet:w-206pxr pc:h-180pxr pc:w-180pxr">
+                <Image src={imageUrl.imageUrl} alt={`이미지 ${index + 1}`} fill className="rounded-3xl" />
+                <div className="absolute right-[-16px] top-[-18px] cursor-pointer p-2" onClick={() => handleRemoveImage(index, imageUrl.id)}>
+                  <Image src={cancleBtn} width={24} height={24} alt="이미지삭제" />
+                </div>
               </div>
-            </div>
-          ) : null,
-        )}
+            );
+          }
+          return null;
+        })}
         {/* 오류 메시지 */}
         {typeof errors[name]?.message === 'string' && <span className="error-message">{errors[name]?.message}</span>}
       </div>

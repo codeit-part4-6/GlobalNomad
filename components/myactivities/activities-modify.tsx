@@ -8,17 +8,18 @@ import AddressModal from './address-modal';
 import TimeList from './time-list';
 import ImageList from './image-list';
 import {useMutation} from '@tanstack/react-query';
-import {patchActivities} from '@/service/api/myactivities/patchActivities.api';
-import {GetActivitiesResponse} from '@/types/getActivitiesId.types';
 import {getActivitiesId} from '@/service/api/myactivities/getActivitiesId.api';
+import {PatchActivitiesBody} from '@/types/patchActivities.types';
+import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
 
 interface ActivitiesModifyProps {
   onSubmitParent?: (data: any) => void;
   modifyId: number;
+  onValidChange: (isValid: boolean) => void;
 }
 
-const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId}, ref) => {
-  const methods = useForm<GetActivitiesResponse>({
+const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId, onValidChange}, ref) => {
+  const methods = useForm<PatchActivitiesBody | GetActivitiesResponse>({
     mode: 'onChange',
     defaultValues: {
       title: '',
@@ -29,6 +30,10 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
       schedules: [],
       bannerImageUrl: '',
       subImages: [],
+      subImageIdsToRemove: [],
+      scheduleIdsToRemove: [],
+      subImageUrlsToAdd: [],
+      schedulesToAdd: [],
     },
   });
 
@@ -40,10 +45,13 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
     clearErrors,
     trigger,
     reset,
+    getValues,
   } = methods;
 
   const [isFocused, setIsFocused] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [subImages, setSubImages] = useState<SubImage[]>([]);
+  const [bannerImageUrl, setBannerImageUrl] = useState('');
 
   // 수정 api
   const mutation = useMutation({
@@ -56,10 +64,14 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
     },
 
     onSuccess: data => {
-      console.log(data);
       reset({
         ...data,
       });
+
+      const subImagesData = data?.subImages || [];
+      const bannerImageUrlData = data.bannerImageUrl;
+      setSubImages(subImagesData);
+      setBannerImageUrl(bannerImageUrlData);
     },
     onError: error => {
       alert(`${error.message}`);
@@ -97,6 +109,13 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
 
     mutation.mutate();
   }, [modifyId]);
+
+  useEffect(() => {
+    const subImagesData = getValues('subImages') || [];
+    const bannerImageUrlData = getValues('bannerImageUrl');
+    setSubImages(subImagesData);
+    setBannerImageUrl(bannerImageUrlData);
+  }, [getValues]);
 
   const options = [
     {value: '문화 · 예술', label: '문화 · 예술'},
@@ -219,11 +238,11 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
           <TimeList />
           <div className="mb-4">
             <label className="mb-3 block text-xl font-bold tablet:text-2xl">배너 이미지</label>
-            <ImageList trigger={trigger} maxImages={1} name="bannerImageUrl" />
+            <ImageList trigger={trigger} maxImages={1} name="bannerImageUrl" bannerImageUrl={bannerImageUrl} />
           </div>
           <div className="mb-4">
             <label className="mb-3 block text-xl font-bold tablet:text-2xl">소개 이미지</label>
-            <ImageList trigger={trigger} maxImages={4} name="subImages" />
+            <ImageList trigger={trigger} maxImages={4} name="subImages" subImages={subImages} />
             <div className="mt-5 text-2lg font-normal text-gray-800">*이미지를 최대 4개까지 제출해주세요.</div>
           </div>
         </form>
