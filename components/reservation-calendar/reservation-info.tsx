@@ -1,14 +1,15 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
 import Image from 'next/image';
 import ConfirmButton from './confirm-button';
 import ConfirmChip from './confirm-chip';
 import {Schedules} from '@/types/reserved-schedule';
-import {useQuery} from '@tanstack/react-query';
+import {useInfiniteQuery} from '@tanstack/react-query';
 import {ReservationsResponse} from '@/types/my-reservations';
 import {getReservations} from '@/service/api/reservation-calendar/getReservations.api';
 import NonDataPage from '../common/non-data';
 import {ScaleLoader} from 'react-spinners';
+import {useInView} from 'react-intersection-observer';
 
 interface ReservationProps {
   reservationStatus: string;
@@ -17,7 +18,6 @@ interface ReservationProps {
   selectedDate: string;
   setSelectedTime: (time: string) => void;
   selectedTime: string | null;
-  onUpdate: () => void;
 }
 
 export default function ReservationInfo({
@@ -27,29 +27,65 @@ export default function ReservationInfo({
   reservedScheduleData,
   activityId,
   selectedDate,
-  onUpdate,
 }: ReservationProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [cursorId, setCursorId] = useState(null);
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+  });
 
   const selectedSchedule = reservedScheduleData.find(schedule => `${schedule.startTime} ~ ${schedule.endTime}` === selectedTime);
   const selectedScheduleId = selectedSchedule ? selectedSchedule.scheduleId : null;
 
-  const {data, isFetching} = useQuery<ReservationsResponse>({
+  const {data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery<ReservationsResponse>({
     queryKey: ['myReservations', activityId, reservationStatus, selectedTime],
-    queryFn: () =>
+    queryFn: ({pageParam = null}) =>
       getReservations({
         activityId,
-        size: 10,
+        size: 5,
         scheduleId: selectedScheduleId ?? reservedScheduleData[0].scheduleId,
         status: reservationStatus,
-        cursorId,
+        cursorId: pageParam as number | null,
       }),
-    enabled: !!activityId,
+    initialPageParam: null, // 첫 번째 페이지는 cursorId 없이 요청
+    getNextPageParam: (lastPage, allPages) => {
+      const totalLoadedReservations = allPages.flatMap(page => page.reservations).length;
+
+      if (totalLoadedReservations >= lastPage.totalCount) {
+        return null;
+      }
+      if (lastPage.cursorId === null) {
+        return null;
+      }
+      return lastPage.reservations[lastPage.reservations.length - 1].id;
+    },
+    enabled: !!activityId && !!selectedTime,
   });
 
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
+
+  useEffect(() => {
+    // 컴포넌트 리렌더링 후 스크롤 위치를 유지하도록 할 수 있음
+    const scrollPosition = localStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+      window.scrollTo(0, parseInt(scrollPosition, 10));
+    }
+  }, [data]); // data가 변경될 때마다 스크롤 위치 조정
+
+  // 스크롤 위치 기록
+  useEffect(() => {
+    const handleScroll = () => {
+      localStorage.setItem('scrollPosition', window.scrollY.toString());
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const times = Array.from(new Set((reservedScheduleData || []).map(reservation => `${reservation.startTime} ~ ${reservation.endTime}`)));
-  const reservations = data?.reservations || [];
+  const reservations = data?.pages.flatMap(page => page.reservations) || [];
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
@@ -63,7 +99,7 @@ export default function ReservationInfo({
   const renderChip = (reservationId: number) => {
     switch (reservationStatus) {
       case 'pending':
-        return <ConfirmButton onUpdate={onUpdate} activityId={activityId} reservationId={reservationId} />;
+        return <ConfirmButton activityId={activityId} reservationId={reservationId} />;
       case 'confirmed':
         return <ConfirmChip method={`confirm`} />;
       case 'declined':
@@ -122,6 +158,12 @@ export default function ReservationInfo({
               ))
             : !isFetching && <NonDataPage type="modal" />}
         </div>
+        {isFetching && (
+          <div className="no-scrollbar flex h-200pxr w-full items-center justify-center">
+            <ScaleLoader width={10} color="#0b3b2d" />
+          </div>
+        )}
+        <div className="mt-1 h-1" ref={ref} />
       </div>
     </div>
   );

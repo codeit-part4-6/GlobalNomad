@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
 import Button from '../common/button';
-import {useMutation} from '@tanstack/react-query';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {patchReservations} from '@/service/api/reservation-calendar/patchReservations.api';
 import {ScaleLoader} from 'react-spinners';
 
 interface patchReservationsProps {
   reservationId: number | null;
   activityId: number | null;
-  onUpdate: () => void;
 }
 
-export default function ConfirmButton({reservationId, activityId, onUpdate}: patchReservationsProps) {
+export default function ConfirmButton({reservationId, activityId}: patchReservationsProps) {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [declineLoading, setDeclinedLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleConfirmedClick = () => {
     mutation.mutate('confirmed');
@@ -38,7 +38,15 @@ export default function ConfirmButton({reservationId, activityId, onUpdate}: pat
     onSuccess: () => {
       setConfirmLoading(false);
       setDeclinedLoading(false);
-      onUpdate();
+      queryClient.invalidateQueries({
+        queryKey: ['reservationDashboard'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['reservedSchedule'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['myReservations'],
+      });
       alert('요청을 처리했습니다');
     },
     onError: () => {

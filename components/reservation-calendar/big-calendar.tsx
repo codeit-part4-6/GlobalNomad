@@ -8,7 +8,7 @@ import {calendarStatusLabels} from '@/constant/reservation-list-constant';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import enUS from 'antd/es/calendar/locale/en_US';
-import {useQuery, useQueryClient} from '@tanstack/react-query';
+import {useQuery} from '@tanstack/react-query';
 import {getReservationDashboard} from '@/service/api/reservation-calendar/getReservationDashboard.api';
 import {ReservationDashboardData} from '@/types/reservation-dashboard';
 
@@ -25,7 +25,6 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
   const [year, setYear] = useState<string>('');
   const [month, setMonth] = useState<string>('');
   const modalRef = useRef<HTMLDivElement | null>(null);
-  const queryClient = useQueryClient();
 
   const {data} = useQuery<ReservationDashboardData>({
     queryKey: ['reservationDashboard', activityId, year, month],
@@ -34,18 +33,6 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
   });
 
   const reservationsData: ReservationDashboardData[] = Array.isArray(data) ? data : [];
-
-  const onUpdate = () => {
-    queryClient.invalidateQueries({
-      queryKey: ['reservationDashboard'],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ['reservedSchedule'],
-    });
-    queryClient.invalidateQueries({
-      queryKey: ['myReservations'],
-    });
-  };
 
   const handleClickOutside = (event: MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -91,7 +78,7 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
 
   const DateCell = (date: Dayjs) => {
     const reservationData = reservationsData.find(reservation => reservation.date === date.format('YYYY-MM-DD'));
-
+    console.log(reservationData);
     return (
       <div>
         <div
@@ -108,13 +95,13 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
                 .map(([status]) => (
                   <div key={status} className="flex">
                     <div
-                      className={`${status === 'completed' ? 'bg-gray-800' : status === 'confirmed' ? 'bg-blue-200' : 'bg-orange-100'} h-2 w-2 rounded-full`}
+                      className={`${status === 'completed' ? 'bg-gray-800' : status === 'pending' ? 'bg-blue-200' : 'bg-orange-100'} h-2 w-2 rounded-full`}
                     ></div>
                   </div>
                 ))}
           </div>
           <span className="absolute left-1 top-1 px-1 text-xl font-medium text-black-300">{date.date()}</span>
-          <div className="flex h-full w-full flex-col justify-end">
+          <div className="flex h-full w-full flex-col justify-end pb-2pxr">
             {reservationData &&
               reservationData.reservations &&
               Object.entries(reservationData.reservations)
@@ -125,18 +112,14 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
                     className={`${
                       status === 'completed'
                         ? 'bg-gray-200 text-gray-800'
-                        : status === 'confirmed'
+                        : status === 'pending'
                           ? 'bg-blue-200 text-white'
                           : 'bg-orange-50 text-orange-100'
-                    } text-ellipsis whitespace-nowrap rounded px-2 py-1 text-left text-xs font-medium tablet:text-md`}
+                    } mx-2pxr text-ellipsis whitespace-nowrap rounded px-2 py-1 text-left text-xs font-medium tablet:text-md`}
                   >
-                    {status === 'pending' ? (
-                      <span>{calendarStatusLabels[status]} 1</span>
-                    ) : (
-                      <span>
-                        {calendarStatusLabels[status]} {count}
-                      </span>
-                    )}
+                    <span>
+                      {calendarStatusLabels[status]} {count}
+                    </span>
                   </div>
                 ))}
           </div>
@@ -157,12 +140,12 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
     <div className="tablet:relative" ref={modalRef}>
       {isModalOpen && !isTablet && (
         <ReservationContainer onClose={() => setIsModalOpen(false)}>
-          <ReservationModal onUpdate={onUpdate} onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
+          <ReservationModal onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
         </ReservationContainer>
       )}
       {isModalOpen && isTablet && (
         <div>
-          <ReservationModal onUpdate={onUpdate} onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
+          <ReservationModal onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
         </div>
       )}
       <Calendar

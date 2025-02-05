@@ -10,10 +10,9 @@ interface ReservationModalProps {
   onClose: () => void;
   selectedDate: string;
   activityId: number | null;
-  onUpdate: () => void;
 }
 
-export default function ReservationModal({onClose, selectedDate, activityId, onUpdate}: ReservationModalProps) {
+export default function ReservationModal({onClose, selectedDate, activityId}: ReservationModalProps) {
   const [reservationStatus, setReservationStatus] = useState('pending');
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const {data} = useQuery<Schedules>({
@@ -39,7 +38,7 @@ export default function ReservationModal({onClose, selectedDate, activityId, onU
   return (
     <div
       onClick={e => e.stopPropagation()}
-      className="no-scrollbar h-full w-full overflow-y-auto border-gray-200 bg-white tablet:absolute tablet:z-[60] tablet:max-h-697pxr tablet:rounded-3xl tablet:border pc:h-[70%] pc:max-h-697pxr pc:w-429pxr"
+      className="h-full w-full overflow-y-auto border-gray-200 bg-white tablet:absolute tablet:z-[60] tablet:max-h-697pxr tablet:rounded-3xl tablet:border pc:h-[70%] pc:max-h-697pxr pc:w-429pxr"
     >
       <div className="h-full w-full pt-6">
         <div className="mb-19pxr flex items-center justify-between px-6 tablet:mb-27pxr">
@@ -77,7 +76,6 @@ export default function ReservationModal({onClose, selectedDate, activityId, onU
           selectedDate={selectedDate}
           setSelectedTime={setSelectedTime}
           selectedTime={selectedTime}
-          onUpdate={onUpdate}
         />
       </div>
     </div>
