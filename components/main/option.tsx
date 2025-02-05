@@ -77,7 +77,7 @@ export default function Option({className}: OptionType) {
       {/* 오른쪽 화살표 버튼 클릭 시 이동 */}
       <Button
         onClick={handleNextClick} // 버튼 클릭 시 오른쪽으로 이동
-        className="absolute right-[13rem] top-[78rem] z-20 hidden h-8 w-8 translate-y-1/2 transform rounded-full border tablet:flex tablet:items-center tablet:justify-center tablet:hover:bg-secondary pc:hidden"
+        className="absolute right-[13rem] top-[80rem] z-20 hidden h-8 w-8 translate-y-1/2 transform rounded-full border tablet:flex tablet:items-center tablet:justify-center tablet:hover:bg-secondary pc:hidden"
       >
         <Image src={arrow} alt="오른쪽 화살표" width={7} height={13} />
       </Button>

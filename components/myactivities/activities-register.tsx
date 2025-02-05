@@ -1,7 +1,7 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';
-import {Controller, FormProvider, SubmitHandler, useFieldArray, useForm} from 'react-hook-form';
+import {Controller, FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
 import AddressModal from './address-modal';
 import ImageList from './image-list';
@@ -58,7 +58,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
     }
   };
 
-  const getErrorMessage = (errors: any, type: string, index?: number) => {
+  const getErrorMessage = (errors: Record<string, {message?: string}>, type: string) => {
     return <span className={`error-message ${errors[type]?.message ? 'visible opacity-100' : 'invisible opacity-0'}`}>{errors[type]?.message}</span>;
   };
 
@@ -68,7 +68,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
 
   useEffect(() => {
     onValidChange(isValid); // ref 로전달불가 props로 직접전달
-  }, [isValid]);
+  }, [isValid, onValidChange]);
 
   const options = [
     {value: '문화 · 예술', label: '문화 · 예술'},

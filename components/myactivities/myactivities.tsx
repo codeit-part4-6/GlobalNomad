@@ -1,5 +1,5 @@
 import Button from '@/components/common/button';
-import {useState, useRef, useEffect, Fragment} from 'react';
+import {useState, useRef, Fragment} from 'react';
 import ActivitiesRegister from './activities-register';
 import Modal from '@/components/common/modal/modal';
 import Image from 'next/image';
@@ -26,7 +26,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
       // setLoading(true);
     },
 
-    onSuccess: data => {
+    onSuccess: () => {
       // setLoading(false);
       setIsOpen(true);
     },

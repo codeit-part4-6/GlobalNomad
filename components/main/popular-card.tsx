@@ -13,16 +13,17 @@ export default function PopularCard({className}: PopularCardType) {
       <Swiper
         modules={[Pagination]} // Pagination 모듈 추가
         spaceBetween={16} // 슬라이드 간격
-        slidesPerView={2} // 한 번에 보이는 슬라이드 개수
+        slidesPerView="auto" // 한 번에 보이는 슬라이드 개수
         breakpoints={{
           // 반응형 설정
-          768: {slidesPerView: 2, spaceBetween: 32}, // Tablet 이상에서 2개씩
-          1024: {slidesPerView: 3, spaceBetween: 24}, // Desktop에서 3개씩
+          340: {slidesPerView: 2, spaceBetween: 10}, // Tablet 이상에서 2개씩
+          745: {slidesPerView: 2}, // Tablet 이상에서 2개씩
+          1200: {slidesPerView: 3}, // Desktop에서 3개씩
         }}
       >
         <SwiperSlide key={'SwiperSlide1'}>
-          <div className="h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
-            <div className="flex flex-col gap-6pxr pb-24pxr pl-20pxr pt-42pxr">
+          <div className="flex h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
+            <div className="gap-6pxr pb-24pxr pl-20pxr pt-42pxr">
               <div className="flex gap-5pxr">
                 <Image src={Star} alt="별" width={18} height={18} />
                 <span className="text-md font-semibold">4.9 (293)</span>
@@ -36,8 +37,8 @@ export default function PopularCard({className}: PopularCardType) {
           </div>
         </SwiperSlide>
         <SwiperSlide key={'SwiperSlide2'}>
-          <div className="h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
-            <div className="flex flex-col gap-6pxr pb-24pxr pl-20pxr pt-42pxr">
+          <div className="flex h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
+            <div className="gap-6pxr pb-24pxr pl-20pxr pt-42pxr">
               <div className="flex gap-5pxr">
                 <Image src={Star} alt="별" width={18} height={18} />
                 <span className="text-md font-semibold">4.9 (293)</span>
@@ -51,8 +52,8 @@ export default function PopularCard({className}: PopularCardType) {
           </div>
         </SwiperSlide>
         <SwiperSlide key={'SwiperSlide3'}>
-          <div className="h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
-            <div className="flex flex-col gap-6pxr pb-24pxr pl-20pxr pt-42pxr">
+          <div className="flex h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
+            <div className="gap-6pxr pb-24pxr pl-20pxr pt-42pxr">
               <div className="flex gap-5pxr">
                 <Image src={Star} alt="별" width={18} height={18} />
                 <span className="text-md font-semibold">4.9 (293)</span>
@@ -66,7 +67,7 @@ export default function PopularCard({className}: PopularCardType) {
           </div>
         </SwiperSlide>
         <SwiperSlide key={'SwiperSlide4'}>
-          <div className="h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
+          <div className="flex h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
             <div className="flex flex-col gap-6pxr pb-24pxr pl-20pxr pt-42pxr">
               <div className="flex gap-5pxr">
                 <Image src={Star} alt="별" width={18} height={18} />
@@ -81,7 +82,7 @@ export default function PopularCard({className}: PopularCardType) {
           </div>
         </SwiperSlide>
         <SwiperSlide key={'SwiperSlide5'}>
-          <div className="h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
+          <div className="flex h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
             <div className="flex flex-col gap-6pxr pb-24pxr pl-20pxr pt-42pxr">
               <div className="flex gap-5pxr">
                 <Image src={Star} alt="별" width={18} height={18} />
@@ -96,7 +97,7 @@ export default function PopularCard({className}: PopularCardType) {
           </div>
         </SwiperSlide>
         <SwiperSlide key={'SwiperSlide6'}>
-          <div className="h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
+          <div className="flex h-186pxr w-186pxr items-end rounded-3xl bg-[url('/img/img_exPopular.webp')] bg-cover bg-no-repeat text-white tablet:h-384pxr tablet:w-384pxr">
             <div className="flex flex-col gap-6pxr pb-24pxr pl-20pxr pt-42pxr">
               <div className="flex gap-5pxr">
                 <Image src={Star} alt="별" width={18} height={18} />
