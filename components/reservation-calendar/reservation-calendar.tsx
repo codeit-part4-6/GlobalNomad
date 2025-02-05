@@ -44,7 +44,6 @@ export default function ReservationCalendar({onClose}: {onClose: () => void}) {
   if (isError) {
     return <div>{error.message}</div>;
   }
-  console.log(myActivities);
 
   return (
     <div className="mb-16 h-full w-full">

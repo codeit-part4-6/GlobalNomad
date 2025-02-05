@@ -78,7 +78,7 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
 
   const DateCell = (date: Dayjs) => {
     const reservationData = reservationsData.find(reservation => reservation.date === date.format('YYYY-MM-DD'));
-    console.log(reservationData);
+
     return (
       <div>
         <div

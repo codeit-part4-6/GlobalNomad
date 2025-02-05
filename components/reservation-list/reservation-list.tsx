@@ -8,7 +8,7 @@ import {statusLabels, buttonByStatus} from '@/constant/reservation-list-constant
 import NonDataPage from '../common/non-data';
 import closeButton from '@/public/icon/ic_close_button.svg';
 import {getReservationList} from '@/service/api/reservation-list/getReservation.api';
-import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
+import {useInfiniteQuery} from '@tanstack/react-query';
 import {ReservationListResponse} from '@/types/reservation-list';
 import FormattedDotDate from '@/service/lib/formatted-dot-date';
 import {ScaleLoader} from 'react-spinners';
