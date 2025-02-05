@@ -34,7 +34,7 @@ export default function Mainpage() {
         <SearchList keyword={searchKeyword} />
       ) : (
         <div className="mb-[12.688rem] flex flex-col items-center justify-center tablet:mb-[41.063rem] pc:mb-[21.375rem]">
-          <section className="tablet:w-200 w-97 mb-40pxr mt-101pxr flex max-w-[75rem] flex-col items-start justify-center gap-4 tablet:mt-110pxr tablet:gap-8 pc:mt-126pxr">
+          <section className="tablet:w-200 w-97 mx-auto mb-40pxr mt-101pxr flex max-w-[75rem] flex-col items-start justify-center gap-4 tablet:mt-110pxr tablet:gap-8 pc:mt-126pxr">
             <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-[2.25rem]/[2.625rem]">🔥 인기 체험</h2>
             <PopularCard className="min-w-[24.25rem] max-w-[75rem]" />
           </section>
