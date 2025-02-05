@@ -158,11 +158,6 @@ export default function ReservationInfo({
               ))
             : !isFetching && <NonDataPage type="modal" />}
         </div>
-        {isFetching && (
-          <div className="no-scrollbar flex h-200pxr w-full items-center justify-center">
-            <ScaleLoader width={10} color="#0b3b2d" />
-          </div>
-        )}
         <div className="mt-1 h-1" ref={ref} />
       </div>
     </div>
