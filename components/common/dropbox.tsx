@@ -1,5 +1,5 @@
 'use client';
-import {useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 
 interface Item {
   id: number;
@@ -17,13 +17,16 @@ interface DropboxProps {
 export default function Dropbox({className = 'w-auto', items = [], onClick, onClose}: DropboxProps) {
   const dropboxRef = useRef<HTMLDivElement>(null);
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (dropboxRef.current && !dropboxRef.current.contains(event.target as Node)) {
-      if (onClose) {
-        onClose();
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (dropboxRef.current && !dropboxRef.current.contains(event.target as Node)) {
+        if (onClose) {
+          onClose();
+        }
       }
-    }
-  };
+    },
+    [onClose],
+  );
 
   useEffect(() => {
     document.addEventListener('click', handleClickOutside);
@@ -31,7 +34,7 @@ export default function Dropbox({className = 'w-auto', items = [], onClick, onCl
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, []);
+  }, [handleClickOutside]);
 
   return (
     <div ref={dropboxRef} className={`absolute cursor-pointer ${className}`}>
