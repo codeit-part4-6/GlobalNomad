@@ -1,9 +1,13 @@
 import Image from 'next/image';
 import ExPopular from '@/public/img/img_exPopular.webp';
 import Star from '@/public/icon/ic_yellowStar.svg';
-import PagenationComponent from '@/app/components/pagenation';
+import Pagenation from '../common/pagenation';
 
 export default function EntireCard() {
+  const handlePageChange = (page: number) => {
+    console.log(page);
+  };
+
   return (
     <div className="flex flex-col">
       <div className="tablet:mb-18 mb-16 grid grid-cols-2 gap-x-2 gap-y-[0.313rem] tablet:grid-cols-3 tablet:gap-x-8 tablet:gap-y-4 pc:grid-cols-4 pc:gap-x-6 pc:gap-y-12">
@@ -99,7 +103,7 @@ export default function EntireCard() {
           </div>
         </div>
       </div>
-      <PagenationComponent />
+      <Pagenation size={31} showItemCount={3} onChange={handlePageChange} />
     </div>
   );
 }

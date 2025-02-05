@@ -2,13 +2,16 @@ import {JSX} from 'react';
 import Image from 'next/image';
 import ExPopular from '@/public/img/img_exPopular.webp';
 import Star from '@/public/icon/ic_yellowStar.svg';
-import PagenationComponent from '@/app/components/pagenation';
-
+import Pagenation from '../common/pagenation';
 interface SearchListProps {
   keyword: string;
 }
 
 export default function SearchList({keyword}: SearchListProps): JSX.Element {
+  const handlePageChange = (page: number) => {
+    console.log(page);
+  };
+
   return (
     <div className="mb-[12.688rem] tablet:mb-[41.063rem] pc:mb-[20.375rem]">
       <div className="tablet:mb-18 mx-auto mb-16 flex flex-col items-center justify-center">
@@ -114,7 +117,7 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
           </div>
         </section>
       </div>
-      <PagenationComponent />
+      <Pagenation size={31} showItemCount={3} onChange={handlePageChange} />
     </div>
   );
 }
