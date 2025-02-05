@@ -1,10 +1,11 @@
 import INSTANCE_URL from '../instance';
 
-export async function postOAuth() {  
-  const appKey = process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID;  
+export async function postOAuth(code: string) {  
+  const appKey = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY;  
 
-  const data = {     
-    appKey,     
+  const data = {    
+    code,
+    appKey,
     provider: 'kakao',   
   };  
 

@@ -1,7 +1,7 @@
 import INSTANCE_URL from '../instance';
-import  {SignupBody, SignupResponse } from '@/types/postSignup.types';
 
-export async function postOAuthSignup(body: SignupBody): Promise<SignupResponse> {
+export async function postOAuthSignup(body: { nickname: string; redirectUri: string; token: string }) {
   const response = await INSTANCE_URL.post('/oauth/sign-up/kakao', body);
+  console.log('API 응답 데이터:', response.data);
   return response.data;
 }
