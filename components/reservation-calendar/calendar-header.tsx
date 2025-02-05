@@ -14,7 +14,11 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({value, onChange, setYear
 
   useEffect(() => {
     setYear(year.toString());
-    setMonth(`0${month.toString()}`);
+    if (month < 10) {
+      setMonth(`0${month.toString()}`);
+    } else {
+      setMonth(`${month.toString()}`);
+    }
   });
 
   const handlePrev = () => {

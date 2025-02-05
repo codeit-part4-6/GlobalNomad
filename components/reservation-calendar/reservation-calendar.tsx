@@ -44,6 +44,7 @@ export default function ReservationCalendar({onClose}: {onClose: () => void}) {
   if (isError) {
     return <div>{error.message}</div>;
   }
+  console.log(myActivities);
 
   return (
     <div className="mb-16 h-full w-full">
@@ -73,7 +74,7 @@ export default function ReservationCalendar({onClose}: {onClose: () => void}) {
               <ul className="absolute left-0 z-10 mt-5 w-full rounded border border-gray-300 bg-white shadow-sidenavi-box">
                 {myActivities.map(activity => (
                   <li
-                    key={activity.title}
+                    key={activity.id}
                     onClick={e => {
                       e.stopPropagation();
                       handleSelect(activity.title, activity.id);

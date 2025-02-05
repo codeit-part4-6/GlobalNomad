@@ -8,11 +8,12 @@ import {statusLabels, buttonByStatus} from '@/constant/reservation-list-constant
 import NonDataPage from '../common/non-data';
 import closeButton from '@/public/icon/ic_close_button.svg';
 import {getReservationList} from '@/service/api/reservation-list/getReservation.api';
-import {useQuery} from '@tanstack/react-query';
+import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import {ReservationListResponse} from '@/types/reservation-list';
 import FormattedDotDate from '@/service/lib/formatted-dot-date';
 import {ScaleLoader} from 'react-spinners';
 import FormattedPrice from '@/service/lib/formatted-price';
+import {useInView} from 'react-intersection-observer';
 
 export const statusLabelsColor: Record<string, string> = {
   pending: 'text-blue-100',
@@ -34,13 +35,34 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-
-  const {data, isLoading, isError, error} = useQuery<ReservationListResponse>({
-    queryKey: ['reservationList'],
-    queryFn: () => getReservationList({size: 20, status: ''}),
+  const [ref, inView] = useInView({
+    threshold: 0.1,
   });
 
-  const reservationList = data?.reservations || [];
+  const {data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery<ReservationListResponse>({
+    queryKey: ['reservationList'],
+    queryFn: ({pageParam = null}) => getReservationList({size: 5, status: '', cursorId: pageParam as number | null}),
+    initialPageParam: null,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalLoadedReservations = allPages.flatMap(page => page.reservations).length;
+
+      if (totalLoadedReservations >= lastPage.totalCount) {
+        return null;
+      }
+      if (lastPage.cursorId === null) {
+        return null;
+      }
+      return lastPage.reservations[lastPage.reservations.length - 1].id;
+    },
+  });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
+
+  const reservationList = data?.pages.flatMap(page => page.reservations) || [];
 
   const handleButtonClick = (status: string, id: number) => {
     setIsOpen(true);
@@ -134,6 +156,7 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
               </div>
             </div>
           ))}
+          <div className="mt-1 h-1" ref={ref} />
         </div>
       )}
       {isOpen && <>{getModalContent()}</>}
