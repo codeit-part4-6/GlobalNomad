@@ -1,6 +1,6 @@
 import Button from '@/components/common/button';
 import {useState, useRef, useEffect, Fragment} from 'react';
-import ActivitiesRegister, {IFormInput} from './activities-register';
+import ActivitiesRegister from './activities-register';
 import Modal from '@/components/common/modal/modal';
 import Image from 'next/image';
 import closeButton from '@/public/icon/ic_close_button.svg';
@@ -8,16 +8,37 @@ import InfiniteScroll from '../common/lnfiniteScroll';
 import {getActivitiesList} from '@/service/api/myactivities/getActivities';
 import {Activity} from '@/types/myactivities';
 import ActivitiesCard from './activities-card';
+import {postActivities} from '@/service/api/myactivities/postActivities';
+import {PostActivitiesBody} from '@/types/postActivities.types';
+import {useMutation} from '@tanstack/react-query';
 
 export default function MyActivities({onclose}: {onclose: () => void}) {
   const [content, setContent] = useState<'manage' | 'register'>('manage');
-  const formRef = useRef<{submitForm: () => void; isValid: boolean} | null>(null);
+  const formRef = useRef<{submitForm: () => void} | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isValid, setIsValid] = useState(false);
+  const mutation = useMutation({
+    mutationFn: async (body: PostActivitiesBody) => {
+      const response = await postActivities(body);
+      return response;
+    },
+    onMutate: () => {
+      // setLoading(true);
+    },
 
-  const handleSubmit = (data: IFormInput) => {
+    onSuccess: data => {
+      // setLoading(false);
+      setIsOpen(true);
+    },
+    onError: error => {
+      alert(`${error.message}`);
+    },
+  });
+
+  const handleSubmit = (data: PostActivitiesBody) => {
     console.log('Form Data from Parent:', data);
-    setIsOpen(true);
+
+    mutation.mutate(data);
   };
 
   const triggerSubmit = () => {
@@ -30,12 +51,6 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
     setIsOpen(false);
     onclose();
   };
-
-  useEffect(() => {
-    if (formRef.current?.isValid) {
-      setIsValid(true);
-    }
-  }, [formRef.current?.isValid]);
 
   return (
     <>
@@ -88,7 +103,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
 
           {content === 'register' && (
             <>
-              <ActivitiesRegister ref={formRef} onSubmitParent={handleSubmit} />
+              <ActivitiesRegister ref={formRef} onSubmitParent={handleSubmit} onValidChange={setIsValid} />
             </>
           )}
         </div>
