@@ -1,4 +1,4 @@
-import {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
+import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {Controller, FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
 import Input from '@/components/common/Input';
@@ -12,12 +12,11 @@ import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
 
 interface ActivitiesModifyProps {
-  onSubmitParent?: (data: any) => void;
+  onSubmitParent?: (data: PatchActivitiesBody | GetActivitiesResponse) => void;
   modifyId: number;
-  onValidChange: (isValid: boolean) => void;
 }
 
-const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId, onValidChange}, ref) => {
+const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId}, ref) => {
   const methods = useForm<PatchActivitiesBody | GetActivitiesResponse>({
     mode: 'onChange',
     defaultValues: {
@@ -39,7 +38,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
   const {
     control,
     handleSubmit,
-    formState: {errors, isValid},
+    formState: {errors},
     setValue,
     clearErrors,
     trigger,
@@ -88,14 +87,14 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
     setIsOpen(true);
   };
 
-  const onSubmit: SubmitHandler<any> = data => {
+  const onSubmit: SubmitHandler<PatchActivitiesBody | GetActivitiesResponse> = data => {
     console.log('Form Data:', data);
     if (onSubmitParent) {
       onSubmitParent(data);
     }
   };
 
-  const getErrorMessage = (errors: any, type: string, index?: number) => {
+  const getErrorMessage = (errors: Record<string, {message?: string}>, type: string) => {
     return <span className={`error-message ${errors[type]?.message ? 'visible opacity-100' : 'invisible opacity-0'}`}>{errors[type]?.message}</span>;
   };
 
@@ -103,10 +102,12 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
     submitForm: handleSubmit(onSubmit),
   }));
 
-  useEffect(() => {
-    if (!modifyId) return;
+  const mutationRef = useRef(mutation);
 
-    mutation.mutate();
+  useEffect(() => {
+    if (modifyId) {
+      mutationRef.current.mutate();
+    }
   }, [modifyId]);
 
   useEffect(() => {

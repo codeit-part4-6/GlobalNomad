@@ -1,22 +1,27 @@
 import cancleBtn from '@/public/icon/ic_cancle_btn.svg';
 import plusIcon from '@/public/icon/ic_plus_icon.svg';
 import Image from 'next/image';
-import {Controller, useFormContext, UseFormTrigger} from 'react-hook-form';
+import {Controller, FieldValues, Path, useFormContext, UseFormTrigger} from 'react-hook-form';
 import {useState, useRef, useEffect} from 'react';
 import {postImage} from '@/service/api/myactivities/postImage.api';
 import {useMutation} from '@tanstack/react-query';
-import {PostActivitiesBody} from '@/types/postActivities.types';
 import {SubImage} from '@/types/getActivitiesId.types';
 
-interface ImageListType {
+interface ImageListType<T extends FieldValues> {
   maxImages?: number;
   name?: string;
-  trigger?: UseFormTrigger<PostActivitiesBody>;
+  trigger: UseFormTrigger<T>;
   bannerImageUrl?: string;
   subImages?: SubImage[];
 }
 
-export default function ImageList({maxImages = 5, name = 'defaultName', trigger, bannerImageUrl, subImages}: ImageListType) {
+export default function ImageList<T extends FieldValues>({
+  maxImages = 5,
+  name = 'defaultName',
+  trigger,
+  bannerImageUrl,
+  subImages,
+}: ImageListType<T>) {
   const [imageUrls, setImageUrls] = useState<SubImage[]>(subImages || []);
   const [apiImageUrls, setApiImageUrls] = useState<string | string[]>('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -29,7 +34,6 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger,
     setError,
     clearErrors,
     setValue,
-    watch,
     getValues,
   } = useFormContext();
   const mutation = useMutation({
@@ -120,7 +124,6 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger,
     }
 
     setValue(name, updatedImageUrls);
-    // if (trigger) trigger(name);
 
     // 수정시
     if (id != null) {
@@ -131,7 +134,7 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger,
 
   useEffect(() => {
     setValue(name, apiImageUrls);
-    if (trigger) trigger(name as keyof PostActivitiesBody); // 유효성 수동 trigger
+    if (trigger) trigger(name as Path<T>); // 유효성 수동 trigger
   }, [apiImageUrls, name, setValue, trigger]);
 
   useEffect(() => {
@@ -144,7 +147,7 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger,
     if (bannerImageUrl) {
       setImageUrls([{imageUrl: bannerImageUrl}]);
     }
-  }, [subImages, bannerImageUrl]);
+  }, [name, subImages, bannerImageUrl, setValue]);
 
   return (
     <>

@@ -48,7 +48,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
       // setLoading(true);
     },
 
-    onSuccess: data => {
+    onSuccess: () => {
       // setLoading(false);
       setIsOpen(true);
     },
@@ -64,8 +64,12 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
 
   const handleSubmit = (data: PostActivitiesBody) => {
     console.log('Form Data from Parent:', data);
+    const updateData = {
+      ...data,
+      bannerImageUrl: data.bannerImageUrl.toString(),
+    };
 
-    postActivitiesMutation.mutate(data);
+    postActivitiesMutation.mutate(updateData);
   };
 
   const handleModifySubmit = (data: PatchActivitiesBody) => {

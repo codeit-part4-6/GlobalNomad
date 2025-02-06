@@ -41,7 +41,7 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     name: 'schedulesToAdd',
   });
 
-  const handleAddRow = (index: number) => {
+  const handleAddRow = () => {
     if (type === 'register') {
       append({date: '', startTime: '00:00', endTime: '00:00'});
     } else {
@@ -59,7 +59,11 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
       setValue('scheduleIdsToRemove', [...prevIds, removedId], {shouldValidate: false});
     }
 
-    removeType === 'fields' ? remove(index) : modifyRemove(index);
+    if (removeType === 'fields') {
+      remove(index);
+    } else {
+      modifyRemove(index);
+    }
   };
 
   const watchedField = watch('schedules');
@@ -90,7 +94,13 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     });
   };
 
-  const renderField = (label: string, name: string, types: 'date' | 'select', index: number, selectProps: {options?: any; label?: string} = {}) => {
+  const renderField = (
+    label: string,
+    name: string,
+    types: 'date' | 'select',
+    index: number,
+    selectProps: {options?: {value: string; label: string}[]; label?: string} = {},
+  ) => {
     return (
       <div>
         {name.startsWith('schedules.') && index === 0 && <label className="text-xl font-medium text-gray-800">{label}</label>}
@@ -145,11 +155,10 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
               <Image src={index === 0 ? plusBtn : minusBtn} alt={index === 0 ? 'Add row' : 'Remove row'} fill />
             </div>
           </div>
-          {index === 0 && fields.length > 1 && <hr className="mt-4"></hr>}
-
           {Array.isArray(errors.schedules) && errors.schedules[index]?.date?.message && (
             <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[index]?.date?.message}</span>
           )}
+          {index === 0 && fields.length > 1 && <hr className="mt-4"></hr>}
         </div>
       ))}
       {/* 수정시 */}
@@ -165,9 +174,10 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
                   <Image src={minusBtn} alt="Remove row" fill />
                 </div>
               </div>
-              {(errors?.schedulesToAdd as any)?.[index]?.date?.message && (
-                <span className="text-sm text-red-500">{(errors.schedulesToAdd as any)[index].date.message}</span>
+              {Array.isArray(errors.schedules) && errors.schedules[index]?.date?.message && (
+                <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[index]?.date?.message}</span>
               )}
+              {index === 0 && fields.length > 1 && <hr className="mt-4"></hr>}
             </div>
           ))}
         </>
