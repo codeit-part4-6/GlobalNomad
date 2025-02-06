@@ -25,7 +25,14 @@ const Reservation = ({device, pageID, price}: {device: string; pageID: string; p
 
   const mutation = useMutation(postReservation, {
     onSuccess: () => {
-      alert('데이터가 성공적으로 저장되었습니다.');
+      alert('체험 예약을 완료했습니다.');
+    },
+    onError: (error: unknown) => {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert('알 수 없는 오류가 발생했습니다.');
+      }
     },
   });
 
@@ -60,7 +67,7 @@ const ReservationWindowsType = ({pageID, person, price, mutate, updatePerson}: R
 
   const handleSaveReservation = () => {
     if (!reservationInfo) return alert('예약 정보가 없습니다.');
-    mutate({pageID: pageID, body: {scheduleId: reservationInfo.id, headCount: person}});
+    mutate({pageID: pageID, body: {scheduleId: +reservationInfo.id, headCount: person}});
   };
 
   return (
@@ -68,7 +75,7 @@ const ReservationWindowsType = ({pageID, person, price, mutate, updatePerson}: R
       <div className="mb-16pxr">
         <div className="flex w-auto flex-row gap-3">
           <p className="mb-16pxr text-3xl font-bold text-black-100">{`₩ ${FormatNumberWithCommas(price)}`}</p>
-          <p className="mb-16pxr text-2xl font-normal leading-10 text-gray-800">{`${person}/ 인`}</p>
+          <p className="mb-16pxr text-2xl font-normal leading-10 text-gray-800">{`/ ${person}인`}</p>
         </div>
         <hr />
       </div>
@@ -136,7 +143,7 @@ const ReservationTabletType = ({pageID, person, price, mutate, updatePerson}: Re
       <div className="mb-16pxr">
         <div className="flex w-auto flex-row gap-3">
           <p className="mb-16pxr text-2xl font-bold text-black-100">{`₩ ${FormatNumberWithCommas(price)}`}</p>
-          <p className="mb-16pxr text-2xl font-normal leading-8 text-gray-800">{`${person}/ 인`}</p>
+          <p className="mb-16pxr text-2xl font-normal leading-8 text-gray-800">{`/ ${person}인`}</p>
         </div>
         <hr />
       </div>
@@ -238,7 +245,7 @@ const ReservationMobileType = ({pageID, person, price, mutate, updatePerson}: Re
           <div className="flex flex-col items-start">
             <div className="flex h-35pxr w-auto flex-row gap-3">
               <p className="text-xl font-bold text-nomad-black">{`₩ ${FormatNumberWithCommas(price)}`}</p>
-              <p className="mb-16pxr text-xl font-normal leading-8 text-gray-800">{`${person}/ 인`}</p>
+              <p className="mb-16pxr text-xl font-normal leading-8 text-gray-800">{`/ ${person}인`}</p>
             </div>
             <Button className="border-0 bg-white text-lg font-semibold text-primary" onClick={() => handleOpenModal(true)}>
               <ins>날짜 선택하기</ins>

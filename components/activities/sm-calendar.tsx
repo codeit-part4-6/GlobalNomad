@@ -56,14 +56,12 @@ const SmCalendar = ({pageID, onSelect}: SmCalendarType) => {
   dayjs.extend(weekOfYear);
   dayjs.extend(weekYear);
   const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
-  const [daySchedule, setDaySchedule] = useState<SchedulesType>();
+  const [daySchedule, setDaySchedule] = useState<SchedulesType>({date: 'string', times: []});
   const [selectTime, setSelectTime] = useState<SchedulesDateType>(DefaultTime);
 
   const {data: schedules} = useQuery<SchedulesType[]>({
     queryKey: ['schedules', selectedDay],
     queryFn: () => getActivitiesSchedule(pageID, selectedDay?.format('YYYY-MM-DD')),
-    structuralSharing: false,
-    notifyOnChangeProps: ['data'],
   });
 
   const getScheduleMatch = useCallback(
@@ -101,8 +99,10 @@ const SmCalendar = ({pageID, onSelect}: SmCalendarType) => {
     (date: Dayjs) => {
       setSelectedDay(date);
       saveTime(DefaultTime);
+      const getDatSchedule = getScheduleMatch(date);
+      if (getDatSchedule) setDaySchedule(getDatSchedule);
     },
-    [saveTime],
+    [getScheduleMatch, saveTime],
   );
 
   const handleTimeClick = ({date, id, startTime, endTime}: SchedulesDateType) => {
@@ -111,10 +111,13 @@ const SmCalendar = ({pageID, onSelect}: SmCalendarType) => {
   };
 
   useEffect(() => {
-    if (schedules && selectedDay) {
-      setDaySchedule(getScheduleMatch(selectedDay));
+    console.log('daySchedule', daySchedule);
+
+    if (daySchedule.times.length < 1 && schedules) {
+      const getDatSchedule = getScheduleMatch(selectedDay);
+      if (getDatSchedule) setDaySchedule(getDatSchedule);
     }
-  }, [getScheduleMatch, schedules, selectedDay]);
+  }, [daySchedule, getScheduleMatch, schedules, selectedDay]);
 
   return (
     <>
