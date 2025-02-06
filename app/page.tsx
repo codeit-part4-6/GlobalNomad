@@ -33,13 +33,13 @@ export default function Mainpage() {
       {isShown ? (
         <SearchList keyword={searchKeyword} />
       ) : (
-        <div>
-          <section className="mx-15pxr mb-40pxr mt-101pxr flex flex-col items-start justify-center gap-16pxr tablet:mt-110pxr pc:mt-126pxr">
+        <div className="mb-[12.688rem] flex flex-col items-center justify-center tablet:mb-[41.063rem] pc:mb-[21.375rem]">
+          <section className="tablet:w-200 w-97 mx-auto mb-40pxr mt-101pxr flex max-w-[75rem] flex-col items-start justify-center gap-4 tablet:mt-110pxr tablet:gap-8 pc:mt-126pxr">
             <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-[2.25rem]/[2.625rem]">🔥 인기 체험</h2>
+            <PopularCard className="min-w-[24.25rem] max-w-[75rem]" />
           </section>
-          <PopularCard className="mx-15pxr" />
-          <Option className="pc:mt-15 mx-15pxr mb-6 mt-10 flex max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]" />
-          <section className="mx-15pxr mb-24pxr mt-24pxr flex flex-col items-start justify-center gap-24pxr tablet:mt-35pxr tablet:gap-32pxr">
+          <Option className="pc:mt-15 mb-6 mt-10 flex min-w-[21.25rem] max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]" />
+          <section className="mb-24pxr mt-24pxr flex max-w-[75rem] flex-col items-start justify-center gap-24pxr tablet:mt-35pxr tablet:gap-32pxr">
             <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-3xl">🥽 모든 체험</h2>
             <EntireCard />
           </section>

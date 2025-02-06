@@ -1,7 +1,8 @@
 'use client';
 import Image from 'next/image';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import LocationIcon from '@/public/icon/icon_location.svg';
+import Button from '../common/button';
 
 interface KakaoMapType {
   address: string;
@@ -9,6 +10,12 @@ interface KakaoMapType {
 }
 
 export default function KakaoMap({address, houseName}: KakaoMapType) {
+  const [mapType, setMapType] = useState<string>('roadmap');
+
+  const handleMapTypeChange = (type: string) => {
+    setMapType(type);
+  };
+
   useEffect(() => {
     const loadKakaoMapScript = () => {
       // script를 만들어서 추가시켜준다.
@@ -44,34 +51,86 @@ export default function KakaoMap({address, houseName}: KakaoMapType) {
                   map: map,
                   position: coords,
                 });
+                marker.setMap(map);
+
                 // 인포윈도우로 장소에 대한 설명을 표시합니다
-                const infowindow = new kakao.maps.InfoWindow({
-                  content: `<div style="width:150px;text-align:center;padding:6px 0;">${houseName}</div>`,
+                const customOverlay = new kakao.maps.CustomOverlay({
+                  position: coords,
+                  content: `<div class="info-title">${houseName}</div>`,
                 });
-                infowindow.open(map, marker);
+                customOverlay.setMap(map);
+
                 // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                 map.setCenter(coords);
               } else {
                 console.error('주소를 찾지 못했습니다.');
               }
             });
-          } else {
-            console.error('mapContainer가 존재하지 않습니다.');
+
+            const roadmapControl = document.getElementById('btnRoadmap');
+            const skyviewControl = document.getElementById('btnSkyview');
+
+            if (roadmapControl && skyviewControl) {
+              if (mapType === 'roadmap') {
+                map.setMapTypeId(kakao.maps.MapTypeId.ROADMAP);
+              } else {
+                map.setMapTypeId(kakao.maps.MapTypeId.HYBRID);
+              }
+            }
           }
         });
       };
     };
 
     loadKakaoMapScript();
-  }, [address, houseName]);
+  }, [address, houseName, mapType]);
 
   return (
     <>
-      <div id="map" className={'m-0 min-h-481pxr min-w-327pxr rounded-2xl tablet:min-h-308pxr tablet:min-w-429pxr pc:min-h-476pxr pc:min-w-800pxr'} />
+      <div id="map_wrap" className="relative">
+        <div
+          id="map"
+          className={'m-0 min-h-481pxr min-w-327pxr rounded-2xl tablet:min-h-308pxr tablet:min-w-429pxr pc:min-h-476pxr pc:min-w-800pxr'}
+        />
+        <div className="absolute right-10pxr top-10pxr z-[1] m-0 bg-inherit p-0">
+          <Button
+            id="btnRoadmap"
+            className={`mr-2pxr w-70pxr rounded-l-lg text-xs ${mapType === 'roadmap' ? 'bg-blue-200' : 'border border-blue-200 bg-white text-black-50'}`}
+            onClick={() => handleMapTypeChange('roadmap')}
+          >
+            지도
+          </Button>
+          <Button
+            id="btnSkyview"
+            className={`w-70pxr rounded-r-lg text-xs ${mapType === 'skyview' ? 'bg-blue-200' : 'border border-blue-200 bg-white text-black-50'}`}
+            onClick={() => handleMapTypeChange('skyview')}
+          >
+            스카이뷰
+          </Button>
+        </div>
+      </div>
       <div className={'flex flex-wrap'}>
-        <Image className={'m-0 mr-1'} src={LocationIcon} alt="Location" width={18} height={18} />
+        <Image className="m-0 mr-1" src={LocationIcon} alt="Location" width={18} height={18} />
         <div className="text-md font-normal text-nomad-black opacity-75">{address}</div>
       </div>
+      <style>
+        {`
+          .info-title {
+            position:relative;
+            bottom:60px;
+            background: white;
+            color: black;
+            border: 2px solid #0ea5e9;
+            text-align: center;
+            line-height: 22px;
+            border-radius: 8px;
+            padding: 3px;
+            margin: -1px -1px;
+            font-size: 1rem;
+            font-weight: 500 !important;
+          }
+        `}
+      </style>
     </>
   );
 }
