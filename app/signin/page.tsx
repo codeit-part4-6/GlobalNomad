@@ -41,8 +41,8 @@ export default function Page() {
   });
 
   const signinMutation = useMutation({
-      mutationFn: (signinData: SigninBody) => postSignin(signinData),
-    });
+    mutationFn: (signinData: SigninBody) => postSignin(signinData),
+  });
 
   const onSubmit = (data: IFormInput) => {
     signinMutation.mutate(data, {

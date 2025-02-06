@@ -1,4 +1,4 @@
-import {useFieldArray, useForm, Controller, useFormContext} from 'react-hook-form';
+import {useFieldArray, Controller, useFormContext, FieldError} from 'react-hook-form';
 import Input from '../common/Input';
 import SelectBox from '../common/selectbox';
 import {findOverlappingSchedules, generateTimeOptions} from '@/service/lib/fotmatted-hour-time';
@@ -6,7 +6,15 @@ import Image from 'next/image';
 import minusBtn from '@/public/icon/ic_minus_btn.svg';
 import plusBtn from '@/public/icon/ic_plus_btn.svg';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
-import {useEffect} from 'react';
+
+interface Field {
+  onChange: (value: string) => void;
+  value: string;
+}
+
+type ScheduleError = {
+  date?: FieldError;
+};
 
 export default function TimeList() {
   const {
@@ -32,7 +40,7 @@ export default function TimeList() {
 
   const watchedField = watch('schedules');
 
-  const handleChange = (field: any, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index: number) => {
+  const handleChange = (field: Field, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index: number) => {
     const newValue = e.target.value;
 
     if (newValue === '') {
@@ -56,7 +64,7 @@ export default function TimeList() {
     }
   };
 
-  const setInvalidDateError = (index: number, setError: any) => {
+  const setInvalidDateError = (index: number, setError: (name: string, error: {type: string; message: string}) => void) => {
     setError(`schedules.${index}.date`, {
       type: 'manual',
       message: '동일한 시간대가 중복됩니다.',
@@ -140,8 +148,8 @@ export default function TimeList() {
               </div>
             )}
           </div>
-          {(errors?.schedules as any)?.[index]?.date?.message && (
-            <span className="text-sm text-red-500">{(errors.schedules as any)[index].date.message}</span>
+          {Array.isArray(errors.schedules) && errors.schedules[index]?.date?.message && (
+            <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[index]?.date?.message}</span>
           )}
           {index === 0 && fields.length > 1 && <hr className="mt-4"></hr>}
         </div>

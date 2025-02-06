@@ -1,15 +1,19 @@
 import Image from 'next/image';
 import ExPopular from '@/public/img/img_exPopular.webp';
 import Star from '@/public/icon/ic_yellowStar.svg';
-import PagenationComponent from '@/app/components/pagenation';
+import Pagenation from '../common/pagenation';
 
 export default function EntireCard() {
+  const handlePageChange = (page: number) => {
+    console.log(page);
+  };
+
   return (
     <div className="flex flex-col">
-      <div className="tablet:mb-18 mb-16 grid grid-cols-2 gap-x-2 gap-y-[0.313rem] tablet:grid-cols-3 tablet:gap-x-8 tablet:gap-y-4 pc:grid-cols-4 pc:gap-x-6 pc:gap-y-12">
+      <div className="tablet:mb-18 mb-16 grid w-[21.5rem] grid-cols-2 gap-x-2 gap-y-[0.313rem] tablet:w-[43.438rem] tablet:grid-cols-3 tablet:gap-x-8 tablet:gap-y-4 pc:w-[75.25rem] pc:grid-cols-4 pc:gap-x-6 pc:gap-y-12">
         {/* 카드 1 */}
         <div className="flex flex-col gap-16pxr">
-          <div className="relative flex h-168pxr w-168pxr flex-col gap-16pxr tablet:h-221pxr tablet:w-221pxr">
+          <div className="relative flex h-168pxr w-168pxr flex-col gap-16pxr tablet:h-221pxr tablet:w-221pxr pc:h-283pxr pc:w-283pxr">
             <Image src={ExPopular} alt="부산 광안리 드론쇼" fill className="rounded-3xl" />
           </div>
           <div className="flex flex-col gap-15pxr">
@@ -32,7 +36,7 @@ export default function EntireCard() {
 
         {/* 카드 2 */}
         <div className="flex flex-col gap-16pxr">
-          <div className="relative flex h-168pxr w-168pxr flex-col gap-16pxr tablet:h-221pxr tablet:w-221pxr">
+          <div className="relative flex h-168pxr w-168pxr flex-col gap-16pxr tablet:h-221pxr tablet:w-221pxr pc:h-283pxr pc:w-283pxr">
             <Image src={ExPopular} alt="서울 야경 투어" fill className="rounded-3xl" />
           </div>
           <div className="flex flex-col gap-15pxr">
@@ -55,7 +59,7 @@ export default function EntireCard() {
 
         {/* 카드 3 */}
         <div className="flex flex-col gap-16pxr">
-          <div className="relative flex h-168pxr w-168pxr flex-col gap-16pxr tablet:h-221pxr tablet:w-221pxr">
+          <div className="relative flex h-168pxr w-168pxr flex-col gap-16pxr tablet:h-221pxr tablet:w-221pxr pc:h-283pxr pc:w-283pxr">
             <Image src={ExPopular} alt="제주 섬 투어" fill className="rounded-3xl" />
           </div>
           <div className="flex flex-col gap-15pxr">
@@ -78,7 +82,7 @@ export default function EntireCard() {
 
         {/* 카드 4 */}
         <div className="flex flex-col gap-16pxr">
-          <div className="relative flex h-168pxr w-168pxr flex-col gap-16pxr tablet:h-221pxr tablet:w-221pxr">
+          <div className="relative flex h-168pxr w-168pxr flex-col gap-16pxr tablet:h-221pxr tablet:w-221pxr pc:h-283pxr pc:w-283pxr">
             <Image src={ExPopular} alt="강릉 바다 여행" fill className="rounded-3xl" />
           </div>
           <div className="flex flex-col gap-15pxr">
@@ -99,7 +103,7 @@ export default function EntireCard() {
           </div>
         </div>
       </div>
-      <PagenationComponent />
+      <Pagenation size={31} showItemCount={3} onChange={handlePageChange} />
     </div>
   );
 }
