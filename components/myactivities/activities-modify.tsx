@@ -12,12 +12,12 @@ import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
 
 interface ActivitiesModifyProps {
-  onSubmitParent?: (data: PatchActivitiesBody | GetActivitiesResponse) => void;
+  onSubmitParent?: (data: PatchActivitiesBody & GetActivitiesResponse) => void;
   modifyId: number;
 }
 
 const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId}, ref) => {
-  const methods = useForm<PatchActivitiesBody | GetActivitiesResponse>({
+  const methods = useForm<PatchActivitiesBody & GetActivitiesResponse>({
     mode: 'onChange',
     defaultValues: {
       title: '',
@@ -63,7 +63,13 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
 
     onSuccess: data => {
       reset({
-        ...data,
+        title: data.title,
+        category: data.category,
+        description: data.description,
+        address: data.address,
+        price: data.price,
+        bannerImageUrl: data.bannerImageUrl,
+        subImages: data.subImages,
       });
 
       const subImagesData = data?.subImages || [];
@@ -87,7 +93,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
     setIsOpen(true);
   };
 
-  const onSubmit: SubmitHandler<PatchActivitiesBody | GetActivitiesResponse> = data => {
+  const onSubmit: SubmitHandler<PatchActivitiesBody & GetActivitiesResponse> = data => {
     console.log('Form Data:', data);
     if (onSubmitParent) {
       onSubmitParent(data);

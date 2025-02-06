@@ -72,8 +72,10 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
     postActivitiesMutation.mutate(updateData);
   };
 
-  const handleModifySubmit = (data: PatchActivitiesBody) => {
-    const params = {
+  type ActivityData<T> = PatchActivitiesBody & T;
+
+  const handleModifySubmit = <T extends object>(data: ActivityData<T>) => {
+    const params: PatchActivitiesBody = {
       title: data.title,
       category: data.category,
       description: data.description,
@@ -161,7 +163,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
           )}
           {content === 'modify' && (
             <>
-              <ActivitiesModify ref={formRef} modifyId={modifyId} onSubmitParent={handleModifySubmit} onValidChange={setIsValid} />
+              <ActivitiesModify ref={formRef} modifyId={modifyId} onSubmitParent={handleModifySubmit} />
             </>
           )}
         </div>

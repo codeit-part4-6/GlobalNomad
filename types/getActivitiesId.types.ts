@@ -15,7 +15,7 @@ export interface GetActivitiesResponse {
   price: number;
   schedules: Schedule[];
   bannerImageUrl: string;
-  subImages: SubImage[];
+  subImages: [];
   updatedAt: string;
   createdAt: string;
   reviewCount: number;
