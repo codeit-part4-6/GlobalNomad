@@ -13,9 +13,10 @@ const items = [
 interface ActivitiesCardProps {
   data: Activity;
   onClickModify: () => void;
+  onClickDelete: () => void;
 }
 
-export default function ActivitiesCard({data, onClickModify}: ActivitiesCardProps) {
+export default function ActivitiesCard({data, onClickModify, onClickDelete}: ActivitiesCardProps) {
   const [isOpenDropbox, setIsOpenDropbox] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
 
@@ -28,10 +29,12 @@ export default function ActivitiesCard({data, onClickModify}: ActivitiesCardProp
   useEffect(() => {
     if (modalType === 'modify') {
       onClickModify();
-      // If you want to navigate after setting the modalType
-      // router.push(`/mypage?type=${encodeURIComponent('reserveList')}`);
     }
-  }, [modalType, onClickModify]);
+
+    if (modalType === 'delete') {
+      onClickDelete();
+    }
+  }, [modalType, onClickModify, onClickDelete]);
 
   return (
     <>

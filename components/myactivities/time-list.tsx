@@ -174,8 +174,8 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
                   <Image src={minusBtn} alt="Remove row" fill />
                 </div>
               </div>
-              {Array.isArray(errors.schedules) && errors.schedules[index]?.date?.message && (
-                <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[index]?.date?.message}</span>
+              {Array.isArray(errors.schedulesToAdd) && errors.schedulesToAdd[index]?.date?.message && (
+                <span className="text-sm text-red-500">{(errors.schedulesToAdd as ScheduleError[])[index]?.date?.message}</span>
               )}
               {index === 0 && fields.length > 1 && <hr className="mt-4"></hr>}
             </div>

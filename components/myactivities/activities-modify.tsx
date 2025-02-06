@@ -63,13 +63,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
 
     onSuccess: data => {
       reset({
-        title: data.title,
-        category: data.category,
-        description: data.description,
-        address: data.address,
-        price: data.price,
-        bannerImageUrl: data.bannerImageUrl,
-        subImages: data.subImages,
+        ...data,
       });
 
       const subImagesData = data?.subImages || [];

@@ -14,13 +14,19 @@ import {useMutation} from '@tanstack/react-query';
 import ActivitiesModify from './activities-modify';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {patchActivities} from '@/service/api/myactivities/patchActivities.api';
+import {deleteActivities} from '@/service/api/myactivities/deleteActivities.api';
+
+type ContentType = 'manage' | 'register' | 'modify' | 'delete';
 
 export default function MyActivities({onclose}: {onclose: () => void}) {
-  const [content, setContent] = useState<'manage' | 'register' | 'modify'>('manage');
+  const [content, setContent] = useState<ContentType>('manage');
   const formRef = useRef<{submitForm: () => void} | null>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenError, setIsOpenError] = useState(false);
+  const [errorMessege, setErrorMessege] = useState('');
   const [isValid, setIsValid] = useState(false);
   const [modifyId, setModifyId] = useState(0);
+
   const postActivitiesMutation = useMutation({
     mutationFn: async (body: PostActivitiesBody) => {
       const response = await postActivities(body);
@@ -35,7 +41,8 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
       setIsOpen(true);
     },
     onError: error => {
-      alert(`${error.message}`);
+      setIsOpenError(true);
+      setErrorMessege(error.message);
     },
   });
 
@@ -53,13 +60,38 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
       setIsOpen(true);
     },
     onError: error => {
-      alert(`${error.message}`);
+      setIsOpenError(true);
+      setErrorMessege(error.message);
+    },
+  });
+
+  const deleteActivitiesMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await deleteActivities(id);
+      return response;
+    },
+    onMutate: () => {
+      // setLoading(true);
+    },
+
+    onSuccess: () => {
+      // setLoading(false);
+      setIsOpen(true);
+    },
+    onError: error => {
+      setIsOpenError(true);
+      setErrorMessege(error.message);
     },
   });
 
   const handleClickModify = (id: number) => {
     setContent('modify');
     setModifyId(id);
+  };
+
+  const handleClickDelete = (deleteId: number) => {
+    setContent('delete');
+    deleteActivitiesMutation.mutate(deleteId);
   };
 
   const handleSubmit = (data: PostActivitiesBody) => {
@@ -147,7 +179,11 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
                   {group.pages.flatMap(page =>
                     page.map((data: Activity) => (
                       <Fragment key={data.id}>
-                        <ActivitiesCard data={data} onClickModify={() => handleClickModify(data.id)} />
+                        <ActivitiesCard
+                          data={data}
+                          onClickModify={() => handleClickModify(data.id)}
+                          onClickDelete={() => handleClickDelete(data.id)}
+                        />
                       </Fragment>
                     )),
                   )}
@@ -168,7 +204,14 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
           )}
         </div>
       </div>
-      {isOpen && <Modal type="big" message={`체험 ${content === 'modify' ? '수정' : '등록'}이 완료되었습니다`} onClose={handleClose} />}
+      {isOpen && (
+        <Modal
+          type="big"
+          message={`체험 ${content === 'modify' ? '수정' : content === 'register' ? '등록' : '삭제'}이 완료되었습니다`}
+          onClose={handleClose}
+        />
+      )}
+      {isOpenError && <Modal type="big" message={errorMessege} onClose={handleClose}></Modal>}
     </>
   );
 }
