@@ -1,9 +1,8 @@
-import {PostActivitiesBody} from '@/types/postActivities.types';
 import {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
 import {Controller, FormProvider, SubmitHandler, useForm} from 'react-hook-form';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
-import Input from '../common/Input';
-import SelectBox from '../common/selectbox';
+import Input from '@/components/common/Input';
+import SelectBox from '@/components/common/selectbox';
 import AddressModal from './address-modal';
 import TimeList from './time-list';
 import ImageList from './image-list';
@@ -235,7 +234,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
             ></Controller>
           </div>
           {isFocused && isOpen && <AddressModal onClose={() => setIsOpen(false)} onComplete={handleComplete} />}
-          <TimeList />
+          <TimeList type="modify" />
           <div className="mb-4">
             <label className="mb-3 block text-xl font-bold tablet:text-2xl">배너 이미지</label>
             <ImageList trigger={trigger} maxImages={1} name="bannerImageUrl" bannerImageUrl={bannerImageUrl} />

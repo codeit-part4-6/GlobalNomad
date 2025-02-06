@@ -1,5 +1,3 @@
-import {GetActivitiesResponse, SubImage} from './getActivitiesId.types';
-
 export interface PatchActivitiesBody {
   title: string;
   category: string;
@@ -11,4 +9,5 @@ export interface PatchActivitiesBody {
   subImageUrlsToAdd: string[]; // 추가할 소개이미지 URL
   schedulesToAdd: []; // 추가할 일정 배열
   subImages?: [];
+  address?: '';
 }

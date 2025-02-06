@@ -2,9 +2,8 @@ import Image from 'next/image';
 import iconStar from '@/public/icon/ic_star.svg';
 import iconMeatball from '@/public/icon/ic_meatball.svg';
 import {Activity} from '@/types/myactivities';
-import Dropbox from '../common/dropbox';
+import Dropbox from '@/components/common/dropbox';
 import {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
 
 const items = [
   {id: 1, label: '수정하기', type: 'modify'},
@@ -17,9 +16,7 @@ interface ActivitiesCardProps {
 }
 
 export default function ActivitiesCard({data, onClickModify}: ActivitiesCardProps) {
-  const router = useRouter();
   const [isOpenDropbox, setIsOpenDropbox] = useState(false);
-  // const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
 
   const handleClick = (type: string) => {
@@ -35,17 +32,6 @@ export default function ActivitiesCard({data, onClickModify}: ActivitiesCardProp
       // router.push(`/mypage?type=${encodeURIComponent('reserveList')}`);
     }
   }, [modalType, onClickModify]);
-
-  // const getModalContent = () => {
-  //   switch (modalType) {
-  //     case 'modify':
-  //       return <Modal type="big" message="수정되었습니다." onClose={() => setIsOpenModal(false)} />;
-  //     case 'delete':
-  //       return <Modal type="big" message="삭제되었습니다." onClose={() => setIsOpenModal(false)} />;
-  //     default:
-  //       return null;
-  //   }
-  // };
 
   return (
     <>
@@ -84,8 +70,6 @@ export default function ActivitiesCard({data, onClickModify}: ActivitiesCardProp
           />
         )}
       </div>
-      {/* {isOpenModal && getModalContent()} */}
-      {/* {getModalContent()} */}
     </>
   );
 }

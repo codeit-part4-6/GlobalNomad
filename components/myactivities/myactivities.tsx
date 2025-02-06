@@ -4,7 +4,7 @@ import ActivitiesRegister from './activities-register';
 import Modal from '@/components/common/modal/modal';
 import Image from 'next/image';
 import closeButton from '@/public/icon/ic_close_button.svg';
-import InfiniteScroll from '../common/lnfiniteScroll';
+import InfiniteScroll from '@/components/common/lnfiniteScroll';
 import {getActivitiesList} from '@/service/api/myactivities/getActivities';
 import {Activity} from '@/types/myactivities';
 import ActivitiesCard from './activities-card';
@@ -124,9 +124,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
             ) : (
               <Button
                 onClick={triggerSubmit}
-                className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white ${
-                  isValid ? 'bg-primary' : 'bg-gray-500'
-                }`}
+                className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] bg-primary pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white`}
               >
                 수정하기
               </Button>
