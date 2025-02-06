@@ -72,9 +72,9 @@ body {
   }
 
   /* SwiperSlide 스타일 */
-  .swiper-slide {
+  /* .swiper-slide {
     @apply flex h-10 w-20 items-center justify-center;
-  }
+  } */
 
   /* 페이지네이션 스타일 */
   .swiper-wrapper .swiper-pagination {
@@ -85,15 +85,5 @@ body {
     text-align: center;
     z-index: 10; /* 페이지네이션이 다른 요소 위에 표시되도록 */
     padding: 10px 0; /* 페이지네이션과 슬라이드 간 간격 조정 */
-  }
-
-  /* 페이지네이션 불릿 스타일 */
-  .swiper-pagination-bullet {
-    background-color: #000; /* 페이지네이션 불릿의 색상 */
-  }
-
-  /* 추가적인 스타일링을 원하는 경우 */
-  .swiper-pagination-bullet-active {
-    background-color: #ff0000; /* 활성화된 불릿 색상 */
   }
 }

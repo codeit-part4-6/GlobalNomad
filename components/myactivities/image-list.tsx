@@ -1,15 +1,16 @@
 import cancleBtn from '@/public/icon/ic_cancle_btn.svg';
 import plusIcon from '@/public/icon/ic_plus_icon.svg';
 import Image from 'next/image';
-import {Controller, useFormContext} from 'react-hook-form';
+import {Controller, useFormContext, UseFormTrigger} from 'react-hook-form';
 import {useState, useRef, useEffect} from 'react';
 import {postImage} from '@/service/api/myactivities/postImage.api';
 import {useMutation} from '@tanstack/react-query';
+import {PostActivitiesBody} from '@/types/postActivities.types';
 
 interface ImageListType {
   maxImages?: number;
   name?: string;
-  trigger?: (names: any) => void;
+  trigger?: UseFormTrigger<PostActivitiesBody>;
 }
 
 export default function ImageList({maxImages = 5, name = 'defaultName', trigger}: ImageListType) {
@@ -114,8 +115,8 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
 
   useEffect(() => {
     setValue(name, apiImageUrls);
-    if (trigger) trigger(name); // 유효성 수동 trigger
-  }, [apiImageUrls]);
+    if (trigger) trigger(name as keyof PostActivitiesBody); // 유효성 수동 trigger
+  }, [apiImageUrls, name, setValue, trigger]);
 
   return (
     <>
