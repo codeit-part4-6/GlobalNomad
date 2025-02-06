@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import ExPopular from '@/public/img/img_exPopular.webp';
 import Star from '@/public/icon/ic_yellowStar.svg';
-import Pagenation from '../common/pagenation';
+import Pagenation from '@/components/common/pagenation';
 
 export default function EntireCard() {
   const handlePageChange = (page: number) => {

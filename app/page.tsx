@@ -1,8 +1,8 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-import Search from '../components/main/search';
-import Option from '../components/main/option';
+import Search from '@/components/main/search';
+import Option from '@/components/main/option';
 import SearchList from '@/components/main/search-list';
 import PopularCard from '@/components/main/popular-card';
 import EntireCard from '@/components/main/entire-card';
