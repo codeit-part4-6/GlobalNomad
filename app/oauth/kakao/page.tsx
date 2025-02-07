@@ -3,22 +3,28 @@ import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { postOAuth } from '@/service/api/oauth/postOAuth.api';
+//import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
+import { useAuthStore } from '@/service/store/authStore';
 
 export default function KakaoOAuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
   const oauthMutation = useMutation({
     mutationFn: postOAuth,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log(data);
       const code = searchParams.get('code');
+      console.log(code);
+
       if (code) {
-        // 세션 스토리지에 토큰 및 사용자 정보 저장
         sessionStorage.setItem('token', code);
         sessionStorage.setItem('userInfo', JSON.stringify(data));
-        // 홈페이지로 리다이렉트
-        router.push('/');
+
+        // zustand 상태 업데이트
+        const { setLogin } = useAuthStore.getState();
+        setLogin(code, code, data);
+
+        router.push('/'); 
       } else {
         console.error('Code not found in URL');
         router.push('/signin');
@@ -32,6 +38,7 @@ export default function KakaoOAuthCallbackPage() {
 
   useEffect(() => {
     const code = searchParams.get('code');
+    console.log(code);
     if (code) {
       oauthMutation.mutate(code);
     }
