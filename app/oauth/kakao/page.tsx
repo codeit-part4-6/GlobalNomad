@@ -1,19 +1,20 @@
 'use client';
+
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { postOAuth } from '@/service/api/oauth/postOAuth.api';
-//import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
+import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
 import { useAuthStore } from '@/service/store/authStore';
 
 export default function KakaoOAuthCallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const oauthMutation = useMutation({
     mutationFn: postOAuth,
     onSuccess: async (data) => {
       const code = searchParams.get('code');
-
       if (code) {
         sessionStorage.setItem('token', code);
         sessionStorage.setItem('userInfo', JSON.stringify(data));
@@ -22,7 +23,24 @@ export default function KakaoOAuthCallbackPage() {
         const { setLogin } = useAuthStore.getState();
         setLogin(code, code, data);
 
-        router.push('/'); 
+        try {
+          const nickname = 'userNickname';
+          const redirectUri = 'http://localhost:3000/oauth/kakao';
+
+          const signupResponse = await postOAuthSignup({
+            nickname,
+            redirectUri,
+            token: code,
+          });
+
+          // 회원가입 성공 시 홈으로 리디렉션
+          console.log('회원가입 성공:', signupResponse);
+          router.push('/');
+        } catch (e) {
+          alert('이미 회원가입됨');
+          console.log(e);
+          router.push('/signin');
+        }
       } else {
         console.error('Code not found in URL');
         router.push('/signin');
@@ -36,6 +54,7 @@ export default function KakaoOAuthCallbackPage() {
 
   useEffect(() => {
     const code = searchParams.get('code');
+    console.log(code);
     if (code) {
       oauthMutation.mutate(code);
     }
