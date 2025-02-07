@@ -7,13 +7,13 @@ export async function getReservationList({
   size,
   status,
 }: {
-  cursorId?: number;
+  cursorId?: number | null;
   size?: number;
   status?: string;
 }): Promise<ReservationListResponse> {
   const accessToken = getAccessToken();
   const params = new URLSearchParams({
-    ...(cursorId !== undefined && {cursorId: cursorId.toString()}),
+    ...(typeof cursorId === 'number' ? {cursorId: cursorId.toString()} : {}),
     ...(size !== undefined && {size: size.toString()}),
     ...(status && {status}),
   });

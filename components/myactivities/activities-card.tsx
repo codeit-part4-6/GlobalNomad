@@ -2,42 +2,47 @@ import Image from 'next/image';
 import iconStar from '@/public/icon/ic_star.svg';
 import iconMeatball from '@/public/icon/ic_meatball.svg';
 import {Activity} from '@/types/myactivities';
-import Dropbox from '../common/dropbox';
-import {useState} from 'react';
-import Modal from '../common/modal/modal';
+import Dropbox from '@/components/common/dropbox';
+import {useEffect, useState} from 'react';
 
 const items = [
   {id: 1, label: '수정하기', type: 'modify'},
   {id: 2, label: '삭제하기', type: 'delete'},
 ];
 
-export default function ActivitiesCard({data}: {data: Activity}) {
+interface ActivitiesCardProps {
+  data: Activity;
+  onClickModify: () => void;
+  onClickDelete: () => void;
+}
+
+export default function ActivitiesCard({data, onClickModify, onClickDelete}: ActivitiesCardProps) {
   const [isOpenDropbox, setIsOpenDropbox] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
 
   const handleClick = (type: string) => {
     setIsOpenDropbox(false);
     setModalType(type);
-    setIsOpenModal(true);
+    // setIsOpenModal(true);
   };
 
-  const getModalContent = () => {
-    switch (modalType) {
-      case 'modify':
-        return <Modal type="big" message="수정되었습니다." onClose={() => setIsOpenModal(false)} />;
-      case 'delete':
-        return <Modal type="big" message="삭제되었습니다." onClose={() => setIsOpenModal(false)} />;
+  useEffect(() => {
+    if (modalType === 'modify') {
+      onClickModify();
     }
-  };
+
+    if (modalType === 'delete') {
+      onClickDelete();
+    }
+  }, [modalType, onClickModify, onClickDelete]);
 
   return (
     <>
       <div className="relative">
         <div
-        key={data.id}
-        className="flex items-center gap-2 overflow-hidden rounded-3xl bg-white shadow-sidenavi-box tablet:gap-3 pc:h-204pxr pc:gap-6"
-      >
+          key={data.id}
+          className="flex items-center gap-2 overflow-hidden rounded-3xl bg-white shadow-sidenavi-box tablet:gap-3 pc:h-204pxr pc:gap-6"
+        >
           <div className="relative h-128pxr w-128pxr tablet:h-156pxr tablet:w-156pxr pc:h-204pxr pc:w-204pxr">
             <Image src={data.bannerImageUrl} alt="체험관리사진" layout="fill" objectFit="cover" className="absolute" />
           </div>
@@ -45,8 +50,8 @@ export default function ActivitiesCard({data}: {data: Activity}) {
             <div className="flex gap-6pxr">
               <Image src={iconStar} width={16} height={16} alt="별점" />
               <div className="text-md tablet:text-lg">
-              {data.rating} ({data.reviewCount})
-            </div>
+                {data.rating} ({data.reviewCount})
+              </div>
             </div>
             <div className="mb-28pxr text-md font-bold tablet:mb-33pxr tablet:text-2lg pc:mb-72pxr pc:text-xl">{data.title}</div>
             <div className="flex w-full items-center justify-between pr-2">
@@ -68,7 +73,6 @@ export default function ActivitiesCard({data}: {data: Activity}) {
           />
         )}
       </div>
-      {isOpenModal && getModalContent()}
     </>
   );
 }
