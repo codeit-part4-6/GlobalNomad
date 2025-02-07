@@ -142,7 +142,7 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     <div className="mb-4">
       <label className="mb-3 block text-xl font-bold tablet:text-2xl">예약 가능한 시간대</label>
       {fields.map((row, index) => (
-        <div key={index} className="mb-4">
+        <div key={row.id} className="mb-4">
           <div className="grid grid-cols-[1fr,auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
             {renderField('날짜', `schedules.${index}.date`, 'date', index)}
             {renderField('시작 시간', `schedules.${index}.startTime`, 'select', index, {label: '00:00'})}
