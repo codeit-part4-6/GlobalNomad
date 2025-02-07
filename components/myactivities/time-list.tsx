@@ -87,6 +87,12 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     }
   };
 
+  const handleInput = (field: Field, e: React.FormEvent<HTMLInputElement>) => {
+    if ((e.target as HTMLInputElement).value === '') {
+      field.onChange('');
+    }
+  };
+
   const setInvalidDateError = (index: number, setError: (name: string, error: {type: string; message: string}) => void) => {
     setError(`schedules.${index}.date`, {
       type: 'manual',
@@ -117,6 +123,7 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
                   required
                   value={field.value}
                   onChange={e => handleChange(field, e, index)}
+                  onInput={(e: React.FormEvent<HTMLInputElement>) => handleInput(field, e)}
                   className="w-full"
                 />
               );
@@ -165,7 +172,7 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
       {type === 'modify' && modifyFields.length !== 0 && (
         <>
           {modifyFields.map((row, index) => (
-            <div key={index} className="mb-4">
+            <div key={row.id} className="mb-4">
               <div className="grid grid-cols-[1fr,auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
                 {renderField('날짜', `schedulesToAdd.${index}.date`, 'date', index)}
                 {renderField('시작 시간', `schedulesToAdd.${index}.startTime`, 'select', index, {label: '00:00'})}
