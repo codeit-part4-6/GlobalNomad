@@ -30,7 +30,7 @@ export default function ReservationInfo({
 }: ReservationProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [ref, inView] = useInView({
-    threshold: 1.0,
+    threshold: 0.9,
   });
 
   const selectedSchedule = reservedScheduleData.find(schedule => `${schedule.startTime} ~ ${schedule.endTime}` === selectedTime);
@@ -41,31 +41,22 @@ export default function ReservationInfo({
     queryFn: ({pageParam = null}) =>
       getReservations({
         activityId,
-        size: 5,
+        size: 3,
         scheduleId: selectedScheduleId ?? reservedScheduleData[0].scheduleId,
         status: reservationStatus,
         cursorId: pageParam as number | null,
       }),
     initialPageParam: null, // 첫 번째 페이지는 cursorId 없이 요청
     getNextPageParam: (lastPage, allPages) => {
-      // console.log('Last Page:', lastPage);
-      // console.log('All Pages Length:', allPages.length);
-
       if (!lastPage || lastPage.reservations.length === 0) {
-        // console.log('⚠ No more data to fetch!');
         return null;
       }
 
       const totalLoadedReservations = allPages.flatMap(page => page.reservations).length;
-      // console.log('Total Loaded Reservations:', totalLoadedReservations);
-      // console.log('lastPage.totalCount:', lastPage.totalCount);
 
       if (totalLoadedReservations >= lastPage.totalCount) {
-        // console.log('All data loaded, stopping further requests.');
         return null;
       }
-
-      console.log('Fetching next page with cursor:', lastPage.cursorId);
       return lastPage.cursorId;
     },
 
@@ -73,20 +64,10 @@ export default function ReservationInfo({
   });
 
   useEffect(() => {
-    console.log('inView:', inView);
-    // console.log('hasNextPage:', hasNextPage);
-    // console.log('isFetchingNextPage:', isFetchingNextPage);
-    // console.log('Data Pages:', data?.pages?.length);
-
     if (inView && hasNextPage && !isFetchingNextPage && data?.pages.length) {
-      console.log('Fetching next page!');
       fetchNextPage();
     }
   }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage, data]);
-
-  useEffect(() => {
-    console.log('inView 상태 변경:', inView);
-  }, [inView]);
 
   const times = Array.from(new Set((reservedScheduleData || []).map(reservation => `${reservation.startTime} ~ ${reservation.endTime}`)));
   const reservations = data?.pages.flatMap(page => page.reservations) || [];
@@ -144,7 +125,7 @@ export default function ReservationInfo({
         <div>
           <p className="mb-4 text-xl font-semibold text-black-100">예약 내역</p>
 
-          {!isFetching && filteredReservations.length > 0
+          {filteredReservations.length > 0
             ? filteredReservations.map(reservation => (
                 <div key={reservation.id} className="mb-4 flex min-h-116pxr w-full flex-col rounded-xl border border-gray-200 px-4 pb-3 pt-4">
                   <div className="mb-6pxr text-lg font-semibold text-gray-700">
@@ -163,7 +144,7 @@ export default function ReservationInfo({
             <ScaleLoader color="#0b3b2d" />
           </div>
         )}
-        <div className="mt-1 h-20" ref={ref} />
+        <div className="mt-1 h-10" ref={ref}></div>
       </div>
     </div>
   );
