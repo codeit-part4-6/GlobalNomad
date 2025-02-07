@@ -12,7 +12,7 @@ export default function ReservationContainer({children, onClose}: ReservationCon
   };
 
   return (
-    <div onClick={handleContainerClick} className="absolute inset-0 z-50 flex h-full w-full items-center justify-center">
+    <div onClick={handleContainerClick} className="fixed inset-0 z-[71] flex h-full w-full items-center justify-center">
       {children}
     </div>
   );

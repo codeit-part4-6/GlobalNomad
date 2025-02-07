@@ -32,4 +32,58 @@ body {
   .big-button {
     @apply h-42pxr w-138pxr rounded-lg bg-nomad-black px-56pxr py-12pxr text-center align-middle text-md font-medium leading-none text-white tablet:h-48pxr tablet:w-120pxr tablet:px-46pxr tablet:py-14pxr tablet:text-lg tablet:leading-none pc:h-48pxr pc:w-120pxr pc:px-46pxr pc:py-14pxr pc:text-lg pc:leading-none;
   }
+  .error-message {
+    @apply ml-2 mt-2 text-xs text-red-200;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 12px;
+    height: 16px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #cbcbcb;
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background-color: #f0f0f0;
+  }
+
+  .placehorder::placeholder {
+    font-size: 1rem;
+    color: #a1a1a1;
+  }
+}
+
+@layer base {
+  .swiper-wrapper {
+    @apply relative h-full w-full;
+    /* 부모 요소가 relative여야 절대 위치가 제대로 적용됨 */
+  }
+
+  /* SwiperSlide 스타일 */
+  /* .swiper-slide {
+    @apply flex h-10 w-20 items-center justify-center;
+  } */
+
+  /* 페이지네이션 스타일 */
+  .swiper-wrapper .swiper-pagination {
+    position: absolute;
+    bottom: 0; /* 페이지네이션을 하단에 위치시킴 */
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 10; /* 페이지네이션이 다른 요소 위에 표시되도록 */
+    padding: 10px 0; /* 페이지네이션과 슬라이드 간 간격 조정 */
+  }
 }

@@ -13,6 +13,8 @@ export default function ClientSideLayout({children}: Readonly<{children: React.R
 
   const hideFooter = pathname === '/mypage' || pathname === '/signin' || pathname === '/signup';
 
+  const hideNavbar = pathname === '/login' || pathname === '/signin';
+
   useEffect(() => {
     setQueryClient(new QueryClient());
   }, []);
@@ -23,7 +25,7 @@ export default function ClientSideLayout({children}: Readonly<{children: React.R
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       {children}
       <ReactQueryDevtools initialIsOpen={false} />
       {!hideFooter && <Footer />}
