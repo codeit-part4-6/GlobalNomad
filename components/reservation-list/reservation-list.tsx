@@ -10,9 +10,9 @@ import closeButton from '@/public/icon/ic_close_button.svg';
 import {getReservationList} from '@/service/api/reservation-list/getReservation.api';
 import {useInfiniteQuery} from '@tanstack/react-query';
 import {ReservationListResponse} from '@/types/reservation-list';
-import FormattedDotDate from '@/service/lib/formatted-dot-date';
+import FormattedDotDate from '@/utils/formatted-dot-date';
 import {ScaleLoader} from 'react-spinners';
-import FormattedPrice from '@/service/lib/formatted-price';
+import FormattedPrice from '@/utils/formatted-price';
 import {useInView} from 'react-intersection-observer';
 
 export const statusLabelsColor: Record<string, string> = {
