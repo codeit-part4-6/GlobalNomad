@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Dayjs} from 'dayjs';
 import dayjs from 'dayjs';
 import {Calendar} from 'antd';
@@ -113,6 +113,14 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
     saveTime(getData);
   };
 
+  const checkTime = useMemo(
+    () => (hour: string) => {
+      const nowHour = +dayjs().get('hour');
+      return nowHour >= +hour.substring(0, 2);
+    },
+    [],
+  );
+
   useEffect(() => {
     if (state.daySchedule.times.length < 1 && schedules) {
       setScheduleMatch(dayjs());
@@ -132,7 +140,17 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
         />
       </div>
       <div className="min-w-336pxr flex-col">
-        <p className="mt-16pxr text-2lg font-bold text-nomad-black">예약 가능한 시간</p>
+        <div className="flex flex-row gap-3">
+          <p className="mt-16pxr text-2lg font-bold text-nomad-black">예약 가능한 시간</p>
+          <div className="mt-16pxr flex flex-row gap-1">
+            <div className="m-auto h-10pxr w-10pxr border border-red-200"></div>
+            <p className="text-sm font-normal text-nomad-black">예약 불가</p>
+          </div>
+          <div className="mt-16pxr flex flex-row gap-1">
+            <div className="m-auto h-10pxr w-10pxr border border-nomad-black" />
+            <p className="text-sm font-normal text-nomad-black">예약 가능</p>
+          </div>
+        </div>
         <div
           className={`mt-14pxr flex flex-row flex-wrap gap-12pxr overflow-y-scroll ${state.daySchedule.times.length < 4 && 'no-scrollbar'} ${device === 'mobile' ? 'h-220pxr' : 'h-110pxr'}`}
         >
@@ -140,9 +158,10 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
             return (
               dt.id > 0 && (
                 <Button
-                  className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectTime.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'}`}
+                  className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectTime.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'} ${checkTime(dt.startTime) && 'border border-red-200'}`}
                   key={dt.id}
                   onClick={() => handleSelectTime({date: state.daySchedule.date, id: dt.id, startTime: dt.startTime, endTime: dt.endTime})}
+                  disabled={checkTime(dt.startTime)}
                 >
                   <p
                     className={`text-lg font-medium ${selectTime.id === dt.id ? 'text-white' : 'text-black-50'}`}

@@ -285,7 +285,7 @@ const ReservationMobileType = ({pageID, price, state, dispatch, updateSchedule, 
         <div className="flex flex-row flex-wrap justify-between px-18pxr py-18pxr">
           <div className="flex flex-col items-start">
             <div className="flex h-35pxr w-auto flex-row gap-3">
-              <p className="text-xl font-bold text-nomad-black">{`₩ ${FormatNumberWithCommas(price)}`}</p>
+              <p className="text-xl font-bold text-nomad-black">{`₩ ${FormatNumberWithCommas(price * state.person)}`}</p>
               <p className="mb-16pxr text-xl font-normal leading-8 text-gray-800">{`/ ${state.person}인`}</p>
             </div>
             <Button className="border-0 bg-white text-lg font-semibold text-primary" onClick={() => handleOpenScheduleModal(true)}>
@@ -312,7 +312,7 @@ const ReservationMobileType = ({pageID, price, state, dispatch, updateSchedule, 
                 <Image src={Cancle} width={40} height={40} alt="cancle" />
               </Button>
             </div>
-            <SmCalendar pageID={pageID} device={'mobile'}state={state} dispatch={dispatch} onSelect={updateSchedule} />
+            <SmCalendar pageID={pageID} device={'mobile'} state={state} dispatch={dispatch} onSelect={updateSchedule} />
             <Button
               className={`absolute bottom-40pxr left-24pxr flex h-56pxr min-w-327pxr flex-row items-center justify-center rounded-md ${!state.schedule?.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
               disabled={!state.schedule.id}

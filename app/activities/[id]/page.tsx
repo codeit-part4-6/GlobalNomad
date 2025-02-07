@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
 import {useQuery} from 'react-query';
 import {StaticImport} from 'next/dist/shared/lib/get-img-props';
-import {notFound, useParams} from 'next/navigation';
+import {notFound, useParams, useRouter} from 'next/navigation';
 import {ActivitiesInfoType} from '@/types/activities-info';
 import {getActivitiesInfo} from '@/service/api/activities/getActivitiesInfo';
 import Reservation from '@/components/activities/side-reservation';
@@ -49,19 +49,22 @@ const BannerFromDivceType = ({device, bannerImg, subImages}: BannerType) => {
   }
 };
 
-const ActivitiesUpdateModal = ({id}: {id: number}) => {
-  const sessionID = sessionStorage.getItem('id');
-  const updateAuth = sessionID && +sessionID === id;
+const ActivitiesUpdateModal = ({userId}: {userId: number}) => {
+  const sessionID = sessionStorage.getItem('userInfo');
+  const updateAuth = sessionID && JSON.parse(sessionID).id === userId;
   const [isOpenDropbox, setIsOpenDropbox] = useState<boolean>(false);
 
+  const router = useRouter();
   const handleActivitiesUpdate = (type: string) => {
     setIsOpenDropbox(false);
+    // mypage에서 병렬 라우팅 작업 완료시 해당 링크로 이동시켜줘야합니다.
     console.log(type);
+    router.push('/mypage');
   };
 
   return (
     updateAuth && (
-      <>
+      <div>
         <Image src={IconMeatball} onClick={() => setIsOpenDropbox(true)} width={40} height={40} alt="자세히보기" priority />;
         {isOpenDropbox && (
           <Dropbox
@@ -71,7 +74,7 @@ const ActivitiesUpdateModal = ({id}: {id: number}) => {
             items={DropboxItems}
           />
         )}
-      </>
+      </div>
     )
   );
 };
@@ -104,7 +107,7 @@ export default function Page() {
           <div className="flex-row items-center gap-16pxr p-0 text-xl font-bold text-nomad-black tablet:text-3xl pc:text-3xl">
             {activitiesInfo.title}
           </div>
-          <ActivitiesUpdateModal id={activitiesInfo.id} />
+          <ActivitiesUpdateModal userId={activitiesInfo.userId} />
         </div>
         <div className="flex flex-row gap-6pxr tablet:mb-25pxr pc:mb-25pxr">
           <Image src={Star} alt="별점 이미지" width={16} height={16} priority />
