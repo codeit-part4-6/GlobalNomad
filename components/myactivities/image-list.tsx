@@ -1,22 +1,31 @@
 import cancleBtn from '@/public/icon/ic_cancle_btn.svg';
 import plusIcon from '@/public/icon/ic_plus_icon.svg';
 import Image from 'next/image';
-import {Controller, useFormContext, UseFormTrigger} from 'react-hook-form';
+import {Controller, FieldValues, Path, useFormContext, UseFormTrigger} from 'react-hook-form';
 import {useState, useRef, useEffect} from 'react';
 import {postImage} from '@/service/api/myactivities/postImage.api';
 import {useMutation} from '@tanstack/react-query';
-import {PostActivitiesBody} from '@/types/postActivities.types';
+import {SubImage} from '@/types/getActivitiesId.types';
 
-interface ImageListType {
+interface ImageListType<T extends FieldValues> {
   maxImages?: number;
   name?: string;
-  trigger?: UseFormTrigger<PostActivitiesBody>;
+  trigger: UseFormTrigger<T>;
+  bannerImageUrl?: string;
+  subImages?: SubImage[];
 }
 
-export default function ImageList({maxImages = 5, name = 'defaultName', trigger}: ImageListType) {
-  const [imageUrls, setImageUrls] = useState<(string | ArrayBuffer)[]>([]);
+export default function ImageList<T extends FieldValues>({
+  maxImages = 5,
+  name = 'defaultName',
+  trigger,
+  bannerImageUrl,
+  subImages,
+}: ImageListType<T>) {
+  const [imageUrls, setImageUrls] = useState<SubImage[]>(subImages || []);
   const [apiImageUrls, setApiImageUrls] = useState<string | string[]>('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [IsRequired, setIsRequired] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -25,8 +34,8 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
     setError,
     clearErrors,
     setValue,
+    getValues,
   } = useFormContext();
-
   const mutation = useMutation({
     mutationFn: async (formData: FormData) => {
       const response = await postImage(formData);
@@ -38,14 +47,16 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
 
     onSuccess: data => {
       // setLoading(false);
-      if (name === 'subImageUrls') {
-        setApiImageUrls(prev => {
-          const updatedUrls = [...prev, data.activityImageUrl];
-          return updatedUrls;
-        });
-      } else {
-        setApiImageUrls(data.activityImageUrl);
+      // 수정시
+      if (name === 'subImges') {
+        const prevIds = getValues('subImageUrlsToAdd') || [];
+        setValue('subImageUrlsToAdd', [...prevIds, data.activityImageUrl]);
       }
+
+      setApiImageUrls(prev => {
+        const updatedUrls = [...prev, data.activityImageUrl];
+        return updatedUrls;
+      });
     },
     onError: error => {
       // setLoading(false);
@@ -79,8 +90,8 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
           const reader = new FileReader();
           reader.onloadend = () => {
             const fileUrl = reader.result as string;
-            if (!imageUrls.includes(fileUrl)) {
-              setImageUrls(prevUrls => [...prevUrls, fileUrl]);
+            if (!imageUrls.some(image => image.imageUrl === fileUrl)) {
+              setImageUrls(prevUrls => [...prevUrls, {imageUrl: fileUrl}]);
             }
             resolve();
           };
@@ -98,7 +109,7 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
     }
   };
 
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveImage = (index: number, id?: number) => {
     const updatedFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(updatedFiles);
 
@@ -111,12 +122,32 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
     } else {
       setApiImageUrls('');
     }
+
+    setValue(name, updatedImageUrls);
+
+    // 수정시
+    if (id != null) {
+      const prevIds = getValues('subImageIdsToRemove') || [];
+      setValue('subImageIdsToRemove', [...prevIds, id], {shouldValidate: false});
+    }
   };
 
   useEffect(() => {
     setValue(name, apiImageUrls);
-    if (trigger) trigger(name as keyof PostActivitiesBody); // 유효성 수동 trigger
+    if (trigger) trigger(name as Path<T>); // 유효성 수동 trigger
   }, [apiImageUrls, name, setValue, trigger]);
+
+  useEffect(() => {
+    if (subImages) {
+      setValue(name, []);
+      setIsRequired(true);
+      setImageUrls(subImages);
+    }
+
+    if (bannerImageUrl) {
+      setImageUrls([{imageUrl: bannerImageUrl}]);
+    }
+  }, [name, subImages, bannerImageUrl, setValue]);
 
   return (
     <>
@@ -136,7 +167,7 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
           name={name}
           control={control}
           rules={{
-            required: '필수 값 입니다.',
+            required: !IsRequired ? '필수 값 입니다.' : false,
             validate: {
               maxImages: () => selectedFiles.length <= maxImages || `최대 ${maxImages}개의 이미지만 선택할 수 있습니다.`,
             },
@@ -154,14 +185,19 @@ export default function ImageList({maxImages = 5, name = 'defaultName', trigger}
           )}
         />
         {/* 이미지 미리보기 및 삭제 버튼 */}
-        {imageUrls.map((imageUrl, index) => (
-          <div key={index} className="relative h-167pxr w-167pxr tablet:h-206pxr tablet:w-206pxr pc:h-180pxr pc:w-180pxr">
-            <Image src={typeof imageUrl === 'string' ? imageUrl : ''} alt={`이미지 ${index + 1}`} fill className="rounded-3xl" />
-            <div className="absolute right-[-16px] top-[-18px] cursor-pointer p-2" onClick={() => handleRemoveImage(index)}>
-              <Image src={cancleBtn} width={24} height={24} alt="이미지삭제" />
-            </div>
-          </div>
-        ))}
+        {imageUrls.map((imageUrl, index) => {
+          if (imageUrl?.imageUrl) {
+            return (
+              <div key={index} className="relative h-167pxr w-167pxr tablet:h-206pxr tablet:w-206pxr pc:h-180pxr pc:w-180pxr">
+                <Image src={imageUrl.imageUrl} alt={`이미지 ${index + 1}`} fill className="rounded-3xl" />
+                <div className="absolute right-[-16px] top-[-18px] cursor-pointer p-2" onClick={() => handleRemoveImage(index, imageUrl.id)}>
+                  <Image src={cancleBtn} width={24} height={24} alt="이미지삭제" />
+                </div>
+              </div>
+            );
+          }
+          return null;
+        })}
         {/* 오류 메시지 */}
         {typeof errors[name]?.message === 'string' && <span className="error-message">{errors[name]?.message}</span>}
       </div>
