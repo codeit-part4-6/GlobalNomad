@@ -12,9 +12,7 @@ export default function KakaoOAuthCallbackPage() {
   const oauthMutation = useMutation({
     mutationFn: postOAuth,
     onSuccess: async (data) => {
-      console.log(data);
       const code = searchParams.get('code');
-      console.log(code);
 
       if (code) {
         sessionStorage.setItem('token', code);
@@ -38,7 +36,6 @@ export default function KakaoOAuthCallbackPage() {
 
   useEffect(() => {
     const code = searchParams.get('code');
-    console.log(code);
     if (code) {
       oauthMutation.mutate(code);
     }
