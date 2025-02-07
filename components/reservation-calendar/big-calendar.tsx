@@ -20,7 +20,6 @@ dayjs.updateLocale('en', {
 
 export default function BigCalendar({activityId}: {activityId: number | null}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isTablet, setIsTablet] = useState<boolean | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [year, setYear] = useState<string>('');
   const [month, setMonth] = useState<string>('');
@@ -43,29 +42,6 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
   const handleDateClick = () => {
     setIsModalOpen(prev => !prev);
   };
-
-  function getPageSize(width: number): boolean {
-    return width >= 745 && width < 1200;
-  }
-
-  useEffect(() => {
-    const initialIsTablet = getPageSize(document.documentElement.clientWidth);
-    setIsTablet(initialIsTablet); // 브라우저에서만 실행
-  }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      const mobile = getPageSize(document.documentElement.clientWidth);
-      setIsTablet(mobile);
-    };
-    if (isTablet !== null) {
-      // isMobile이 null이 아니면 resize 이벤트 처리
-      window.addEventListener('resize', handleResize);
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
-    }
-  }, [isTablet]);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -137,17 +113,7 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
   };
 
   return (
-    <div className="tablet:relative" ref={modalRef}>
-      {isModalOpen && !isTablet && (
-        <ReservationContainer onClose={() => setIsModalOpen(false)}>
-          <ReservationModal onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
-        </ReservationContainer>
-      )}
-      {isModalOpen && isTablet && (
-        <div>
-          <ReservationModal onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
-        </div>
-      )}
+    <div ref={modalRef}>
       <Calendar
         onSelect={(date, {source}) => {
           if (source === 'date') {
@@ -163,6 +129,11 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
         )}
         fullCellRender={DateCell}
       />
+      {isModalOpen && (
+        <ReservationContainer onClose={() => setIsModalOpen(false)}>
+          <ReservationModal onClose={() => setIsModalOpen(false)} selectedDate={selectedDate} activityId={activityId} />
+        </ReservationContainer>
+      )}
       <style>
         {`
           .ant-picker-content th {

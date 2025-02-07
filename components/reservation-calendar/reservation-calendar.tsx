@@ -86,9 +86,8 @@ export default function ReservationCalendar({onClose}: {onClose: () => void}) {
               </ul>
             )}
           </div>
-          <div>
-            <BigCalendar activityId={selectedId} />
-          </div>
+
+          <BigCalendar activityId={selectedId} />
         </>
       )}
     </div>

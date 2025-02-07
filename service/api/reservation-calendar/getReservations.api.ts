@@ -13,7 +13,7 @@ export async function getReservations({
   size?: number;
   scheduleId: number;
   status: string;
-  cursorId: number | null;
+  cursorId?: number | null;
 }): Promise<ReservationsResponse> {
   const accessToken = getAccessToken();
   const params = new URLSearchParams({

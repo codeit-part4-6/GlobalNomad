@@ -30,11 +30,11 @@ export default function ReservationInfo({
 }: ReservationProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [ref, inView] = useInView({
-    threshold: 0.1,
+    threshold: 1.0,
   });
 
   const selectedSchedule = reservedScheduleData.find(schedule => `${schedule.startTime} ~ ${schedule.endTime}` === selectedTime);
-  const selectedScheduleId = selectedSchedule ? selectedSchedule.scheduleId : null;
+  const selectedScheduleId = selectedSchedule?.scheduleId || reservedScheduleData?.[0]?.scheduleId;
 
   const {data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery<ReservationsResponse>({
     queryKey: ['myReservations', activityId, reservationStatus, selectedTime],
@@ -48,41 +48,45 @@ export default function ReservationInfo({
       }),
     initialPageParam: null, // 첫 번째 페이지는 cursorId 없이 요청
     getNextPageParam: (lastPage, allPages) => {
+      // console.log('Last Page:', lastPage);
+      // console.log('All Pages Length:', allPages.length);
+
+      if (!lastPage || lastPage.reservations.length === 0) {
+        // console.log('⚠ No more data to fetch!');
+        return null;
+      }
+
       const totalLoadedReservations = allPages.flatMap(page => page.reservations).length;
+      // console.log('Total Loaded Reservations:', totalLoadedReservations);
+      // console.log('lastPage.totalCount:', lastPage.totalCount);
 
       if (totalLoadedReservations >= lastPage.totalCount) {
+        // console.log('All data loaded, stopping further requests.');
         return null;
       }
-      if (lastPage.cursorId === null) {
-        return null;
-      }
-      return lastPage.reservations[lastPage.reservations.length - 1].id;
+
+      console.log('Fetching next page with cursor:', lastPage.cursorId);
+      return lastPage.cursorId;
     },
+
     enabled: !!activityId && !!selectedTime,
   });
 
   useEffect(() => {
-    if (inView && hasNextPage && !isFetchingNextPage) {
+    console.log('inView:', inView);
+    // console.log('hasNextPage:', hasNextPage);
+    // console.log('isFetchingNextPage:', isFetchingNextPage);
+    // console.log('Data Pages:', data?.pages?.length);
+
+    if (inView && hasNextPage && !isFetchingNextPage && data?.pages.length) {
+      console.log('Fetching next page!');
       fetchNextPage();
     }
-  }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
+  }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage, data]);
 
   useEffect(() => {
-    // 컴포넌트 리렌더링 후 스크롤 위치를 유지하도록 할 수 있음
-    const scrollPosition = localStorage.getItem('scrollPosition');
-    if (scrollPosition) {
-      window.scrollTo(0, parseInt(scrollPosition, 10));
-    }
-  }, [data]); // data가 변경될 때마다 스크롤 위치 조정
-
-  // 스크롤 위치 기록
-  useEffect(() => {
-    const handleScroll = () => {
-      localStorage.setItem('scrollPosition', window.scrollY.toString());
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    console.log('inView 상태 변경:', inView);
+  }, [inView]);
 
   const times = Array.from(new Set((reservedScheduleData || []).map(reservation => `${reservation.startTime} ~ ${reservation.endTime}`)));
   const reservations = data?.pages.flatMap(page => page.reservations) || [];
@@ -139,11 +143,7 @@ export default function ReservationInfo({
         </div>
         <div>
           <p className="mb-4 text-xl font-semibold text-black-100">예약 내역</p>
-          {isFetching && (
-            <div className="no-scrollbar flex h-200pxr w-full items-center justify-center">
-              <ScaleLoader color="#0b3b2d" />
-            </div>
-          )}
+
           {!isFetching && filteredReservations.length > 0
             ? filteredReservations.map(reservation => (
                 <div key={reservation.id} className="mb-4 flex min-h-116pxr w-full flex-col rounded-xl border border-gray-200 px-4 pb-3 pt-4">
@@ -158,7 +158,12 @@ export default function ReservationInfo({
               ))
             : !isFetching && <NonDataPage type="modal" />}
         </div>
-        <div className="mt-1 h-1" ref={ref} />
+        {isFetching && (
+          <div className="no-scrollbar flex h-200pxr w-full items-center justify-center">
+            <ScaleLoader color="#0b3b2d" />
+          </div>
+        )}
+        <div className="mt-1 h-20" ref={ref} />
       </div>
     </div>
   );

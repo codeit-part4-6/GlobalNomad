@@ -38,7 +38,7 @@ export default function ReservationModal({onClose, selectedDate, activityId}: Re
   return (
     <div
       onClick={e => e.stopPropagation()}
-      className="h-full w-full overflow-y-auto border-gray-200 bg-white tablet:absolute tablet:z-[60] tablet:max-h-697pxr tablet:rounded-3xl tablet:border pc:h-[70%] pc:max-h-697pxr pc:w-429pxr"
+      className="fixed z-[60] h-full w-full overflow-y-auto border-gray-200 bg-white tablet:h-[70%] tablet:max-h-697pxr tablet:w-429pxr tablet:rounded-3xl tablet:border"
     >
       <div className="h-full w-full pt-6">
         <div className="mb-19pxr flex items-center justify-between px-6 tablet:mb-27pxr">
