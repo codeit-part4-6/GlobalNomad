@@ -107,6 +107,16 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
   type ActivityData<T> = PatchActivitiesBody & T;
 
   const handleModifySubmit = <T extends object>(data: ActivityData<T>) => {
+    const schedulesToAdd = data.schedulesToAdd || [];
+    const filterSchedulesToAdd = data.schedulesToAddTemp;
+
+    if (filterSchedulesToAdd) {
+      filterSchedulesToAdd.forEach((data: {id?: number}) => {
+        delete data.id;
+      });
+      schedulesToAdd.push(...filterSchedulesToAdd);
+    }
+
     const params: PatchActivitiesBody = {
       title: data.title,
       category: data.category,
@@ -116,7 +126,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
       subImageIdsToRemove: data.subImageIdsToRemove,
       subImageUrlsToAdd: data.subImages || [],
       scheduleIdsToRemove: data.scheduleIdsToRemove,
-      schedulesToAdd: data.schedulesToAdd,
+      schedulesToAdd: schedulesToAdd || [],
     };
     patchActivitiesMutation.mutate({id: modifyId, body: params});
   };

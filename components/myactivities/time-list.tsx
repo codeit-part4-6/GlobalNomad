@@ -6,8 +6,10 @@ import Image from 'next/image';
 import minusBtn from '@/public/icon/ic_minus_btn.svg';
 import plusBtn from '@/public/icon/ic_plus_btn.svg';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
+import {Schedule} from '@/types/postActivities.types';
 
 interface Field {
+  name: string;
   onChange: (value: string) => void;
   value: string;
 }
@@ -50,9 +52,7 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
   };
 
   const handleMinusRow = (index: number, removeType: 'fields' | 'modifyFields') => {
-    console.log(watchedField);
-    console.log(index);
-    if (type === 'modify') {
+    if (type === 'modify' && removeType === 'fields') {
       const values = getValues();
       const removedId = values.schedules[index].id;
       const prevIds = getValues('scheduleIdsToRemove') || [];
@@ -68,10 +68,26 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
 
   const watchedField = watch('schedules');
 
+  const getIdsFromSchedules = (schedules: Schedule[]): number[] => {
+    return schedules.map(schedule => schedule.id).filter((id): id is number => id !== undefined);
+  };
+
   const handleChange = (field: Field, e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>, index: number) => {
     const newValue = e.target.value;
     if (newValue === '') return;
     field.onChange(newValue);
+
+    // 기존데이터 수정
+    // :: 기존있는 데이터를 모두삭제후 재등록
+    if (type === 'modify' && field.name.startsWith('schedules.')) {
+      const schedules = getValues('schedules');
+      const scheduleIdsToRemove = getValues('scheduleIdsToRemove');
+
+      if (scheduleIdsToRemove === undefined) {
+        setValue('scheduleIdsToRemove', getIdsFromSchedules(schedules));
+      }
+      setValue('schedulesToAddTemp', getValues('schedules'));
+    }
 
     const invalidSchedules = findOverlappingSchedules(watchedField);
     if (invalidSchedules.length === 0) {
@@ -165,7 +181,7 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
           {Array.isArray(errors.schedules) && errors.schedules[index]?.date?.message && (
             <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[index]?.date?.message}</span>
           )}
-          {index === 0 && fields.length > 1 && <hr className="mt-4"></hr>}
+          {index === 0 && <hr className="mt-4"></hr>}
         </div>
       ))}
       {/* 수정시 */}
@@ -184,7 +200,6 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
               {Array.isArray(errors.schedulesToAdd) && errors.schedulesToAdd[index]?.date?.message && (
                 <span className="text-sm text-red-500">{(errors.schedulesToAdd as ScheduleError[])[index]?.date?.message}</span>
               )}
-              {index === 0 && fields.length > 1 && <hr className="mt-4"></hr>}
             </div>
           ))}
         </>
