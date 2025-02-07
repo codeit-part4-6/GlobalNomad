@@ -3,7 +3,7 @@ import Button from '../button';
 import OverlayContainer from './overlay-container';
 import {ReviewModalProps} from '@/types/review-modal-props';
 import closeButton from '@/public/icon/ic_close_button.svg';
-import FormattedDotDate from '@/service/lib/formatted-dot-date';
+import FormattedDotDate from '@/utils/formatted-dot-date';
 import StarRating from '@/components/reservation-list/star-rating';
 import {useState} from 'react';
 import {postReview} from '@/service/api/reservation-list/postReview.api';

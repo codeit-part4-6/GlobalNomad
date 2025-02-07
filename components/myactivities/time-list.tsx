@@ -1,7 +1,7 @@
 import {useFieldArray, Controller, useFormContext, FieldError} from 'react-hook-form';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';
-import {findOverlappingSchedules, generateTimeOptions} from '@/service/lib/fotmatted-hour-time';
+import {findOverlappingSchedules, generateTimeOptions} from '@/utils/fotmatted-hour-time';
 import Image from 'next/image';
 import minusBtn from '@/public/icon/ic_minus_btn.svg';
 import plusBtn from '@/public/icon/ic_plus_btn.svg';
