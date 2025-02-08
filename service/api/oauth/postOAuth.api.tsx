@@ -9,6 +9,6 @@ export async function postOAuth(code: string) {
   };
 
   const response = await INSTANCE_URL.post('/oauth/apps', data);
-  console.log('API 응답 데이터:', response.data);
+  console.log('OAuth API 응답 데이터:', response.data);
   return response.data;
 }

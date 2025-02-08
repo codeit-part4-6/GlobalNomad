@@ -4,59 +4,73 @@ import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { postOAuth } from '@/service/api/oauth/postOAuth.api';
+import { postOAuthSignin } from '@/service/api/oauth/postOAuthSignin.api';
 import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
 import { useAuthStore } from '@/service/store/authStore';
 
-export default function KakaoOAuthCallbackPage() {
+export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const oauthMutation = useMutation({
     mutationFn: postOAuth,
-    onSuccess: async (data) => {
-      const code = searchParams.get('code');
-      if (code) {
-        sessionStorage.setItem('token', code);
-        sessionStorage.setItem('userInfo', JSON.stringify(data));
-
-        // zustand 상태 업데이트
-        const { setLogin } = useAuthStore.getState();
-        setLogin(code, code, data);
-
+    onSuccess: async (oauthData) => {
+      // code로 받지만 token으로 사용
+      const token = searchParams.get('code');
+      console.log("받은 인가 토큰", token);
+      if (token) {
+        sessionStorage.setItem('userInfo', JSON.stringify(oauthData));
         try {
-          const nickname = 'userNickname';
           const redirectUri = 'http://localhost:3000/oauth/kakao';
-
-          const signupResponse = await postOAuthSignup({
-            nickname,
+          const signinResponse = await postOAuthSignin({
             redirectUri,
-            token: code,
+            token: token,
           });
+          console.log('로그인 성공:', signinResponse);
 
-          // 회원가입 성공 시 홈으로 리디렉션
-          console.log('회원가입 성공:', signupResponse);
+          const { setLogin } = useAuthStore.getState();
+          setLogin(
+            signinResponse.accessToken,
+            signinResponse.refreshToken,
+            signinResponse.user
+          );
           router.push('/');
-        } catch (e) {
-          alert('이미 회원가입됨');
-          console.log(e);
-          router.push('/signin');
+        } catch (error: any) {
+          if (error.response?.status === 404) {
+            const signupResponse = await postOAuthSignup({
+              nickname: '기본 닉네임',
+              redirectUri: 'http://localhost:3000/oauth/kakao',
+              token: token,
+            });
+            console.log('회원가입 성공:', signupResponse);
+
+            const { setLogin } = useAuthStore.getState();
+            setLogin(
+              signupResponse.accessToken,
+              signupResponse.refreshToken,
+              signupResponse.user
+            );
+            router.push('/');
+          } else {
+            console.error('로그인 에러:', error);
+            router.push('/signin');
+          }
         }
       } else {
-        console.error('Code not found in URL');
+        console.error('URL에서 토큰을 찾을 수 없음');
         router.push('/signin');
       }
     },
-    onError: (error) => {
+    onError: (error: AxiosError) => {  // Specify AxiosError type
       console.error('OAuth 로그인 실패', error);
       router.push('/signin');
     },
   });
 
   useEffect(() => {
-    const code = searchParams.get('code');
-    console.log(code);
-    if (code) {
-      oauthMutation.mutate(code);
+    const token = searchParams.get('code'); // code로 받지만 token으로 사용
+    if (token) {
+      oauthMutation.mutate(token);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
