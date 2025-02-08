@@ -7,111 +7,13 @@ import CustomSelect from '@/components/reservation-list/custom-select';
 import {statusLabels, buttonByStatus} from '@/constant/reservation-list-constant';
 import NonDataPage from '../common/non-data';
 import closeButton from '@/public/icon/ic_close_button.svg';
-
-const mock = {
-  reservations: [
-    {
-      id: 1,
-      teamId: '11-6',
-      userId: 0,
-      activity: {
-        bannerImageUrl: '/img/img_navlogo.svg',
-        title: '테스트 예약 체험1',
-        id: 1,
-      },
-      scheduleId: 1,
-      status: 'pending',
-      reviewSubmitted: true,
-      totalPrice: 10000,
-      headCount: 0,
-      date: '날짜',
-      startTime: '시작 시간',
-      endTime: '종료 시간',
-      createdAt: '2025-01-20T01:55:20.317Z',
-      updatedAt: '2025-01-20T01:55:20.317Z',
-    },
-    {
-      id: 2,
-      teamId: '11-6',
-      userId: 0,
-      activity: {
-        bannerImageUrl: '/img/img_navlogo.svg',
-        title: '테스트 예약 체험2',
-        id: 2,
-      },
-      scheduleId: 2,
-      status: 'confirmed',
-      reviewSubmitted: true,
-      totalPrice: 20000,
-      headCount: 0,
-      date: '날짜',
-      startTime: '시작 시간',
-      endTime: '종료 시간',
-      createdAt: '2025-01-20T01:55:20.317Z',
-      updatedAt: '2025-01-20T01:55:20.317Z',
-    },
-    {
-      id: 3,
-      teamId: '11-6',
-      userId: 0,
-      activity: {
-        bannerImageUrl: '/img/img_navlogo.svg',
-        title: '테스트 예약 체험3',
-        id: 3,
-      },
-      scheduleId: 3,
-      status: 'completed',
-      reviewSubmitted: true,
-      totalPrice: 30000,
-      headCount: 0,
-      date: '날짜',
-      startTime: '시작 시간',
-      endTime: '종료 시간',
-      createdAt: '2025-01-20T01:55:20.317Z',
-      updatedAt: '2025-01-20T01:55:20.317Z',
-    },
-    {
-      id: 4,
-      teamId: '11-6',
-      userId: 0,
-      activity: {
-        bannerImageUrl: '/img/img_navlogo.svg',
-        title: '테스트 예약 체험4',
-        id: 4,
-      },
-      scheduleId: 4,
-      status: 'declined',
-      reviewSubmitted: true,
-      totalPrice: 40000,
-      headCount: 0,
-      date: '날짜',
-      startTime: '시작 시간',
-      endTime: '종료 시간',
-      createdAt: '2025-01-20T01:55:20.317Z',
-      updatedAt: '2025-01-20T01:55:20.317Z',
-    },
-    {
-      id: 5,
-      teamId: '11-6',
-      userId: 0,
-      activity: {
-        bannerImageUrl: '/img/img_navlogo.svg',
-        title: '테스트 예약 체험3',
-        id: 5,
-      },
-      scheduleId: 5,
-      status: 'canceled',
-      reviewSubmitted: true,
-      totalPrice: 50000,
-      headCount: 0,
-      date: '날짜',
-      startTime: '시작 시간',
-      endTime: '종료 시간',
-      createdAt: '2025-01-20T01:55:20.317Z',
-      updatedAt: '2025-01-20T01:55:20.317Z',
-    },
-  ],
-};
+import {getReservationList} from '@/service/api/reservation-list/getReservation.api';
+import {useInfiniteQuery} from '@tanstack/react-query';
+import {ReservationListResponse} from '@/types/reservation-list';
+import FormattedDotDate from '@/utils/formatted-dot-date';
+import {ScaleLoader} from 'react-spinners';
+import FormattedPrice from '@/utils/formatted-price';
+import {useInView} from 'react-intersection-observer';
 
 export const statusLabelsColor: Record<string, string> = {
   pending: 'text-blue-100',
@@ -133,6 +35,34 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [ref, inView] = useInView({
+    threshold: 0.1,
+  });
+
+  const {data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery<ReservationListResponse>({
+    queryKey: ['reservationList'],
+    queryFn: ({pageParam = null}) => getReservationList({size: 5, status: '', cursorId: pageParam as number | null}),
+    initialPageParam: null,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalLoadedReservations = allPages.flatMap(page => page.reservations).length;
+
+      if (totalLoadedReservations >= lastPage.totalCount) {
+        return null;
+      }
+      if (lastPage.cursorId === null) {
+        return null;
+      }
+      return lastPage.reservations[lastPage.reservations.length - 1].id;
+    },
+  });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
+
+  const reservationList = data?.pages.flatMap(page => page.reservations) || [];
 
   const handleButtonClick = (status: string, id: number) => {
     setIsOpen(true);
@@ -143,16 +73,16 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
   const getModalContent = () => {
     switch (modalType) {
       case 'pending':
-        return <Modal type="small" message="예약을 취소하시겠습니까?" onClose={() => setIsOpen(false)} />;
+        return <Modal reservationId={selectedId} type="small" message="예약을 취소하시겠습니까?" onClose={() => setIsOpen(false)} />;
       case 'completed':
-        const selectedData = mock.reservations.find(reservation => reservation.status === 'completed' && reservation.id === selectedId);
+        const selectedData = reservationList.find(reservation => reservation.status === 'completed' && reservation.id === selectedId);
         return <ReviewModal data={selectedData} message={'후기 작성'} onClose={() => setIsOpen(false)} />;
       default:
         return null;
     }
   };
 
-  const filteredReservation = mock.reservations.filter(reservation => !orderBy || reservation.status === orderBy);
+  const filteredReservation = reservationList.filter(reservation => !orderBy || reservation.status === orderBy);
 
   useEffect(() => {
     // 모달 dim 부분 스크롤 막기
@@ -166,18 +96,29 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
     };
   }, [isOpen]);
 
+  if (isLoading) {
+    return (
+      <div className="no-scrollbar flex h-740pxr w-full items-center justify-center">
+        <ScaleLoader color="#0b3b2d" />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <div>{error.message}</div>;
+  }
+
   return (
     <div className="mb-16 h-full w-full">
-      <div className="mb-3 flex w-full items-start justify-between tablet:hidden">
+      <div className="mb-3 flex w-full items-center justify-between tablet:mb-6 tablet:items-start">
         <p className="text-3xl font-bold text-black-100">예약 내역</p>
-        <div className="relative h-12 w-12 tablet:hidden" onClick={onClose}>
-          <Image src={closeButton} alt="모달 닫기 버튼" className="absolute cursor-pointer" fill />
-        </div>
-      </div>
-      <div className="mb-3 hidden w-full items-start justify-between tablet:mb-6 tablet:flex">
-        <p className="text-3xl font-bold text-black-100">예약 내역</p>
-        <div className="m-0">
-          <CustomSelect orderBy={orderBy} handleOrderBy={(value: string) => setOrderBy(value)} />
+        <div className="flex items-center gap-1">
+          <div className="m-0">
+            <CustomSelect orderBy={orderBy} handleOrderBy={(value: string) => setOrderBy(value)} />
+          </div>
+          <div className="relative h-12 w-12 tablet:hidden" onClick={onClose}>
+            <Image src={closeButton} alt="모달 닫기 버튼" className="absolute cursor-pointer" fill />
+          </div>
         </div>
       </div>
 
@@ -186,9 +127,12 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
       ) : (
         <div className="flex flex-col gap-2 tablet:gap-4 pc:gap-6">
           {filteredReservation.map(reservation => (
-            <div key={`list_${reservation.id}`} className="flex h-32 w-full items-center rounded-3xl shadow-sidenavi-box tablet:h-156pxr pc:h-204pxr">
+            <div
+              key={`list_${reservation.id}`}
+              className="flex h-32 w-full items-center rounded-3xl bg-white shadow-sidenavi-box tablet:h-156pxr pc:h-204pxr"
+            >
               <div className="relative h-32 w-32 flex-shrink tablet:h-156pxr tablet:w-156pxr pc:h-204pxr pc:w-204pxr">
-                <Image className="absolute" fill src={reservation.activity.bannerImageUrl} alt="체험 배너 이미지" />
+                <Image className="absolute rounded-bl-3xl rounded-tl-3xl" fill src={reservation.activity.bannerImageUrl} alt="체험 배너 이미지" />
               </div>
               <div className="flex-grow py-11pxr pl-2 pr-14pxr tablet:py-3 tablet:pl-3 tablet:pr-18pxr pc:px-6 pc:py-21pxr">
                 <p className={`${statusLabelsColor[reservation.status]} text-md font-bold tablet:text-lg pc:mb-2`}>
@@ -196,14 +140,12 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
                 </p>
                 <p className="text-md font-bold text-nomad-black tablet:mb-1 tablet:text-2lg pc:mb-3 pc:text-xl">{reservation.activity.title}</p>
                 <div className="mb-0 flex items-center gap-[0.125rem] text-xs font-regular text-nomad-black tablet:mb-10pxr tablet:text-md pc:mb-4 pc:text-lg">
-                  <p>{reservation.date}</p>
-                  <p>·</p>
-                  <p>{reservation.startTime}</p>
-                  <p>·</p>
-                  <p>{reservation.endTime}</p>
+                  <p>
+                    {FormattedDotDate(reservation.date)} · {reservation.startTime} - {reservation.endTime} · {reservation.headCount}명
+                  </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-lg font-medium text-black-100 tablet:text-xl">￦{reservation.totalPrice}</p>
+                  <p className="text-lg font-medium text-black-100 tablet:text-xl">￦{FormattedPrice(reservation.totalPrice)}</p>
                   <Button
                     onClick={() => handleButtonClick(`${reservation.status}`, reservation.id)}
                     className={`${buttonStyleByStatus[reservation.status]}`}
@@ -214,6 +156,7 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
               </div>
             </div>
           ))}
+          <div className="mt-1 h-1" ref={ref} />
         </div>
       )}
       {isOpen && <>{getModalContent()}</>}

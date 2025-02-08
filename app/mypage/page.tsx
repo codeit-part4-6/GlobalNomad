@@ -61,19 +61,20 @@ export default function Page() {
       case 'reserveList':
         return <ReservationList onClose={() => setIsOpen(false)} />;
       case 'treatReservation':
-        return <MyActivities />;
+        return (
+          <MyActivities
+            onclose={() => {
+              handleSelectMenu('treatReservation');
+              setIsOpen(false);
+            }}
+          />
+        );
       case 'activitiesRegister':
         return <ActivitiesRegister />;
       case 'reserveCalendar':
         return <ReservationCalendar onClose={() => setIsOpen(false)} />;
-        {
-          /*여기 컴포넌트 갈아끼워야해요*/
-        }
       default:
         return <div>선택된 메뉴가 없습니다.</div>;
-        {
-          /*여기 컴포넌트 갈아끼워야해요*/
-        }
     }
   };
 
@@ -82,16 +83,16 @@ export default function Page() {
   }
 
   return (
-    <div className="mx-auto px-4 pt-6 tablet:p-6 pc:mt-[4.5rem] pc:w-full pc:max-w-[75rem] pc:p-0">
+    <div className="mx-auto px-4 pt-6 tablet:p-6 pc:w-full pc:max-w-[75rem] pc:p-0 pc:pt-[4.5rem]">
       {isMobile ? (
         // **모바일 환경**
-        <div>
+        <div className="">
           <SideNavi selectedMenu={selectedMenu} onSelectMenu={handleSelectMenu} isMobile={isMobile} onOpenModal={() => setIsOpen(true)} />
           {isOpen && (
             <OverlayContainer>
               <div className="h-full w-full overflow-y-auto bg-white">
                 <Navbar />
-                <div className="px-4 pt-6" key={key}>
+                <div className="min-h-740pxr bg-black-400 px-4 pt-6" key={key}>
                   {renderContent()}
                 </div>
                 <Footer />
@@ -101,7 +102,7 @@ export default function Page() {
         </div>
       ) : (
         // **PC/태블릿 환경**
-        <div className="flex overflow-y-auto tablet:gap-4 pc:gap-6">
+        <div className="flex tablet:gap-4 pc:gap-6">
           <SideNavi selectedMenu={selectedMenu} onSelectMenu={handleSelectMenu} />
           <div className="flex-grow" key={key}>
             {renderContent()}

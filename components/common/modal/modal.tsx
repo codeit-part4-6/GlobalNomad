@@ -2,14 +2,50 @@ import Image from 'next/image';
 import checkConfirm from '@/public/icon/icon_confirm.svg';
 import OverlayContainer from './overlay-container';
 import Button from '../button';
+import {patchReservationList} from '@/service/api/reservation-list/patchReservation.api';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
+import {ScaleLoader} from 'react-spinners';
+import {useState} from 'react';
 
 interface ModalProps {
   type: 'small' | 'big';
   message: string;
   onClose: () => void;
+  reservationId?: number | null;
 }
 
-export default function Modal({type, message, onClose}: ModalProps) {
+export default function Modal({type, message, onClose, reservationId}: ModalProps) {
+  const [loading, setLoading] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async (reservationId: number | null) => {
+      if (reservationId !== null) {
+        await patchReservationList({reservationId});
+      }
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['reservationList'],
+      });
+      setLoading(false);
+      alert('예약을 취소했습니다');
+      onClose();
+    },
+    onError: () => {
+      setLoading(false);
+      alert('예약 취소에 실패했어요');
+    },
+  });
+
+  const handleCancelClick = () => {
+    if (reservationId !== null) {
+      mutation.mutate(reservationId ?? null);
+    }
+  };
+
   const modalConfig = {
     small: {
       containerClass:
@@ -32,10 +68,11 @@ export default function Modal({type, message, onClose}: ModalProps) {
               아니오
             </Button>
             <Button
-              onClick={onClose}
+              disabled={loading}
+              onClick={handleCancelClick}
               className={'h-38pxr w-80pxr rounded-md bg-nomad-black px-14pxr py-10pxr text-center text-md font-bold leading-none text-white'}
             >
-              취소하기
+              {loading ? <ScaleLoader width={3} height={20} color="#ffffff" /> : '취소하기'}
             </Button>
           </div>
         </>
