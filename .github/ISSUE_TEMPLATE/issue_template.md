@@ -1,6 +1,6 @@
 ---
-name: 이슈 템플릿
-about: Describe this issue template's purpose here.~
+name: ISSUE_TEMPLATE
+about: 이슈 템플릿
 title: ''
 labels: ''
 assignees: ''
