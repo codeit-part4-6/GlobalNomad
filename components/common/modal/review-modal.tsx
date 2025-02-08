@@ -9,6 +9,7 @@ import {useState} from 'react';
 import {postReview} from '@/service/api/reservation-list/postReview.api';
 import {useMutation} from '@tanstack/react-query';
 import {ScaleLoader} from 'react-spinners';
+import FormattedPrice from '@/utils/formatted-price';
 
 export default function ReviewModal({data, message, onClose}: ReviewModalProps) {
   const [starRating, setStarRating] = useState<number>(0);
@@ -64,7 +65,7 @@ export default function ReviewModal({data, message, onClose}: ReviewModalProps) 
                 {FormattedDotDate(data.date)} · {data.startTime} - {data.endTime} · {data.headCount}명
               </p>
             </div>
-            <p className="text-xl font-bold leading-none text-nomad-black tablet:text-3xl">￦{data?.totalPrice}</p>
+            <p className="text-xl font-bold leading-none text-nomad-black tablet:text-3xl">￦{FormattedPrice(data?.totalPrice)}</p>
           </div>
         </div>
         <StarRating starRating={starRating} setStarRating={setStarRating} />
