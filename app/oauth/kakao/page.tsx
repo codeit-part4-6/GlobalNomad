@@ -7,6 +7,7 @@ import { postOAuth } from '@/service/api/oauth/postOAuth.api';
 import { postOAuthSignin } from '@/service/api/oauth/postOAuthSignin.api';
 import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
 import { useAuthStore } from '@/service/store/authStore';
+import { AxiosError } from 'axios';
 
 export default function Page() {
   const router = useRouter();
@@ -35,24 +36,29 @@ export default function Page() {
             signinResponse.user
           );
           router.push('/');
-        } catch (error: any) {
-          if (error.response?.status === 404) {
-            const signupResponse = await postOAuthSignup({
-              nickname: '기본 닉네임',
-              redirectUri: 'http://localhost:3000/oauth/kakao',
-              token: token,
-            });
-            console.log('회원가입 성공:', signupResponse);
-
-            const { setLogin } = useAuthStore.getState();
-            setLogin(
-              signupResponse.accessToken,
-              signupResponse.refreshToken,
-              signupResponse.user
-            );
-            router.push('/');
+          
+        } catch (error: unknown) {
+          if (error instanceof AxiosError) {
+            if (error.response?.status === 404) {
+              const signupResponse = await postOAuthSignup({
+                nickname: '기본 닉네임',
+                redirectUri: 'http://localhost:3000/oauth/kakao',
+                token: token,
+              });
+              console.log('회원가입 성공:', signupResponse);
+              const { setLogin } = useAuthStore.getState();
+              setLogin(
+                signupResponse.accessToken,
+                signupResponse.refreshToken,
+                signupResponse.user
+              );
+              router.push('/');
+            } else {
+              console.error('로그인 에러:', error);
+              router.push('/signin');
+            }
           } else {
-            console.error('로그인 에러:', error);
+            console.error('알 수 없는 오류 발생:', error);
             router.push('/signin');
           }
         }
@@ -61,7 +67,7 @@ export default function Page() {
         router.push('/signin');
       }
     },
-    onError: (error: AxiosError) => {  // Specify AxiosError type
+    onError: (error: AxiosError) => { 
       console.error('OAuth 로그인 실패', error);
       router.push('/signin');
     },
