@@ -77,12 +77,11 @@ export default function Page() {
   });
 
   useEffect(() => {
-    const token = searchParams.get('code'); // code로 받지만 token으로 사용
+    const token = searchParams.get('code');
     if (token) {
       oauthMutation.mutate(token);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [searchParams, oauthMutation]);
 
   return <div>카카오 로그인 처리 중...</div>;
 }
