@@ -1,3 +1,4 @@
+'use client';
 import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Button from '@/components/common/button';
@@ -30,7 +31,7 @@ export const buttonStyleByStatus: Record<string, string> = {
     'w-80pxr h-8 py-1 px-2 font-bold text-md text-white tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-nomad-black rounded-md',
 };
 
-export default function ReservationList({onClose}: {onClose: () => void}) {
+export default function ReservationList({onClose}: {onClose?: () => void}) {
   const [orderBy, setOrderBy] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);

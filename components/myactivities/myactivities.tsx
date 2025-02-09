@@ -1,3 +1,4 @@
+'use client';
 import Button from '@/components/common/button';
 import {useState, useRef, Fragment} from 'react';
 import ActivitiesRegister from './activities-register';
@@ -18,7 +19,7 @@ import {deleteActivities} from '@/service/api/myactivities/deleteActivities.api'
 
 type ContentType = 'manage' | 'register' | 'modify' | 'delete';
 
-export default function MyActivities({onclose}: {onclose: () => void}) {
+export default function MyActivities({onclose}: {onclose?: () => void}) {
   const [content, setContent] = useState<ContentType>('manage');
   const formRef = useRef<{submitForm: () => void} | null>(null);
   const [isOpen, setIsOpen] = useState(false);

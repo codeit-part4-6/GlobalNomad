@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import React, {useEffect, useMemo, useState} from 'react';
 import selectDown from '@/public/icon/ic_chevron_down.svg';
@@ -9,7 +10,7 @@ import {MyActivitiesResponse} from '@/types/activities';
 import {getActivities} from '@/service/api/reservation-calendar/getActivities.api';
 import {ScaleLoader} from 'react-spinners';
 
-export default function ReservationCalendar({onClose}: {onClose: () => void}) {
+export default function ReservationCalendar({onClose}: {onClose?: () => void}) {
   const [isOptionOpen, setIsOptionOpen] = useState(false);
   const {data, isLoading, isError, error} = useQuery<MyActivitiesResponse>({
     queryKey: ['myActivites'],
