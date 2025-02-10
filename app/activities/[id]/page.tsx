@@ -1,11 +1,12 @@
 'use client';
 import React, {useEffect, useState} from 'react';
-import Image from 'next/image';
 import {useQuery} from 'react-query';
 import {StaticImport} from 'next/dist/shared/lib/get-img-props';
 import {notFound, useParams, useRouter} from 'next/navigation';
 import {ActivitiesInfoType} from '@/types/activities-info';
 import {getActivitiesInfo} from '@/service/api/activities/getActivitiesInfo';
+import Image from 'next/image';
+import SkeletonLayout from '@/app/activities/[id]/skeleton';
 import Reservation from '@/components/activities/side-reservation';
 import KakaoMap from '@/components/activities/kakomap';
 import Reviews from '@/components/activities/reviews';
@@ -14,7 +15,7 @@ import InitialDevice from '@/utils/initial-device';
 import Star from '@/public/icon/ic_star.svg';
 import IconMeatball from '@/public/icon/ic_meatball.svg';
 import LocationIcon from '@/public/icon/icon_location.svg';
-import SkeletonLayout from './skeleton';
+import AdminAuth from '@/utils/admin-auth';
 
 const DropboxItems = [
   {id: 1, label: '수정하기', type: 'modify'},
@@ -50,8 +51,7 @@ const BannerFromDivceType = ({device, bannerImg, subImages}: BannerType) => {
 };
 
 const ActivitiesUpdateModal = ({userId}: {userId: number}) => {
-  const sessionID = sessionStorage.getItem('userInfo');
-  const updateAuth = sessionID && JSON.parse(sessionID).id === userId;
+  const adminAuth = AdminAuth(userId);
   const [isOpenDropbox, setIsOpenDropbox] = useState<boolean>(false);
 
   const router = useRouter();
@@ -63,7 +63,7 @@ const ActivitiesUpdateModal = ({userId}: {userId: number}) => {
   };
 
   return (
-    updateAuth && (
+    adminAuth && (
       <div>
         <Image src={IconMeatball} onClick={() => setIsOpenDropbox(true)} width={40} height={40} alt="자세히보기" priority />;
         {isOpenDropbox && (
@@ -81,6 +81,7 @@ const ActivitiesUpdateModal = ({userId}: {userId: number}) => {
 
 export default function Page() {
   const params = useParams();
+  const router = useRouter();
   const [device, setDevice] = useState<string>('mobile');
   const [pageID, setPageID] = useState<string>('');
 
@@ -88,7 +89,10 @@ export default function Page() {
     queryKey: ['activitiesInfo'],
     queryFn: () => getActivitiesInfo(pageID),
     enabled: !!pageID,
-    onError: () => notFound(),
+    onError: error => {
+      alert(error);
+      router.back();
+    },
   });
 
   useEffect(() => {
