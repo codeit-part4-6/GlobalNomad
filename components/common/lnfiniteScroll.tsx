@@ -25,24 +25,23 @@ const InfiniteScroll = <T,>({queryKey, fetchData, render, className}: InfiniteSc
     initialPageParam: null,
   });
 
+  const getPage = (data?.pages ?? [])
+    .flatMap(group => group.pages)
+    .flat()
+    .filter(Boolean);
+  const hasData = getPage.length > 0;
+
   useEffect(() => {
     if (inView && hasNextPage) {
       fetchNextPage();
     }
   }, [inView, fetchNextPage, hasNextPage]);
 
-  const activities = (data?.pages ?? [])
-    .flatMap(group => group.pages)
-    .flat()
-    .filter(Boolean);
-  const hasActivities = activities.length > 0;
-
   return (
     <>
       <div className={`relative ${className}`}>
         {/* 데이터 영역 */}
-        {hasActivities}
-        <div className={`h-full overflow-x-hidden pr-4 ${hasActivities ? 'custom-scrollbar overflow-y-scroll' : 'overflow-hidden'}`}>
+        <div className={`h-full overflow-x-hidden pr-4 ${hasData ? 'custom-scrollbar overflow-y-scroll' : 'overflow-hidden'}`}>
           {data?.pages.map((group, i) => (
             <div key={i} className="relative">
               {render(group)}

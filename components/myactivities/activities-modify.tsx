@@ -10,7 +10,7 @@ import {useMutation} from '@tanstack/react-query';
 import {getActivitiesId} from '@/service/api/myactivities/getActivitiesId.api';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
-import Modal from '../common/modal/modal';
+import Modal from '@/components/common/modal/modal';
 
 interface ActivitiesModifyProps {
   onSubmitParent?: (data: PatchActivitiesBody & GetActivitiesResponse) => void;
