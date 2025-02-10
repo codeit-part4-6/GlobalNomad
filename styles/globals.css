@@ -71,11 +71,6 @@ body {
     /* 부모 요소가 relative여야 절대 위치가 제대로 적용됨 */
   }
 
-  /* SwiperSlide 스타일 */
-  /* .swiper-slide {
-    @apply flex h-10 w-20 items-center justify-center;
-  } */
-
   /* 페이지네이션 스타일 */
   .swiper-wrapper .swiper-pagination {
     position: absolute;
