@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -24,6 +25,7 @@ interface IFormInput {
 export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const router = useRouter();
 
   const {
     control,
@@ -54,6 +56,7 @@ export default function Page() {
       onSuccess: () => {
         setModalMessage('가입이 완료되었습니다!');
         setIsModalOpen(true);
+        router.push('/');
       },
     });
   };
