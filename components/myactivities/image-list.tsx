@@ -6,6 +6,7 @@ import {useState, useRef, useEffect} from 'react';
 import {postImage} from '@/service/api/myactivities/postImage.api';
 import {useMutation} from '@tanstack/react-query';
 import {SubImage} from '@/types/getActivitiesId.types';
+import Modal from '../common/modal/modal';
 
 interface ImageListType<T extends FieldValues> {
   maxImages?: number;
@@ -19,6 +20,8 @@ export default function ImageList<T extends FieldValues>({maxImages = 5, name = 
   const [imageUrls, setImageUrls] = useState<SubImage[]>(subImages || []);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [errorMessege, setErrorMessege] = useState('');
+  const [isOpenError, setIsOpenError] = useState(false);
 
   const {
     control,
@@ -54,8 +57,8 @@ export default function ImageList<T extends FieldValues>({maxImages = 5, name = 
       }
     },
     onError: error => {
-      // setLoading(false);
-      alert(`${error.message}`);
+      setIsOpenError(true);
+      setErrorMessege(error.message);
     },
   });
 
@@ -199,6 +202,7 @@ export default function ImageList<T extends FieldValues>({maxImages = 5, name = 
         {/* 오류 메시지 */}
         {typeof errors[name]?.message === 'string' && <span className="error-message">{errors[name]?.message}</span>}
       </div>
+      {isOpenError && <Modal type="big" message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>
   );
 }

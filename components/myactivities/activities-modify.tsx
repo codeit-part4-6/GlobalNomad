@@ -10,6 +10,7 @@ import {useMutation} from '@tanstack/react-query';
 import {getActivitiesId} from '@/service/api/myactivities/getActivitiesId.api';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
+import Modal from '@/components/common/modal/modal';
 
 interface ActivitiesModifyProps {
   onSubmitParent?: (data: PatchActivitiesBody & GetActivitiesResponse) => void;
@@ -51,6 +52,8 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
   const [isOpen, setIsOpen] = useState(false);
   const [subImages, setSubImages] = useState<SubImage[]>([]);
   const [bannerImageUrl, setBannerImageUrl] = useState('');
+  const [isOpenError, setIsOpenError] = useState(false);
+  const [errorMessege, setErrorMessege] = useState('');
 
   // 수정 api
   const mutation = useMutation({
@@ -73,7 +76,8 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
       setBannerImageUrl(bannerImageUrlData);
     },
     onError: error => {
-      alert(`${error.message}`);
+      setIsOpenError(true);
+      setErrorMessege(error.message);
     },
   });
 
@@ -252,6 +256,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
           </div>
         </form>
       </FormProvider>
+      {isOpenError && <Modal type="big" message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>
   );
 });
