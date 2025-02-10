@@ -73,14 +73,8 @@ export default function Page() {
         return <ActivitiesRegister />;
       case 'reserveCalendar':
         return <ReservationCalendar onClose={() => setIsOpen(false)} />;
-        {
-          /*여기 컴포넌트 갈아끼워야해요*/
-        }
       default:
         return <div>선택된 메뉴가 없습니다.</div>;
-        {
-          /*여기 컴포넌트 갈아끼워야해요*/
-        }
     }
   };
 
@@ -98,7 +92,7 @@ export default function Page() {
             <OverlayContainer>
               <div className="h-full w-full overflow-y-auto bg-white">
                 <Navbar />
-                <div className="bg-black-400 min-h-740pxr px-4 pt-6" key={key}>
+                <div className="min-h-740pxr bg-black-400 px-4 pt-6" key={key}>
                   {renderContent()}
                 </div>
                 <Footer />
