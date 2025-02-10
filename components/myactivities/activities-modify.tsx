@@ -13,7 +13,7 @@ import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
 
 interface ActivitiesModifyProps {
   onSubmitParent?: (data: PatchActivitiesBody & GetActivitiesResponse) => void;
-  modifyId: number;
+  modifyId: number | null;
 }
 
 const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId}, ref) => {

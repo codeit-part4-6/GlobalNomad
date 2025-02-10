@@ -134,7 +134,7 @@ export default function MyActivities() {
     setIsOpen(false);
     // onclose();
   };
-
+  console.log(content);
   return (
     <>
       <div className="flex flex-col">
@@ -147,7 +147,10 @@ export default function MyActivities() {
             {content === 'manage' ? (
               <>
                 <Button
-                  onClick={() => setContent('register')}
+                  onClick={() => {
+                    setContent('register');
+                    router.push('/mypage/treatReservation/activitiesRegister');
+                  }}
                   className="h-[48px] w-[120px] gap-[4px] rounded-[4px] bg-primary pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white"
                 >
                   체험 등록하기
