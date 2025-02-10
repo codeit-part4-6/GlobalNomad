@@ -1,87 +1,221 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
-import { postOAuth } from '@/service/api/oauth/postOAuth.api';
-import { postOAuthSignin } from '@/service/api/oauth/postOAuthSignin.api';
-import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
-import { useAuthStore } from '@/service/store/authStore';
-import { AxiosError } from 'axios';
+import Input from '@/components/common/Input';
+import Button from '@/components/common/button';
+import Modal from '@/components/common/modal/modal';
+import signLogo from '@/public/img/img_signlogo.svg';
+import GoogleIcon from '@/public/icon/ic_google.svg';
+import KakaoIcon from '@/public/icon/ic_kakao.svg';
+import { postSignup } from '@/service/api/users/postSignup.api';
+import { SignupBody } from '@/types/postSignup.types';
+
+interface IFormInput {
+  email: string;
+  nickname: string;
+  password: string;
+  confirmPassword: string;
+}
 
 export default function Page() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const oauthMutation = useMutation({
-    mutationFn: postOAuth,
-    onSuccess: async (oauthData) => {
-      // code로 받지만 token으로 사용
-      const token = searchParams.get('code');
-      console.log("받은 인가 토큰", token);
-      
-      if (token) {
-        sessionStorage.setItem('userInfo', JSON.stringify(oauthData));
-        try {
-          const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI || '';
-          
-          const signinResponse = await postOAuthSignin({
-            redirectUri,
-            token: token,
-          });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
-          console.log('로그인 성공:', signinResponse);
-          const { setLogin } = useAuthStore.getState();
-          setLogin(
-            signinResponse.accessToken,
-            signinResponse.refreshToken,
-            signinResponse.user
-          );
-
-          router.push('/');
-        } catch (error: unknown) {
-          if (error instanceof AxiosError) {
-            if (error.response?.status === 404) {
-              const signupResponse = await postOAuthSignup({
-                nickname: '기본 닉네임',
-                redirectUri: process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI || '',
-                token: token,
-              });
-
-              console.log('회원가입 성공:', signupResponse);
-              const { setLogin } = useAuthStore.getState();
-              setLogin(
-                signupResponse.accessToken,
-                signupResponse.refreshToken,
-                signupResponse.user
-              );
-
-              router.push('/');
-            } else {
-              console.error('로그인 에러:', error);
-              router.push('/signin');
-            }
-          } else {
-            console.error('알 수 없는 오류 발생:', error);
-            router.push('/signin');
-          }
-        }
-      } else {
-        console.error('URL에서 토큰을 찾을 수 없음');
-        router.push('/signin');
-      }
-    },
-    onError: (error: AxiosError) => {
-      console.error('OAuth 로그인 실패', error);
-      router.push('/signin');
+  const {
+    control,
+    handleSubmit,
+    formState: {errors, isValid},
+    watch,
+  } = useForm<IFormInput>({
+    mode: 'onChange',
+    defaultValues: {
+      email: '',
+      nickname: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
-  useEffect(() => {
-    const token = searchParams.get('code');
-    if (token) {
-      oauthMutation.mutate(token);
-    }
-  }, [searchParams, oauthMutation]);
+  const signupMutation = useMutation({
+    mutationFn: (signupData: SignupBody) => postSignup(signupData),
+  });
 
-  return <div>카카오 로그인 처리 중...</div>;
+  const onSubmit = (data: IFormInput) => {
+    signupMutation.mutate(data, {
+      // 경고
+      onError: () => {
+        setModalMessage('이미 사용중인 이메일입니다.');
+        setIsModalOpen(true);
+      },
+      onSuccess: () => {
+        setModalMessage('가입이 완료되었습니다!');
+        setIsModalOpen(true);
+      },
+    });
+  };
+
+  const passwordValue = watch('password');
+
+  const handleKakaoLogin = () => {
+    const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI}&response_type=code`;
+    window.location.href = kakaoAuthURL;
+  }
+
+  return (
+    <>
+      <div className="desktop:pt-[7.375rem] desktop:gap-[3.5rem] m-auto flex max-w-[40rem] flex-col items-center gap-[1.5rem] pt-[6.875rem] tablet:gap-[2.5rem] tablet:pt-[7.875rem]">
+        <Link href="/">
+          <Image src={signLogo} alt="로고" />
+        </Link>
+        <form 
+          className="flex w-full flex-col items-center justify-center gap-[2.5rem] tablet:gap-[3rem]"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="flex flex-col gap-[1.625rem] tablet:gap-[2rem]">
+            <div className="flex flex-col gap-[1.75rem]">
+              {/* 이메일 입력란 */}
+              <Controller
+                name="email"
+                control={control}
+                rules={{
+                  required: '필수값입니다.',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                    message: '이메일 형식으로 작성해 주세요.',
+                  },
+                }}
+                render={({field}) => (
+                  <Input
+                    label="이메일"
+                    placeholder="이메일을 입력해 주세요"
+                    labelClassName="block text-lg pb-2"
+                    className="h-[3.625rem] w-[21.875rem] tablet:h-[3.625rem] tablet:w-[40rem]"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.email?.message}
+                  />
+                )}
+              />
+              {/* 닉네임 입력란 */}
+              <Controller
+                name="nickname"
+                control={control}
+                rules={{
+                  required: '필수값입니다.',
+                  maxLength: {
+                    value: 10,
+                    message: '열 자 이하로 작성해 주세요.',
+                  },
+                }}
+                render={({field}) => (
+                  <Input
+                    label="닉네임"
+                    placeholder="닉네임을 입력해 주세요"
+                    labelClassName="block text-lg pb-2"
+                    className="h-[3.625rem] w-[21.875rem] tablet:h-[3.625rem] tablet:w-[40rem]"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.nickname?.message}
+                  />
+                )}
+              />
+              {/* 비밀번호 입력란 */}
+              <Controller
+                name="password"
+                control={control}
+                rules={{
+                  required: '필수값입니다.',
+                  minLength: {
+                    value: 8,
+                    message: '8자 이상으로 작성해 주세요.',
+                  },
+                }}
+                render={({field}) => (
+                  <Input
+                    label="비밀번호"
+                    placeholder="비밀번호를 입력해 주세요"
+                    labelClassName="block text-lg pb-2"
+                    className="h-[3.625rem] w-[21.875rem] tablet:h-[3.625rem] tablet:w-[40rem]"
+                    value={field.value}
+                    onChange={field.onChange}
+                    isPassword={true}
+                    type="password"
+                    error={errors.password?.message}
+                  />
+                )}
+              />
+              {/* 비밀번호 확인 입력란 */}
+              <Controller
+                name="confirmPassword"
+                control={control}
+                rules={{
+                  required: '필수값입니다.',
+                  validate: value => value === passwordValue || '비밀번호가 일치하지 않습니다.',
+                }}
+                render={({field}) => (
+                  <div>
+                    <Input
+                      label="비밀번호 확인"
+                      placeholder="비밀번호를 한번 더 입력해 주세요"
+                      labelClassName="block text-lg pb-2"
+                      className="h-[3.625rem] w-[21.875rem] tablet:h-[3.625rem] tablet:w-[40rem]"
+                      value={field.value}
+                      onChange={field.onChange}
+                      isPassword={true}
+                      type="password"
+                      error={errors.confirmPassword?.message}
+                    />
+                  </div>
+                )}
+              />
+              {/* 회원가입 버튼 */}
+              <Button
+                className={`h-[3.375rem] w-[21.875rem] gap-[0.5rem] rounded-[0.375rem] text-white sm:px-4 tablet:h-[3rem] tablet:w-[40rem] ${
+                  isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
+                }`}
+                type="submit"
+                disabled={!isValid}
+              >
+                회원가입 하기
+              </Button>
+            </div>
+            {/* 로그인 링크 */}
+            <span className="text-center text-[1rem] font-regular leading-[1.19rem] text-gray-800">
+              회원이신가요?
+              <Link href="/signin" className="ml-[0.3125rem] underline">
+                로그인하기
+              </Link>
+            </span>
+            <div className="flex flex-col gap-[1.5rem] tablet:gap-[2.5rem]">
+              <div className="flex justify-center items-center">
+                <hr className="w-[5rem] border border-gray-300" />
+                <span className="text-center text-[0.875rem] font-regular leading-[1.5rem] text-gray-700">
+                  SNS 계정으로 회원가입하기
+                </span>
+                <hr className="w-[5rem] border border-gray-300" />
+              </div>
+              <div className="flex justify-center gap-[1rem]">
+                <button type="button" onClick={() => alert("Google 로그인 기능이 일시적으로 제한되어 있습니다")}>
+                  <Image src={GoogleIcon} alt="google icon" />
+                </button>
+                <button type="button" onClick={handleKakaoLogin}>
+                  <Image src={KakaoIcon} alt="kakao icon" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      {isModalOpen && 
+        <Modal 
+          type="big" 
+          message={modalMessage} 
+          onClose={() => setIsModalOpen(false)} 
+        />}
+    </>
+  );
 }
