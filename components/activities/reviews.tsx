@@ -27,7 +27,7 @@ const Reviews = ({pageID}: {pageID: string}) => {
       <>
         <div className="w-full pb-34pxr pt-40pxr text-xl font-bold text-nomad-black">후기</div>
         <div className="flex flex-row">
-          <p className="mr-16pxr text-4xl font-semibold text-nomad-black">{data.averageRating}</p>
+          <p className="mr-16pxr text-4xl font-semibold text-nomad-black">{data.averageRating.toFixed(1)}</p>
           <div className="flex-col items-start gap-8pxr p-0">
             <p className="text-2lg font-normal text-nomad-black">매우 만족</p>
             <div className="flex flex-row">

@@ -126,7 +126,9 @@ export default function Page() {
                 체험 설명
               </div>
               <div className="text-nomad mb-16pxr h-auto min-w-327pxr text-xl font-normal opacity-75 tablet:mb-57pxr tablet:min-w-428pxr pc:mb-34pxr pc:min-w-790pxr">
-                안녕하세요! 저희 스트릿 댄스 체험을 소개합니다...
+                {activitiesInfo.description.split('\n').map((dt, idx) => {
+                  return <p key={`description-${idx}`}>{dt}</p>;
+                })}
               </div>
             </div>
             <hr />
