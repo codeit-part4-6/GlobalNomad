@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Dayjs} from 'dayjs';
 import dayjs from 'dayjs';
 import {Calendar} from 'antd';
@@ -113,13 +113,12 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
     saveTime(getData);
   };
 
-  const checkTime = useMemo(
-    () => (hour: string) => {
-      const nowHour = +dayjs().get('hour');
-      return nowHour >= +hour.substring(0, 2);
-    },
-    [],
-  );
+  const checkTime = (date: string, hour: string) => {
+    const getDate = dayjs(`${date} ${hour}:00:00`, 'YYYY-MM-DD HH-mm:ss');
+    console.log(dayjs().diff(getDate));
+
+    return dayjs().diff(getDate) > 0;
+  };
 
   useEffect(() => {
     if (state.daySchedule.times.length < 1 && schedules) {
@@ -158,10 +157,10 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
             return (
               dt.id > 0 && (
                 <Button
-                  className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectTime.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'} ${checkTime(dt.startTime) && 'border border-red-200'}`}
+                  className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectTime.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'} ${checkTime(state.daySchedule.date, dt.startTime) && 'border border-red-200'}`}
                   key={dt.id}
                   onClick={() => handleSelectTime({date: state.daySchedule.date, id: dt.id, startTime: dt.startTime, endTime: dt.endTime})}
-                  disabled={checkTime(dt.startTime)}
+                  disabled={checkTime(state.daySchedule.date, dt.startTime)}
                 >
                   <p
                     className={`text-lg font-medium ${selectTime.id === dt.id ? 'text-white' : 'text-black-50'}`}
