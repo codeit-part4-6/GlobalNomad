@@ -15,6 +15,7 @@ import ActivitiesModify from './activities-modify';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {patchActivities} from '@/service/api/myactivities/patchActivities.api';
 import {deleteActivities} from '@/service/api/myactivities/deleteActivities.api';
+import NonDataPage from './non-data';
 
 type ContentType = 'manage' | 'register' | 'modify' | 'delete';
 
@@ -149,12 +150,12 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
         <div className="mb-16 h-full w-full">
           <div className="item-center mb-4 flex justify-between tablet:mb-6 tablet:mt-0">
             <h1 className="text-3xl font-bold">{content === 'manage' ? '내 체험 관리' : '내 체험 등록'}</h1>
-            <div className="flex gap-1">
+            <div className="item-center flex gap-1">
               {content === 'manage' ? (
                 <>
                   <Button
                     onClick={() => setContent('register')}
-                    className="h-48pxr w-120pxr gap-4pxr rounded-md bg-primary pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white"
+                    className="h-48pxr w-100pxr gap-4pxr rounded-md bg-primary pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white"
                   >
                     등록하기
                   </Button>
@@ -187,21 +188,30 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
               className="h-500pxr w-full pc:h-700pxr"
               queryKey="key"
               fetchData={context => getActivitiesList({...context, meta: {size: 20}})}
-              render={group => (
-                <div className="flex flex-col gap-2 tablet:gap-4 pc:gap-6">
-                  {group.pages.flatMap(page =>
-                    page.map((data: Activity) => (
-                      <Fragment key={data.id}>
-                        <ActivitiesCard
-                          data={data}
-                          onClickModify={() => handleClickModify(data.id)}
-                          onClickDelete={() => handleClickDelete(data.id)}
-                        />
-                      </Fragment>
-                    )),
-                  )}
-                </div>
-              )}
+              render={group => {
+                if (!group.pages || group.pages.length === 0) {
+                  return <NonDataPage />;
+                }
+
+                const activities = group.pages.flatMap(page => page);
+                return (
+                  <div className="flex flex-col gap-2 tablet:gap-4 pc:gap-6">
+                    {activities.length > 0 ? (
+                      activities.map((data: Activity) => (
+                        <Fragment key={data.id}>
+                          <ActivitiesCard
+                            data={data}
+                            onClickModify={() => handleClickModify(data.id)}
+                            onClickDelete={() => handleClickDelete(data.id)}
+                          />
+                        </Fragment>
+                      ))
+                    ) : (
+                      <NonDataPage />
+                    )}
+                  </div>
+                );
+              }}
             ></InfiniteScroll>
           )}
 

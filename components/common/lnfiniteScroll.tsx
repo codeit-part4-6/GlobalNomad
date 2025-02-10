@@ -31,12 +31,18 @@ const InfiniteScroll = <T,>({queryKey, fetchData, render, className}: InfiniteSc
     }
   }, [inView, fetchNextPage, hasNextPage]);
 
+  const activities = (data?.pages ?? [])
+    .flatMap(group => group.pages)
+    .flat()
+    .filter(Boolean);
+  const hasActivities = activities.length > 0;
+
   return (
     <>
       <div className={`relative ${className}`}>
         {/* 데이터 영역 */}
-
-        <div className="custom-scrollbar h-full overflow-x-hidden overflow-y-scroll pr-4">
+        {hasActivities}
+        <div className={`h-full overflow-x-hidden pr-4 ${hasActivities ? 'custom-scrollbar overflow-y-scroll' : 'overflow-hidden'}`}>
           {data?.pages.map((group, i) => (
             <div key={i} className="relative">
               {render(group)}
@@ -45,7 +51,6 @@ const InfiniteScroll = <T,>({queryKey, fetchData, render, className}: InfiniteSc
             </div>
           ))}
         </div>
-
         {/* 로딩 아이콘: 하단에 위치 */}
         {isFetchingNextPage && (
           <div className="absolute bottom-0 left-0 right-0 z-30 flex items-center justify-center bg-gray-100 py-2 opacity-20">
