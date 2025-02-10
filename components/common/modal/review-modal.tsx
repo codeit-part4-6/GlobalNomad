@@ -3,13 +3,13 @@ import Button from '../button';
 import OverlayContainer from './overlay-container';
 import {ReviewModalProps} from '@/types/review-modal-props';
 import closeButton from '@/public/icon/ic_close_button.svg';
-import FormattedDotDate from '@/utils/formatted-dot-date';
 import StarRating from '@/components/reservation-list/star-rating';
 import {useState} from 'react';
 import {postReview} from '@/service/api/reservation-list/postReview.api';
 import {useMutation} from '@tanstack/react-query';
 import {ScaleLoader} from 'react-spinners';
 import FormattedPrice from '@/utils/formatted-price';
+import FormatDate from '@/utils/format-date';
 
 export default function ReviewModal({data, message, onClose}: ReviewModalProps) {
   const [starRating, setStarRating] = useState<number>(0);
@@ -62,7 +62,7 @@ export default function ReviewModal({data, message, onClose}: ReviewModalProps) 
             <p className="text-lg font-bold text-nomad-black tablet:text-xl">{data?.activity.title}</p>
             <div className="border-nomad-black/10 mb-6pxr flex items-center border-b pb-6pxr text-md font-regular text-nomad-black tablet:mb-3 tablet:pb-3 tablet:text-2lg">
               <p>
-                {FormattedDotDate(data.date)} · {data.startTime} - {data.endTime} · {data.headCount}명
+                {FormatDate(data.date)} · {data.startTime} - {data.endTime} · {data.headCount}명
               </p>
             </div>
             <p className="text-xl font-bold leading-none text-nomad-black tablet:text-3xl">￦{FormattedPrice(data?.totalPrice)}</p>

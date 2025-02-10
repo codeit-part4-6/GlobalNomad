@@ -16,10 +16,12 @@ import ActivitiesModify from './activities-modify';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {patchActivities} from '@/service/api/myactivities/patchActivities.api';
 import {deleteActivities} from '@/service/api/myactivities/deleteActivities.api';
+import {useRouter} from 'next/navigation';
 
 type ContentType = 'manage' | 'register' | 'modify' | 'delete';
 
-export default function MyActivities({onclose}: {onclose?: () => void}) {
+export default function MyActivities() {
+  const router = useRouter();
   const [content, setContent] = useState<ContentType>('manage');
   const formRef = useRef<{submitForm: () => void} | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -130,14 +132,14 @@ export default function MyActivities({onclose}: {onclose?: () => void}) {
 
   const handleClose = () => {
     setIsOpen(false);
-    onclose();
+    // onclose();
   };
 
   return (
     <>
       <div className="flex flex-col">
         <div className="mb-2 flex justify-end tablet:hidden">
-          <Image onClick={onclose} src={closeButton} alt="모달 닫기 버튼" className="cursor-pointer" width={48} height={48} />
+          <Image onClick={() => router.back()} src={closeButton} alt="모달 닫기 버튼" className="cursor-pointer" width={48} height={48} />
         </div>
         <div className="mb-16 h-full w-full">
           <div className="item-center mb-4 flex justify-between tablet:mb-6 tablet:mt-0">

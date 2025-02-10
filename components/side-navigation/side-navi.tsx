@@ -12,13 +12,12 @@ import reserveCalendar from '@/public/icon/icon_calendar_check.svg';
 import unReserveCalendar from '@/public/icon/icon_calendar_uncheck.svg';
 
 interface SideNaviProps {
-  selectedMenu: string;
+  selectedMenu: string | null;
   onSelectMenu: (menuId: string) => void;
-  isMobile?: boolean;
-  onOpenModal?: () => void;
+  isMobile?: boolean | null;
 }
 
-export default function SideNavi({selectedMenu, onSelectMenu, isMobile, onOpenModal}: SideNaviProps) {
+export default function SideNavi({selectedMenu, onSelectMenu, isMobile}: SideNaviProps) {
   const menus = [
     {id: 'myinfo', label: '내 정보', icon: accountCheck, nonIcon: accountUncheck},
     {id: 'reserveList', label: '예약 내역', icon: reserveListCheck, nonIcon: reserveListUncheck},
@@ -42,7 +41,6 @@ export default function SideNavi({selectedMenu, onSelectMenu, isMobile, onOpenMo
             <button
               key={menu.id}
               onClick={() => {
-                if (onOpenModal) onOpenModal();
                 onSelectMenu(menu.id);
               }}
               className={`flex w-full items-center gap-[0.875rem] rounded-xl px-4 py-[0.625rem] hover:bg-green-50 ${
