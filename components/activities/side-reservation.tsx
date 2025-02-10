@@ -1,17 +1,17 @@
 'use client';
 import React, {useReducer} from 'react';
+import {useMutation} from 'react-query';
+import {ReservationInfoType, SchedulesDateType, SchedulesType} from '@/types/activities-info';
+import dayjs from 'dayjs';
 import Image from 'next/image';
 import SmCalendar from '@/components/activities/sm-calendar';
 import Button from '@/components/common/button';
 import OverlayContainer from '@/components/common/modal/overlay-container';
+import FormatNumberWithCommas from '@/utils/format-number';
+import postReservation from '@/service/api/activities/postActivities';
 import Plus from '@/public/icon/icon_plus.png';
 import Minus from '@/public/icon/icon_minus.png';
 import Cancle from '@/public/icon/icon_cancle.png';
-import {ReservationInfoType, SchedulesDateType, SchedulesType} from '@/types/activities-info';
-import FormatNumberWithCommas from '@/utils/format-number';
-import {useMutation} from 'react-query';
-import postReservation from '@/service/api/activities/postActivities';
-import dayjs from 'dayjs';
 
 const initialState: ReservationInfoType = {
   person: 1,
