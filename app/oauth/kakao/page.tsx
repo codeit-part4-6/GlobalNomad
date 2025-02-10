@@ -96,7 +96,6 @@ export default function Page() {
     <div className="flex items-center justify-center h-screen bg-gray-100">
       {isLoading ? (
         <div className="flex flex-col items-center">
-          {/* 로딩 스피너 */}
           <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
           <p className="mt-4 text-gray-700 text-lg font-semibold">
             카카오 로그인 처리 중...
