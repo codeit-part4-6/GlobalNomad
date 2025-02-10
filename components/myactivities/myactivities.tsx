@@ -25,6 +25,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
   const [isOpenError, setIsOpenError] = useState(false);
   const [errorMessege, setErrorMessege] = useState('');
   const [isValid, setIsValid] = useState(false);
+  const [isValidModify, setIsValidModify] = useState(false);
   const [modifyId, setModifyId] = useState(0);
 
   const postActivitiesMutation = useMutation({
@@ -107,6 +108,16 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
   type ActivityData<T> = PatchActivitiesBody & T;
 
   const handleModifySubmit = <T extends object>(data: ActivityData<T>) => {
+    const schedulesToAdd = data.schedulesToAdd || [];
+    const filterSchedulesToAdd = data.schedulesToAddTemp;
+
+    if (filterSchedulesToAdd) {
+      filterSchedulesToAdd.forEach((data: {id?: number}) => {
+        delete data.id;
+      });
+      schedulesToAdd.push(...filterSchedulesToAdd);
+    }
+
     const params: PatchActivitiesBody = {
       title: data.title,
       category: data.category,
@@ -114,9 +125,9 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
       price: data.price,
       bannerImageUrl: data.bannerImageUrl.toString(),
       subImageIdsToRemove: data.subImageIdsToRemove,
-      subImageUrlsToAdd: data.subImages || [],
+      subImageUrlsToAdd: data.subImageUrlsToAdd || [],
       scheduleIdsToRemove: data.scheduleIdsToRemove,
-      schedulesToAdd: data.schedulesToAdd,
+      schedulesToAdd: schedulesToAdd || [],
     };
     patchActivitiesMutation.mutate({id: modifyId, body: params});
   };
@@ -162,7 +173,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
             ) : (
               <Button
                 onClick={triggerSubmit}
-                className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] bg-primary pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white`}
+                className={`${isValidModify ? 'bg-primary' : 'bg-gray-500'} h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white`}
               >
                 수정하기
               </Button>
@@ -199,7 +210,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
           )}
           {content === 'modify' && (
             <>
-              <ActivitiesModify ref={formRef} modifyId={modifyId} onSubmitParent={handleModifySubmit} />
+              <ActivitiesModify ref={formRef} modifyId={modifyId} onSubmitParent={handleModifySubmit} onValidChange={setIsValidModify} />
             </>
           )}
         </div>

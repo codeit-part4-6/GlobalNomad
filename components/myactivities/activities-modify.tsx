@@ -14,9 +14,10 @@ import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
 interface ActivitiesModifyProps {
   onSubmitParent?: (data: PatchActivitiesBody & GetActivitiesResponse) => void;
   modifyId: number;
+  onValidChange?: (isValid: boolean) => void;
 }
 
-const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId}, ref) => {
+const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId, onValidChange}, ref) => {
   const methods = useForm<PatchActivitiesBody & GetActivitiesResponse>({
     mode: 'onChange',
     defaultValues: {
@@ -38,7 +39,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: {errors, isValid},
     setValue,
     clearErrors,
     trigger,
@@ -101,6 +102,10 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
   useImperativeHandle(ref, () => ({
     submitForm: handleSubmit(onSubmit),
   }));
+
+  useEffect(() => {
+    if (onValidChange) onValidChange(isValid); // ref 로전달불가 props로 직접전달
+  }, [isValid, onValidChange]);
 
   const mutationRef = useRef(mutation);
 
