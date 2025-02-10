@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 export interface ActivitiesBody {
   method: 'offset' | 'cursor';
   cursorId?: number;
@@ -21,19 +20,14 @@ export interface CardData {
 export interface ActivitiesResponse {
   cursorId: number;
   totalCount: number;
-  activities: Activity[];
+  activities: Activities[];
 }
-
-interface Activity {
-=======
 export interface MyActivitiesResponse {
   totalCount: number;
   cursorId: string;
   activities: Activities[];
 }
-
 export interface Activities {
->>>>>>> 11dd5252cc34f0bbc2643dc53cd98438f37942e6
   id: number;
   userId: number;
   title: string;
