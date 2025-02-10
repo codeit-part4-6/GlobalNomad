@@ -15,9 +15,10 @@ interface ActivitiesCardProps {
   data: Activity;
   onClickModify: () => void;
   onClickDelete: () => void;
+  isMobile: boolean;
 }
 
-export default function ActivitiesCard({data, onClickModify, onClickDelete}: ActivitiesCardProps) {
+export default function ActivitiesCard({data, onClickModify, onClickDelete, isMobile}: ActivitiesCardProps) {
   const [isOpenDropbox, setIsOpenDropbox] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
   const router = useRouter();
@@ -27,7 +28,9 @@ export default function ActivitiesCard({data, onClickModify, onClickDelete}: Act
     setModalType(type);
     // setIsOpenModal(true);
 
-    if (type === 'modify') {
+    if (type === 'modify' && isMobile) {
+      router.push(`/mypage/treatReservation/activitiesModify/${data.id}?modal=true`);
+    } else if (type === 'modify' && !isMobile) {
       router.push(`/mypage/treatReservation/activitiesModify/${data.id}`);
     }
   };

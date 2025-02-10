@@ -1,6 +1,6 @@
 'use client';
 import Button from '@/components/common/button';
-import {useState, useRef, Fragment} from 'react';
+import {useState, useRef, Fragment, useEffect} from 'react';
 import ActivitiesRegister from './activities-register';
 import Modal from '@/components/common/modal/modal';
 import Image from 'next/image';
@@ -29,6 +29,7 @@ export default function MyActivities() {
   const [errorMessege, setErrorMessege] = useState('');
   const [isValid, setIsValid] = useState(false);
   const [modifyId, setModifyId] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   const postActivitiesMutation = useMutation({
     mutationFn: async (body: PostActivitiesBody) => {
@@ -134,7 +135,16 @@ export default function MyActivities() {
     setIsOpen(false);
     // onclose();
   };
-  console.log(content);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 745);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <>
       <div className="flex flex-col">
@@ -149,7 +159,11 @@ export default function MyActivities() {
                 <Button
                   onClick={() => {
                     setContent('register');
-                    router.push('/mypage/treatReservation/activitiesRegister');
+                    if (isMobile) {
+                      router.push('/mypage/treatReservation/activitiesRegister?modal=true');
+                    } else {
+                      router.push('/mypage/treatReservation/activitiesRegister');
+                    }
                   }}
                   className="h-[48px] w-[120px] gap-[4px] rounded-[4px] bg-primary pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white"
                 >
@@ -189,6 +203,7 @@ export default function MyActivities() {
                           data={data}
                           onClickModify={() => handleClickModify(data.id)}
                           onClickDelete={() => handleClickDelete(data.id)}
+                          isMobile={isMobile}
                         />
                       </Fragment>
                     )),
