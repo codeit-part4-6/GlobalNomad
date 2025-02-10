@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { postOAuth } from '@/service/api/oauth/postOAuth.api';
@@ -12,7 +12,7 @@ import { AxiosError } from 'axios';
 export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isProcessing, setIsProcessing] = useState(false);
+  const processedRef = useRef(false);
 
   const oauthMutation = useMutation({
     mutationFn: postOAuth,
@@ -40,8 +40,8 @@ export default function Page() {
 
           router.push('/');
         } catch (error: unknown) {
-          if (error instanceof AxiosError) {
-            if (error.response?.status === 404) {
+          if (error instanceof AxiosError && error.response?.status === 404) {
+            try {
               const signupResponse = await postOAuthSignup({
                 nickname: '기본 닉네임',
                 redirectUri: process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI || '',
@@ -55,14 +55,14 @@ export default function Page() {
                 signupResponse.refreshToken,
                 signupResponse.user
               );
-
+              
               router.push('/');
-            } else {
-              console.error('로그인 에러:', error);
+            } catch (signupError) {
+              console.error('회원가입 실패:', signupError);
               router.push('/signin');
             }
           } else {
-            console.error('알 수 없는 오류 발생:', error);
+            console.error('로그인 에러:', error);
             router.push('/signin');
           }
         }
@@ -79,11 +79,11 @@ export default function Page() {
 
   useEffect(() => {
     const token = searchParams.get('code');
-    if (token && !isProcessing) {
-      setIsProcessing(true);
+    if (token && !processedRef.current) {
+      processedRef.current = true;
       oauthMutation.mutate();
     }
-  }, [searchParams, oauthMutation, isProcessing]);
+  }, [searchParams, oauthMutation]);
 
   return <div>카카오 로그인 처리 중...</div>;
 }
