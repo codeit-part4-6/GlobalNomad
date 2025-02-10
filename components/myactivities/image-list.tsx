@@ -6,27 +6,22 @@ import {useState, useRef, useEffect} from 'react';
 import {postImage} from '@/service/api/myactivities/postImage.api';
 import {useMutation} from '@tanstack/react-query';
 import {SubImage} from '@/types/getActivitiesId.types';
+import Modal from '../common/modal/modal';
 
 interface ImageListType<T extends FieldValues> {
   maxImages?: number;
-  name?: string;
+  name?: 'bannerImageUrl' | 'subImages' | 'subImageUrls' | '';
   trigger: UseFormTrigger<T>;
   bannerImageUrl?: string;
   subImages?: SubImage[];
 }
 
-export default function ImageList<T extends FieldValues>({
-  maxImages = 5,
-  name = 'defaultName',
-  trigger,
-  bannerImageUrl,
-  subImages,
-}: ImageListType<T>) {
+export default function ImageList<T extends FieldValues>({maxImages = 5, name = '', trigger, bannerImageUrl, subImages}: ImageListType<T>) {
   const [imageUrls, setImageUrls] = useState<SubImage[]>(subImages || []);
-  const [apiImageUrls, setApiImageUrls] = useState<string | string[]>('');
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [IsRequired, setIsRequired] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [errorMessege, setErrorMessege] = useState('');
+  const [isOpenError, setIsOpenError] = useState(false);
 
   const {
     control,
@@ -47,20 +42,23 @@ export default function ImageList<T extends FieldValues>({
 
     onSuccess: data => {
       // setLoading(false);
-      // 수정시
-      if (name === 'subImges') {
+      if (name === 'subImages') {
         const prevIds = getValues('subImageUrlsToAdd') || [];
         setValue('subImageUrlsToAdd', [...prevIds, data.activityImageUrl]);
       }
 
-      setApiImageUrls(prev => {
-        const updatedUrls = [...prev, data.activityImageUrl];
-        return updatedUrls;
-      });
+      if (name === 'subImageUrls') {
+        const prevIds = getValues('subImageUrls') || [];
+        setValue('subImageUrls', [...prevIds, data.activityImageUrl]);
+      }
+
+      if (name === 'bannerImageUrl') {
+        setValue('bannerImageUrl', data.activityImageUrl);
+      }
     },
     onError: error => {
-      // setLoading(false);
-      alert(`${error.message}`);
+      setIsOpenError(true);
+      setErrorMessege(error.message);
     },
   });
 
@@ -109,6 +107,16 @@ export default function ImageList<T extends FieldValues>({
     }
   };
 
+  // 필수값 체크 함수
+  const validateImageField = () => {
+    if (imageUrls.length === 0) {
+      setValue(name, '', {shouldValidate: true});
+      setError(name, {type: 'manual', message: '필수 값 입니다.'});
+    } else {
+      clearErrors(name);
+    }
+  };
+
   const handleRemoveImage = (index: number, id?: number) => {
     const updatedFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(updatedFiles);
@@ -116,38 +124,41 @@ export default function ImageList<T extends FieldValues>({
     const updatedImageUrls = imageUrls.filter((_, i) => i !== index);
     setImageUrls(updatedImageUrls);
 
-    if (Array.isArray(apiImageUrls)) {
-      const updatedImageUrls = apiImageUrls.filter((_, i) => i !== index);
-      setApiImageUrls(updatedImageUrls);
-    } else {
-      setApiImageUrls('');
-    }
-
-    setValue(name, updatedImageUrls);
+    validateImageField();
 
     // 수정시
     if (id != null) {
       const prevIds = getValues('subImageIdsToRemove') || [];
       setValue('subImageIdsToRemove', [...prevIds, id], {shouldValidate: false});
+      console.log(prevIds);
     }
   };
 
   useEffect(() => {
-    setValue(name, apiImageUrls);
-    if (trigger) trigger(name as Path<T>); // 유효성 수동 trigger
-  }, [apiImageUrls, name, setValue, trigger]);
+    if (trigger) {
+      trigger(name as Path<T>); // 유효성 수동 trigger
+    }
+  }, [trigger, imageUrls, name]);
 
   useEffect(() => {
+    // 초기값
     if (subImages) {
-      setValue(name, []);
-      setIsRequired(true);
       setImageUrls(subImages);
     }
 
     if (bannerImageUrl) {
       setImageUrls([{imageUrl: bannerImageUrl}]);
     }
-  }, [name, subImages, bannerImageUrl, setValue]);
+  }, [subImages, bannerImageUrl]);
+
+  useEffect(() => {
+    if (imageUrls.length === 0) {
+      setValue(name, '', {shouldValidate: true}); // 필수 값 검사를 강제 트리거
+      setError(name, {type: 'manual', message: '필수 값 입니다.'});
+    } else {
+      clearErrors(name);
+    }
+  }, [imageUrls, name, setError, clearErrors, setValue]);
 
   return (
     <>
@@ -167,22 +178,12 @@ export default function ImageList<T extends FieldValues>({
           name={name}
           control={control}
           rules={{
-            required: !IsRequired ? '필수 값 입니다.' : false,
+            required: imageUrls.length > 0 ? false : '필수 값 입니다.',
             validate: {
               maxImages: () => selectedFiles.length <= maxImages || `최대 ${maxImages}개의 이미지만 선택할 수 있습니다.`,
             },
           }}
-          render={() => (
-            <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              disabled={selectedFiles.length >= maxImages}
-              multiple
-            />
-          )}
+          render={() => <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileChange} multiple />}
         />
         {/* 이미지 미리보기 및 삭제 버튼 */}
         {imageUrls.map((imageUrl, index) => {
@@ -201,6 +202,7 @@ export default function ImageList<T extends FieldValues>({
         {/* 오류 메시지 */}
         {typeof errors[name]?.message === 'string' && <span className="error-message">{errors[name]?.message}</span>}
       </div>
+      {isOpenError && <Modal type="big" message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>
   );
 }

@@ -1,16 +1,15 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import {Dayjs} from 'dayjs';
-import dayjs from 'dayjs';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useQuery} from 'react-query';
+import {getActivitiesSchedule} from '@/service/api/activities/getActivitiesInfo';
+import {ReservationInfoType, SchedulesDateType, SchedulesType} from '@/types/activities-info';
 import {Calendar} from 'antd';
+import dayjs, {Dayjs} from 'dayjs';
 import locale from 'antd/es/calendar/locale/ko_KR';
 import localeData from 'dayjs/plugin/localeData';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
-import {getActivitiesSchedule} from '@/service/api/activities/getActivitiesInfo';
-import {useQuery} from 'react-query';
-import {ReservationInfoType, SchedulesDateType, SchedulesType} from '@/types/activities-info';
-import Button from '../common/button';
+import Button from '@/components/common/button';
 
 type Action = {type: 'SET_DAY_SCHEDULE'; payload: SchedulesType};
 
@@ -71,6 +70,7 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
     queryKey: ['schedules', selectDate],
     queryFn: () => getActivitiesSchedule(pageID, selectDate),
     enabled: !!selectDate,
+    notifyOnChangeProps: ['data'],
   });
 
   const setScheduleMatch = useCallback(
@@ -82,7 +82,6 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
         return acc;
       }, defaultSchedule);
 
-      // 현재 날짜와 시간 보다 이전이라면 제거
       if (getTodaySchedule) {
         if (getTodaySchedule.date.length > 0) {
           dispatch({type: 'SET_DAY_SCHEDULE', payload: getTodaySchedule});
@@ -113,13 +112,10 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
     saveTime(getData);
   };
 
-  const checkTime = useMemo(
-    () => (hour: string) => {
-      const nowHour = +dayjs().get('hour');
-      return nowHour >= +hour.substring(0, 2);
-    },
-    [],
-  );
+  const checkTime = (date: string, hour: string) => {
+    const getDate = dayjs(`${date} ${hour}:00:00`, 'YYYY-MM-DD HH-mm:ss');
+    return dayjs().diff(getDate) > 0;
+  };
 
   useEffect(() => {
     if (state.daySchedule.times.length < 1 && schedules) {
@@ -158,10 +154,10 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
             return (
               dt.id > 0 && (
                 <Button
-                  className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectTime.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'} ${checkTime(dt.startTime) && 'border border-red-200'}`}
+                  className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectTime.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'} ${checkTime(state.daySchedule.date, dt.startTime) && 'border border-red-200'}`}
                   key={dt.id}
                   onClick={() => handleSelectTime({date: state.daySchedule.date, id: dt.id, startTime: dt.startTime, endTime: dt.endTime})}
-                  disabled={checkTime(dt.startTime)}
+                  disabled={checkTime(state.daySchedule.date, dt.startTime)}
                 >
                   <p
                     className={`text-lg font-medium ${selectTime.id === dt.id ? 'text-white' : 'text-black-50'}`}

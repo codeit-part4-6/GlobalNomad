@@ -10,13 +10,15 @@ import {useMutation} from '@tanstack/react-query';
 import {getActivitiesId} from '@/service/api/myactivities/getActivitiesId.api';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
+import Modal from '@/components/common/modal/modal';
 
 interface ActivitiesModifyProps {
   onSubmitParent?: (data: PatchActivitiesBody & GetActivitiesResponse) => void;
   modifyId: number | null;
+  onValidChange?: (isValid: boolean) => void;
 }
 
-const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId}, ref) => {
+const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyProps>(({onSubmitParent, modifyId, onValidChange}, ref) => {
   const methods = useForm<PatchActivitiesBody & GetActivitiesResponse>({
     mode: 'onChange',
     defaultValues: {
@@ -38,7 +40,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: {errors, isValid},
     setValue,
     clearErrors,
     trigger,
@@ -50,6 +52,8 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
   const [isOpen, setIsOpen] = useState(false);
   const [subImages, setSubImages] = useState<SubImage[]>([]);
   const [bannerImageUrl, setBannerImageUrl] = useState('');
+  const [isOpenError, setIsOpenError] = useState(false);
+  const [errorMessege, setErrorMessege] = useState('');
 
   // 수정 api
   const mutation = useMutation({
@@ -72,7 +76,8 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
       setBannerImageUrl(bannerImageUrlData);
     },
     onError: error => {
-      alert(`${error.message}`);
+      setIsOpenError(true);
+      setErrorMessege(error.message);
     },
   });
 
@@ -101,6 +106,10 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
   useImperativeHandle(ref, () => ({
     submitForm: handleSubmit(onSubmit),
   }));
+
+  useEffect(() => {
+    if (onValidChange) onValidChange(isValid); // ref 로전달불가 props로 직접전달
+  }, [isValid, onValidChange]);
 
   const mutationRef = useRef(mutation);
 
@@ -247,6 +256,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
           </div>
         </form>
       </FormProvider>
+      {isOpenError && <Modal type="big" message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>
   );
 });

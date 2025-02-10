@@ -1,8 +1,8 @@
 'use client';
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
-import {useEffect, useState} from 'react';
+import Button from '@/components/common/button';
 import LocationIcon from '@/public/icon/icon_location.svg';
-import Button from '../common/button';
 
 interface KakaoMapType {
   address: string;
