@@ -15,7 +15,7 @@ const Reviews = ({pageID}: {pageID: string}) => {
   const {data, isSuccess} = useQuery<ActivitiesReviewsType>({
     queryKey: ['activitiesReviews', page],
     queryFn: () => getActivitiesReviews(pageID, 1, 3),
-    structuralSharing: false,
+    enabled: !!page,
     notifyOnChangeProps: ['data'],
   });
 

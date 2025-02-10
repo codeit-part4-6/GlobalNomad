@@ -70,6 +70,7 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
     queryKey: ['schedules', selectDate],
     queryFn: () => getActivitiesSchedule(pageID, selectDate),
     enabled: !!selectDate,
+    notifyOnChangeProps: ['data'],
   });
 
   const setScheduleMatch = useCallback(
@@ -113,8 +114,6 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
 
   const checkTime = (date: string, hour: string) => {
     const getDate = dayjs(`${date} ${hour}:00:00`, 'YYYY-MM-DD HH-mm:ss');
-    console.log(dayjs().diff(getDate));
-
     return dayjs().diff(getDate) > 0;
   };
 
