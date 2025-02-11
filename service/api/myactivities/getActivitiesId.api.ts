@@ -2,7 +2,7 @@ import {ServerError} from '@/types/server-error.types';
 import INSTANCE_URL from '../instance';
 import {GetActivitiesResponse} from '@/types/getActivitiesId.types';
 
-export async function getActivitiesId(activityId: number): Promise<GetActivitiesResponse> {
+export async function getActivitiesId(activityId: number | null): Promise<GetActivitiesResponse> {
   try {
     const response = await INSTANCE_URL.get(`/activities/${activityId}`);
     return response.data;
