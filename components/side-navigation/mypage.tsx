@@ -43,9 +43,7 @@ export default function MyPage() {
   useEffect(() => {
     if (!user) {
       router.push('/signin');
-    } else {
-      router.push('/mypage/myinfo');
-    }
+    } 
   }, [user, router]);
 
   const mypageMutation = useMutation({
