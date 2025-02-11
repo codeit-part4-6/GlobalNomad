@@ -1,3 +1,4 @@
+'use client';
 import Button from '@/components/common/button';
 import {useState, useRef, Fragment} from 'react';
 import ActivitiesRegister from './activities-register';
@@ -15,11 +16,13 @@ import ActivitiesModify from './activities-modify';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {patchActivities} from '@/service/api/myactivities/patchActivities.api';
 import {deleteActivities} from '@/service/api/myactivities/deleteActivities.api';
+import {useRouter} from 'next/navigation';
 import NonDataPage from './non-data';
 
 type ContentType = 'manage' | 'register' | 'modify' | 'delete';
 
-export default function MyActivities({onclose}: {onclose: () => void}) {
+export default function MyActivities() {
+  const router = useRouter();
   const [content, setContent] = useState<ContentType>('manage');
   const formRef = useRef<{submitForm: () => void} | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -141,7 +144,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
 
   const handleClose = () => {
     setIsOpen(false);
-    onclose();
+    // onclose();
   };
 
   return (
@@ -178,7 +181,7 @@ export default function MyActivities({onclose}: {onclose: () => void}) {
                 </Button>
               )}
               <div className="mb-2 flex justify-end tablet:hidden">
-                <Image onClick={onclose} src={closeButton} alt="모달 닫기 버튼" className="cursor-pointer" width={48} height={48} />
+                <Image onClick={() => router.back()} src={closeButton} alt="모달 닫기 버튼" className="cursor-pointer" width={48} height={48} />
               </div>
             </div>
           </div>
