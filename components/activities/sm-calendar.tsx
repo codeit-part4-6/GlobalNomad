@@ -1,16 +1,17 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Dayjs} from 'dayjs';
-import dayjs from 'dayjs';
+import {useQuery} from 'react-query';
+import {getActivitiesSchedule} from '@/service/api/activities/getActivitiesInfo';
+import {ReservationInfoType, SchedulesDateType, SchedulesType} from '@/types/activities-info';
 import {Calendar} from 'antd';
+import dayjs, {Dayjs} from 'dayjs';
 import locale from 'antd/es/calendar/locale/ko_KR';
 import localeData from 'dayjs/plugin/localeData';
 import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
-import {getActivitiesSchedule} from '@/service/api/activities/getActivitiesInfo';
-import {useQuery} from 'react-query';
-import {SchedulesDateType, SchedulesType} from '@/types/activities-info';
-import Button from '../common/button';
+import Button from '@/components/common/button';
+
+type Action = {type: 'SET_DAY_SCHEDULE'; payload: SchedulesType};
 
 interface CalendarHeaderType {
   value: Dayjs;
@@ -18,10 +19,17 @@ interface CalendarHeaderType {
 }
 interface SmCalendarType {
   pageID: string;
+  state: ReservationInfoType;
+  device?: string;
+  dispatch: React.Dispatch<Action>;
   onSelect: ({date, id, startTime, endTime}: SchedulesDateType) => void;
 }
 
-const DefaultTime = {date: '', id: 0, startTime: '', endTime: ''};
+const defaultTime = {date: '', id: 0, startTime: '', endTime: ''};
+const defaultSchedule = {
+  date: '',
+  times: [{startTime: '', endTime: '', id: 0}],
+};
 
 const CalendarHeader = ({value, onChange}: CalendarHeaderType) => {
   const year = value.year();
@@ -50,43 +58,39 @@ const CalendarHeader = ({value, onChange}: CalendarHeaderType) => {
   );
 };
 
-const SmCalendar = ({pageID, onSelect}: SmCalendarType) => {
+const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCalendarType) => {
   dayjs.extend(weekday);
   dayjs.extend(localeData);
   dayjs.extend(weekOfYear);
   dayjs.extend(weekYear);
-  const [selectedDay, setSelectedDay] = useState<Dayjs>(dayjs());
-  const [daySchedule, setDaySchedule] = useState<SchedulesType>();
-  const [selectTime, setSelectTime] = useState<SchedulesDateType>(DefaultTime);
+  const [selectDate, setSelectDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
+  const [selectTime, setSelectTime] = useState<SchedulesDateType>(state.schedule);
 
   const {data: schedules} = useQuery<SchedulesType[]>({
-    queryKey: ['schedules', selectedDay],
-    queryFn: () => getActivitiesSchedule(pageID, selectedDay?.format('YYYY-MM-DD')),
-    structuralSharing: false,
+    queryKey: ['schedules', selectDate],
+    queryFn: () => getActivitiesSchedule(pageID, selectDate),
+    enabled: !!selectDate,
     notifyOnChangeProps: ['data'],
   });
 
-  const getScheduleMatch = useCallback(
+  const setScheduleMatch = useCallback(
     (date: Dayjs) => {
-      const getTodaySchedule = schedules?.reduce<SchedulesType>(
-        (acc, curr) => {
-          if (dayjs(curr.date).isSame(date, 'day')) {
-            acc = curr;
-          }
-          return acc;
-        },
-        {
-          date: '',
-          times: [{startTime: '', endTime: '', id: 0}],
-        },
-      );
+      const getTodaySchedule = schedules?.reduce<SchedulesType>((acc, curr) => {
+        if (dayjs(curr.date).isSame(date, 'day')) {
+          acc = curr;
+        }
+        return acc;
+      }, defaultSchedule);
 
-      if (!getTodaySchedule || getTodaySchedule.date.length < 1) return undefined;
-
-      // 현재 날짜와 시간 보다 이전이라면 제거
-      return getTodaySchedule;
+      if (getTodaySchedule) {
+        if (getTodaySchedule.date.length > 0) {
+          dispatch({type: 'SET_DAY_SCHEDULE', payload: getTodaySchedule});
+        } else {
+          dispatch({type: 'SET_DAY_SCHEDULE', payload: {date: date.format('YYYY-MM-DD'), times: [{startTime: '', endTime: '', id: 0}]}});
+        }
+      }
     },
-    [schedules],
+    [dispatch, schedules],
   );
 
   const saveTime = useCallback(
@@ -97,55 +101,71 @@ const SmCalendar = ({pageID, onSelect}: SmCalendarType) => {
     [onSelect],
   );
 
-  const handleOnSelect = useCallback(
-    (date: Dayjs) => {
-      setSelectedDay(date);
-      saveTime(DefaultTime);
-    },
-    [saveTime],
-  );
+  const handleChangeDay = (date: Dayjs) => {
+    setSelectDate(date.format('YYYY-MM-DD'));
+    setScheduleMatch(date);
+    saveTime(defaultTime);
+  };
 
-  const handleTimeClick = ({date, id, startTime, endTime}: SchedulesDateType) => {
+  const handleSelectTime = ({date, id, startTime, endTime}: SchedulesDateType) => {
     const getData = {date, id, startTime, endTime};
     saveTime(getData);
   };
 
+  const checkTime = (date: string, hour: string) => {
+    const getDate = dayjs(`${date} ${hour}:00:00`, 'YYYY-MM-DD HH-mm:ss');
+    return dayjs().diff(getDate) > 0;
+  };
+
   useEffect(() => {
-    if (schedules && selectedDay) {
-      setDaySchedule(getScheduleMatch(selectedDay));
+    if (state.daySchedule.times.length < 1 && schedules) {
+      setScheduleMatch(dayjs());
     }
-  }, [getScheduleMatch, schedules, selectedDay]);
+  }, [schedules, setScheduleMatch, state.daySchedule.times.length]);
 
   return (
     <>
       <div className="mx-auto w-305pxr items-center justify-center rounded-lg border border-solid border-gray-100 p-0">
         <Calendar
           locale={locale}
-          value={selectedDay}
+          value={dayjs(state.daySchedule.date)}
           fullscreen={false}
           headerRender={(props: CalendarHeaderType) => <CalendarHeader {...props} />}
-          onSelect={handleOnSelect}
+          onChange={handleChangeDay}
+          onSelect={handleChangeDay}
         />
       </div>
       <div className="min-w-336pxr flex-col">
-        <p className="mt-16pxr w-full text-2lg font-bold text-nomad-black">예약 가능한 시간</p>
-        <div className="no-scrollbar mb-16pxr mt-14pxr flex h-110pxr flex-row flex-wrap gap-12pxr overflow-y-scroll">
-          <div className="mb-16pxr flex flex-row flex-wrap gap-12pxr">
-            {daySchedule &&
-              daySchedule.times.map(dt => {
-                return (
-                  <Button
-                    className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectTime.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'}`}
-                    key={dt.id}
-                    onClick={() => handleTimeClick({date: daySchedule.date, id: dt.id, startTime: dt.startTime, endTime: dt.endTime})}
-                  >
-                    <p
-                      className={`text-lg font-medium ${selectTime.id === dt.id ? 'text-white' : 'text-black-50'}`}
-                    >{`${dt.startTime} ~ ${dt.endTime}`}</p>
-                  </Button>
-                );
-              })}
+        <div className="flex flex-row gap-3">
+          <p className="mt-16pxr text-2lg font-bold text-nomad-black">예약 가능한 시간</p>
+          <div className="mt-16pxr flex flex-row gap-1">
+            <div className="m-auto h-10pxr w-10pxr border border-red-200"></div>
+            <p className="text-sm font-normal text-nomad-black">예약 불가</p>
           </div>
+          <div className="mt-16pxr flex flex-row gap-1">
+            <div className="m-auto h-10pxr w-10pxr border border-nomad-black" />
+            <p className="text-sm font-normal text-nomad-black">예약 가능</p>
+          </div>
+        </div>
+        <div
+          className={`mt-14pxr flex flex-row flex-wrap gap-12pxr overflow-y-scroll ${state.daySchedule.times.length < 4 && 'no-scrollbar'} ${device === 'mobile' ? 'h-220pxr' : 'h-110pxr'}`}
+        >
+          {state.daySchedule.times.map(dt => {
+            return (
+              dt.id > 0 && (
+                <Button
+                  className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectTime.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'} ${checkTime(state.daySchedule.date, dt.startTime) && 'border border-red-200'}`}
+                  key={dt.id}
+                  onClick={() => handleSelectTime({date: state.daySchedule.date, id: dt.id, startTime: dt.startTime, endTime: dt.endTime})}
+                  disabled={checkTime(state.daySchedule.date, dt.startTime)}
+                >
+                  <p
+                    className={`text-lg font-medium ${selectTime.id === dt.id ? 'text-white' : 'text-black-50'}`}
+                  >{`${dt.startTime} ~ ${dt.endTime}`}</p>
+                </Button>
+              )
+            );
+          })}
         </div>
       </div>
     </>

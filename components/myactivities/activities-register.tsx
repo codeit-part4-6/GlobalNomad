@@ -1,3 +1,4 @@
+'use client';
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';
@@ -10,7 +11,7 @@ import TimeList from './time-list';
 
 interface ActivitiesRegisterProps {
   onSubmitParent?: (data: PostActivitiesBody) => void;
-  onValidChange: (isValid: boolean) => void;
+  onValidChange?: (isValid: boolean) => void;
 }
 
 const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegisterProps>(({onSubmitParent, onValidChange}, ref) => {
@@ -22,7 +23,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
       description: '',
       address: '',
       price: 0,
-      schedules: [{date: '', startTime: '', endTime: ''}],
+      schedules: [{date: '', startTime: '00:00', endTime: '00:00'}],
       bannerImageUrl: '',
       subImageUrls: [],
     },
@@ -67,7 +68,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
   }));
 
   useEffect(() => {
-    onValidChange(isValid); // ref 로전달불가 props로 직접전달
+    if (onValidChange) onValidChange(isValid); // ref 로전달불가 props로 직접전달
   }, [isValid, onValidChange]);
 
   const options = [
@@ -97,6 +98,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
                   value={value}
                   onChange={onChange}
                   error={errors.title?.message}
+                  maxLength={50}
                   placeholder="제목 ex) K-뷰티 메이크업 클래스"
                   className="placehorder w-full"
                 />
@@ -134,6 +136,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
                 <textarea
                   required={true}
                   value={value}
+                  maxLength={1000}
                   onChange={onChange}
                   placeholder="체험 중 어떤 활동을 하게 될지 알려주세요."
                   className="placehorder h-40 w-full cursor-text resize-none rounded-s border border-gray-700 p-4 focus:outline-none focus:ring-2 focus:ring-green-950"
@@ -188,7 +191,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
             ></Controller>
           </div>
           {isFocused && isOpen && <AddressModal onClose={() => setIsOpen(false)} onComplete={handleComplete} />}
-          <TimeList />
+          <TimeList type="register" />
           <div className="mb-4">
             <label className="mb-3 block text-xl font-bold tablet:text-2xl">배너 이미지</label>
             <ImageList trigger={trigger} maxImages={1} name="bannerImageUrl" />

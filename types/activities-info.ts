@@ -69,3 +69,11 @@ export interface ReservationPost {
   scheduleId: number;
   headCount: number;
 }
+
+export interface ReservationInfoType {
+  person: number;
+  scheduleModal: boolean;
+  personModal: boolean;
+  schedule: SchedulesDateType;
+  daySchedule: SchedulesType;
+}

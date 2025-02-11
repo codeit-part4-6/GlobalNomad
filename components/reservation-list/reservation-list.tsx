@@ -1,3 +1,4 @@
+'use client';
 import React, {useState, useEffect} from 'react';
 import Image from 'next/image';
 import Button from '@/components/common/button';
@@ -8,10 +9,13 @@ import {statusLabels, buttonByStatus} from '@/constant/reservation-list-constant
 import NonDataPage from '../common/non-data';
 import closeButton from '@/public/icon/ic_close_button.svg';
 import {getReservationList} from '@/service/api/reservation-list/getReservation.api';
-import {useQuery} from '@tanstack/react-query';
+import {useInfiniteQuery} from '@tanstack/react-query';
 import {ReservationListResponse} from '@/types/reservation-list';
-import FormattedDotDate from '@/service/lib/formatted-dot-date';
 import {ScaleLoader} from 'react-spinners';
+import FormattedPrice from '@/utils/formatted-price';
+import {useInView} from 'react-intersection-observer';
+import FormatDate from '@/utils/format-date';
+import {useRouter} from 'next/navigation';
 
 export const statusLabelsColor: Record<string, string> = {
   pending: 'text-blue-100',
@@ -28,18 +32,40 @@ export const buttonStyleByStatus: Record<string, string> = {
     'w-80pxr h-8 py-1 px-2 font-bold text-md text-white tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-nomad-black rounded-md',
 };
 
-export default function ReservationList({onClose}: {onClose: () => void}) {
+export default function ReservationList() {
+  const router = useRouter();
   const [orderBy, setOrderBy] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-
-  const {data, isLoading, isError, error} = useQuery<ReservationListResponse>({
-    queryKey: ['reservationList'],
-    queryFn: () => getReservationList({size: 20, status: ''}),
+  const [ref, inView] = useInView({
+    threshold: 0.1,
   });
 
-  const reservationList = data?.reservations || [];
+  const {data, isLoading, isError, error, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery<ReservationListResponse>({
+    queryKey: ['reservationList'],
+    queryFn: ({pageParam = null}) => getReservationList({size: 5, status: '', cursorId: pageParam as number | null}),
+    initialPageParam: null,
+    getNextPageParam: (lastPage, allPages) => {
+      const totalLoadedReservations = allPages.flatMap(page => page.reservations).length;
+
+      if (totalLoadedReservations >= lastPage.totalCount) {
+        return null;
+      }
+      if (lastPage.cursorId === null) {
+        return null;
+      }
+      return lastPage.reservations[lastPage.reservations.length - 1].id;
+    },
+  });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage, isFetchingNextPage]);
+
+  const reservationList = data?.pages.flatMap(page => page.reservations) || [];
 
   const handleButtonClick = (status: string, id: number) => {
     setIsOpen(true);
@@ -93,7 +119,7 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
           <div className="m-0">
             <CustomSelect orderBy={orderBy} handleOrderBy={(value: string) => setOrderBy(value)} />
           </div>
-          <div className="relative h-12 w-12 tablet:hidden" onClick={onClose}>
+          <div className="relative h-12 w-12 tablet:hidden" onClick={() => router.back()}>
             <Image src={closeButton} alt="모달 닫기 버튼" className="absolute cursor-pointer" fill />
           </div>
         </div>
@@ -118,11 +144,11 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
                 <p className="text-md font-bold text-nomad-black tablet:mb-1 tablet:text-2lg pc:mb-3 pc:text-xl">{reservation.activity.title}</p>
                 <div className="mb-0 flex items-center gap-[0.125rem] text-xs font-regular text-nomad-black tablet:mb-10pxr tablet:text-md pc:mb-4 pc:text-lg">
                   <p>
-                    {FormattedDotDate(reservation.date)} · {reservation.startTime} - {reservation.endTime} · {reservation.headCount}명
+                    {FormatDate(reservation.date)} · {reservation.startTime} - {reservation.endTime} · {reservation.headCount}명
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-lg font-medium text-black-100 tablet:text-xl">￦{reservation.totalPrice}</p>
+                  <p className="text-lg font-medium text-black-100 tablet:text-xl">￦{FormattedPrice(reservation.totalPrice)}</p>
                   <Button
                     onClick={() => handleButtonClick(`${reservation.status}`, reservation.id)}
                     className={`${buttonStyleByStatus[reservation.status]}`}
@@ -133,6 +159,7 @@ export default function ReservationList({onClose}: {onClose: () => void}) {
               </div>
             </div>
           ))}
+          <div className="mt-1 h-1" ref={ref} />
         </div>
       )}
       {isOpen && <>{getModalContent()}</>}

@@ -1,12 +1,13 @@
 'use client';
 import React, {useState} from 'react';
-import Image from 'next/image';
-import Pagenation from '@/components/common/pagenation';
-import FormatDate from '@/utils/format-date';
-import Star from '@/public/icon/ic_star.svg';
 import {useQuery} from 'react-query';
 import {getActivitiesReviews} from '@/service/api/activities/getActivitiesInfo';
 import {ActivitiesReviewsType} from '@/types/activities-info';
+import Image from 'next/image';
+import FormatDate from '@/utils/format-date';
+import Pagenation from '@/components/common/pagenation';
+import Star from '@/public/icon/ic_star.svg';
+import DefaultProfile from '@/public/img/img_default_profile.svg';
 
 const Reviews = ({pageID}: {pageID: string}) => {
   const [page, setPage] = useState<number>(1);
@@ -14,7 +15,7 @@ const Reviews = ({pageID}: {pageID: string}) => {
   const {data, isSuccess} = useQuery<ActivitiesReviewsType>({
     queryKey: ['activitiesReviews', page],
     queryFn: () => getActivitiesReviews(pageID, 1, 3),
-    structuralSharing: false,
+    enabled: !!page,
     notifyOnChangeProps: ['data'],
   });
 
@@ -27,7 +28,7 @@ const Reviews = ({pageID}: {pageID: string}) => {
       <>
         <div className="w-full pb-34pxr pt-40pxr text-xl font-bold text-nomad-black">후기</div>
         <div className="flex flex-row">
-          <p className="mr-16pxr text-4xl font-semibold text-nomad-black">{data.averageRating}</p>
+          <p className="mr-16pxr text-4xl font-semibold text-nomad-black">{data.averageRating.toFixed(1)}</p>
           <div className="flex-col items-start gap-8pxr p-0">
             <p className="text-2lg font-normal text-nomad-black">매우 만족</p>
             <div className="flex flex-row">
@@ -42,7 +43,7 @@ const Reviews = ({pageID}: {pageID: string}) => {
               <div className="flex flex-row" key={dt.id}>
                 <div className="mr-16pxr h-138pxr w-61pxr">
                   <div className="relative h-45pxr w-45pxr">
-                    <Image src={dt.user.profileImageUrl} alt="기본 프로필" className="absolute" fill priority />
+                    <Image src={dt.user.profileImageUrl || DefaultProfile} alt="기본 프로필" className="absolute" fill priority />
                   </div>
                 </div>
                 <div>

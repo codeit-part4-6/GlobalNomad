@@ -1,11 +1,12 @@
 'use client';
 import React, {useEffect, useState} from 'react';
-import Image from 'next/image';
-import {useQuery} from 'react-query';
+import {useMutation, useQueryClient, useQuery} from '@tanstack/react-query';
 import {StaticImport} from 'next/dist/shared/lib/get-img-props';
-import {notFound, useParams} from 'next/navigation';
+import {notFound, useParams, useRouter} from 'next/navigation';
 import {ActivitiesInfoType} from '@/types/activities-info';
 import {getActivitiesInfo} from '@/service/api/activities/getActivitiesInfo';
+import Image from 'next/image';
+import SkeletonLayout from '@/app/activities/[id]/skeleton';
 import Reservation from '@/components/activities/side-reservation';
 import KakaoMap from '@/components/activities/kakomap';
 import Reviews from '@/components/activities/reviews';
@@ -14,7 +15,8 @@ import InitialDevice from '@/utils/initial-device';
 import Star from '@/public/icon/ic_star.svg';
 import IconMeatball from '@/public/icon/ic_meatball.svg';
 import LocationIcon from '@/public/icon/icon_location.svg';
-import SkeletonLayout from './skeleton';
+import AdminAuth from '@/utils/admin-auth';
+import deleteReservation from '@/service/api/activities/deleteActivities';
 
 const DropboxItems = [
   {id: 1, label: '수정하기', type: 'modify'},
@@ -49,19 +51,41 @@ const BannerFromDivceType = ({device, bannerImg, subImages}: BannerType) => {
   }
 };
 
-const ActivitiesUpdateModal = ({id}: {id: number}) => {
-  const sessionID = sessionStorage.getItem('id');
-  const updateAuth = sessionID && +sessionID === id;
+const ActivitiesUpdateModal = ({pageID, userId}: {pageID: string; userId: number}) => {
+  const adminAuth = AdminAuth(userId);
   const [isOpenDropbox, setIsOpenDropbox] = useState<boolean>(false);
 
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (pageID: string) => {
+      await deleteReservation(pageID);
+    },
+    onSuccess: () => {
+      alert('등록하신 체험 정보를 삭제했습니다.');
+      queryClient.setQueryData(['activitiesInfo', 'activitiesReviews', 'schedules'], null);
+      router.push('/');
+    },
+    onError: (error: unknown) => {
+      alert(error);
+      router.refresh();
+    },
+  });
+
+  const router = useRouter();
   const handleActivitiesUpdate = (type: string) => {
     setIsOpenDropbox(false);
-    console.log(type);
+    if (type === 'delete') {
+      mutation.mutate(pageID);
+    } else {
+      // mypage에서 병렬 라우팅 작업 완료시 해당 링크로 이동시켜줘야합니다.
+      router.push('/mypage');
+    }
   };
 
   return (
-    updateAuth && (
-      <>
+    adminAuth && (
+      <div>
         <Image src={IconMeatball} onClick={() => setIsOpenDropbox(true)} width={40} height={40} alt="자세히보기" priority />;
         {isOpenDropbox && (
           <Dropbox
@@ -71,23 +95,31 @@ const ActivitiesUpdateModal = ({id}: {id: number}) => {
             items={DropboxItems}
           />
         )}
-      </>
+      </div>
     )
   );
 };
 
 export default function Page() {
   const params = useParams();
+  const router = useRouter();
   const [device, setDevice] = useState<string>('mobile');
   const [pageID, setPageID] = useState<string>('');
 
-  const {data: activitiesInfo, isSuccess: activitiesSuccess} = useQuery<ActivitiesInfoType>({
+  const {
+    data: activitiesInfo,
+    isSuccess: activitiesSuccess,
+    error,
+  } = useQuery<ActivitiesInfoType>({
     queryKey: ['activitiesInfo'],
     queryFn: () => getActivitiesInfo(pageID),
     enabled: !!pageID,
-    onError: () => notFound(),
   });
 
+  if (error) {
+    alert(error);
+    router.back();
+  }
   useEffect(() => {
     if (!params?.id) return notFound();
     setPageID(Array.isArray(params.id) ? params.id[0] : params.id);
@@ -96,7 +128,7 @@ export default function Page() {
     setDevice(getDeviceType);
   }, [params.id]);
 
-  return activitiesSuccess ? (
+  return activitiesSuccess && activitiesInfo ? (
     <div className="container mx-auto tablet:min-w-[43rem] pc:max-w-[75rem]">
       <div className="mx-auto w-full px-24pxr pb-133pxr pt-16pxr tablet:min-w-696pxr tablet:pb-145pxr tablet:pt-24pxr pc:px-0 pc:pb-128pxr pc:pt-78pxr">
         <h4 className="mb-10pxr text-md font-normal text-nomad-black">{activitiesInfo.category}</h4>
@@ -104,7 +136,7 @@ export default function Page() {
           <div className="flex-row items-center gap-16pxr p-0 text-xl font-bold text-nomad-black tablet:text-3xl pc:text-3xl">
             {activitiesInfo.title}
           </div>
-          <ActivitiesUpdateModal id={activitiesInfo.id} />
+          <ActivitiesUpdateModal pageID={pageID} userId={activitiesInfo.userId} />
         </div>
         <div className="flex flex-row gap-6pxr tablet:mb-25pxr pc:mb-25pxr">
           <Image src={Star} alt="별점 이미지" width={16} height={16} priority />
@@ -123,7 +155,9 @@ export default function Page() {
                 체험 설명
               </div>
               <div className="text-nomad mb-16pxr h-auto min-w-327pxr text-xl font-normal opacity-75 tablet:mb-57pxr tablet:min-w-428pxr pc:mb-34pxr pc:min-w-790pxr">
-                안녕하세요! 저희 스트릿 댄스 체험을 소개합니다...
+                {activitiesInfo.description.split('\n').map((dt, idx) => {
+                  return <p key={`description-${idx}`}>{dt}</p>;
+                })}
               </div>
             </div>
             <hr />
