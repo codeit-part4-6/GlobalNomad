@@ -9,7 +9,7 @@ import navlogo from '@/public/img/img_navlogo.svg';
 import notification from '@/public/icon/ic_notification.svg';
 import defaultProfileImage from '@/public/icon/ic_defaultProfileImage.svg';
 import Dropbox from '@/components/common/dropbox';
-import Notification from '@/app/components/notification';
+import Notification from '@/components/common/notification';
 
 export default function Navbar() {
   const {user, setLogout} = useAuthStore();
