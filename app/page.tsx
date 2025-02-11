@@ -14,16 +14,31 @@ const useMultipleActivities = () => {
   return useQueries({
     queries: [
       {
-        queryKey: ['popular', {method: 'offset', sort: 'most_reviewed', size: 1000, page: 1}],
-        queryFn: () => activitiesList({method: 'offset', sort: 'most_reviewed', size: 1000, page: 1}),
+        queryKey: ['popular', {method: 'offset', category: undefined, sort: 'most_reviewed', size: 1000, page: 1}],
+        queryFn: () => activitiesList({method: 'offset', category: undefined, sort: 'most_reviewed', size: 1000, page: 1}),
       },
       {
-        queryKey: ['entire', {method: 'offset', sort: 'latest', size: 1000, page: 1}],
-        queryFn: () => activitiesList({method: 'offset', sort: 'latest', size: 1000, page: 1}),
+        queryKey: ['entire', {method: 'offset', category: undefined, sort: 'latest', size: 1000, page: 1}],
+        queryFn: () => activitiesList({method: 'offset', category: undefined, sort: 'latest', size: 1000, page: 1}),
       },
     ],
   });
 };
+
+// const fetchActivitiesByCategory = async (category: string) => {
+//   return await activitiesList({method: 'offset', category, size: 20, page: 1});
+// };
+
+// // ✅ 카테고리 변경 시 실행되는 함수 (데이터 요청)
+// const handleCategoryChange = (category: '문화·예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙') => {
+//   refetch({category}); // ✅ API 요청 실행
+// };
+
+// const {refetch} = useQuery({
+//   queryKey: ['activities', 'category'],
+//   queryFn: () => fetchActivitiesByCategory('문화·예술'), // 기본 카테고리 요청
+//   enabled: false, // 기본적으로 자동 실행 X (refetch로 실행)
+// });
 
 export default function Mainpage() {
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -36,7 +51,6 @@ export default function Mainpage() {
   const handleClick = (keyword: string) => {
     setSearchKeyword(keyword);
     setIsShown(true);
-    // mutation.mutate({method: 'offset', size: 20, page: 1});
   };
 
   useEffect(() => {
@@ -69,7 +83,10 @@ export default function Mainpage() {
             <PopularCard className="min-w-[24.25rem] max-w-[75rem]" data={popularQuery.data} />
           </section>
 
-          <Option className="pc:mt-15 mb-6 mt-10 flex min-w-[21.25rem] max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]" />
+          <Option
+            className="pc:mt-15 mb-6 mt-10 flex min-w-[21.25rem] max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]"
+            // onChange={category => handleCategoryChange(category.type)}
+          />
 
           {/* ✅ 모든 체험 섹션 */}
           <section className="mb-24pxr mt-24pxr flex max-w-[75rem] flex-col items-start justify-center gap-24pxr tablet:mt-35pxr tablet:gap-32pxr">

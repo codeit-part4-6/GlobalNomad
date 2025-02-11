@@ -22,11 +22,13 @@ export interface ActivitiesResponse {
   totalCount: number;
   activities: Activities[];
 }
+
 export interface MyActivitiesResponse {
   totalCount: number;
   cursorId: string;
   activities: Activities[];
 }
+
 export interface Activities {
   id: number;
   userId: number;
@@ -40,4 +42,9 @@ export interface Activities {
   reviewCount: number;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Category {
+  id: '문화·예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
+  value: '문화·예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙';
 }
