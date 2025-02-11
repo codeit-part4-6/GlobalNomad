@@ -56,7 +56,7 @@ export default function Page() {
       onSuccess: () => {
         setModalMessage('가입이 완료되었습니다!');
         setIsModalOpen(true);
-        router.push('/');
+        router.push('/signin');
       },
     });
   };
