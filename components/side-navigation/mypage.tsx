@@ -8,7 +8,7 @@ import {EditMypageBody} from '@/types/patchMypage.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import closeButton from '@/public/icon/ic_close_button.svg';
 import {useRouter} from 'next/navigation';
 import Image from 'next/image';
@@ -39,6 +39,14 @@ export default function MyPage() {
     },
   });
   const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/signin');
+    } else {
+      router.push('/mypage/myinfo');
+    }
+  }, [user, router]);
 
   const mypageMutation = useMutation({
     mutationFn: (mypageData: EditMypageBody) => patchMypage(mypageData),
