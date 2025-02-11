@@ -4,7 +4,6 @@ import iconMeatball from '@/public/icon/ic_meatball.svg';
 import {Activity} from '@/types/myactivities';
 import Dropbox from '@/components/common/dropbox';
 import {useEffect, useState} from 'react';
-import {useRouter} from 'next/navigation';
 
 const items = [
   {id: 1, label: '수정하기', type: 'modify'},
@@ -15,24 +14,16 @@ interface ActivitiesCardProps {
   data: Activity;
   onClickModify: () => void;
   onClickDelete: () => void;
-  isMobile: boolean;
 }
 
-export default function ActivitiesCard({data, onClickModify, onClickDelete, isMobile}: ActivitiesCardProps) {
+export default function ActivitiesCard({data, onClickModify, onClickDelete}: ActivitiesCardProps) {
   const [isOpenDropbox, setIsOpenDropbox] = useState(false);
   const [modalType, setModalType] = useState<string | null>(null);
-  const router = useRouter();
 
   const handleClick = (type: string) => {
     setIsOpenDropbox(false);
     setModalType(type);
     // setIsOpenModal(true);
-
-    if (type === 'modify' && isMobile) {
-      router.push(`/mypage/treatReservation/activitiesModify/${data.id}?modal=true`);
-    } else if (type === 'modify' && !isMobile) {
-      router.push(`/mypage/treatReservation/activitiesModify/${data.id}`);
-    }
   };
 
   useEffect(() => {

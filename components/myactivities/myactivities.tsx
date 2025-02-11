@@ -1,6 +1,6 @@
 'use client';
 import Button from '@/components/common/button';
-import {useState, useRef, Fragment, useEffect} from 'react';
+import {useState, useRef, Fragment} from 'react';
 import ActivitiesRegister from './activities-register';
 import Modal from '@/components/common/modal/modal';
 import Image from 'next/image';
@@ -31,7 +31,6 @@ export default function MyActivities() {
   const [isValid, setIsValid] = useState(false);
   const [isValidModify, setIsValidModify] = useState(false);
   const [modifyId, setModifyId] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
 
   const postActivitiesMutation = useMutation({
     mutationFn: async (body: PostActivitiesBody) => {
@@ -148,15 +147,6 @@ export default function MyActivities() {
     // onclose();
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 745);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
     <>
       <div className="flex flex-col">
@@ -167,14 +157,7 @@ export default function MyActivities() {
               {content === 'manage' ? (
                 <>
                   <Button
-                    onClick={() => {
-                      setContent('register');
-                      if (isMobile) {
-                        router.push('/mypage/treatReservation/activitiesRegister?modal=true');
-                      } else {
-                        router.push('/mypage/treatReservation/activitiesRegister');
-                      }
-                    }}
+                    onClick={() => setContent('register')}
                     className="h-48pxr w-100pxr gap-4pxr rounded-md bg-primary pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white"
                   >
                     등록하기
@@ -223,7 +206,6 @@ export default function MyActivities() {
                             data={data}
                             onClickModify={() => handleClickModify(data.id)}
                             onClickDelete={() => handleClickDelete(data.id)}
-                            isMobile={isMobile}
                           />
                         </Fragment>
                       ))
