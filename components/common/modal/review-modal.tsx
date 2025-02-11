@@ -10,11 +10,14 @@ import {useMutation} from '@tanstack/react-query';
 import {ScaleLoader} from 'react-spinners';
 import FormattedPrice from '@/utils/formatted-price';
 import FormatDate from '@/utils/format-date';
+import Modal from './modal';
 
 export default function ReviewModal({data, message, onClose}: ReviewModalProps) {
   const [starRating, setStarRating] = useState<number>(0);
   const [content, setContent] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState<string>('');
   const mutation = useMutation({
     mutationFn: async () => {
       if (data !== undefined) {
@@ -28,12 +31,13 @@ export default function ReviewModal({data, message, onClose}: ReviewModalProps) 
 
     onSuccess: () => {
       setLoading(false);
-      alert('후기 작성에 성공했습니다.');
-      onClose();
+      setIsModalOpen(true);
+      setModalMessage('후기 작성에 성공했습니다.');
     },
     onError: error => {
       setLoading(false);
-      alert(`${error.message}`);
+      setIsModalOpen(true);
+      setModalMessage(`${error.message}`);
     },
   });
 
@@ -85,6 +89,16 @@ export default function ReviewModal({data, message, onClose}: ReviewModalProps) 
           <div className="flex items-center justify-center gap-3">{loading ? <ScaleLoader width={3} height={20} color="#ffffff" /> : '작성하기'}</div>
         </Button>
       </div>
+      {isModalOpen && (
+        <Modal
+          type="big"
+          message={modalMessage}
+          onClose={() => {
+            setIsModalOpen(false);
+            onClose();
+          }}
+        />
+      )}
     </OverlayContainer>
   );
 }
