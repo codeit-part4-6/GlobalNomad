@@ -10,10 +10,11 @@ import {useMutation} from '@tanstack/react-query';
 import {getActivitiesId} from '@/service/api/myactivities/getActivitiesId.api';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
 import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
+import Modal from '@/components/common/modal/modal';
 
 interface ActivitiesModifyProps {
   onSubmitParent?: (data: PatchActivitiesBody & GetActivitiesResponse) => void;
-  modifyId: number;
+  modifyId: number | null;
   onValidChange?: (isValid: boolean) => void;
 }
 
@@ -51,6 +52,8 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
   const [isOpen, setIsOpen] = useState(false);
   const [subImages, setSubImages] = useState<SubImage[]>([]);
   const [bannerImageUrl, setBannerImageUrl] = useState('');
+  const [isOpenError, setIsOpenError] = useState(false);
+  const [errorMessege, setErrorMessege] = useState('');
 
   // 수정 api
   const mutation = useMutation({
@@ -73,7 +76,8 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
       setBannerImageUrl(bannerImageUrlData);
     },
     onError: error => {
-      alert(`${error.message}`);
+      setIsOpenError(true);
+      setErrorMessege(error.message);
     },
   });
 
@@ -149,6 +153,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
                   value={value}
                   onChange={onChange}
                   error={errors.title?.message}
+                  maxLength={50}
                   placeholder="제목 ex) K-뷰티 메이크업 클래스"
                   className="placehorder w-full"
                 />
@@ -186,6 +191,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
                 <textarea
                   required={true}
                   value={value}
+                  maxLength={1000}
                   onChange={onChange}
                   placeholder="체험 중 어떤 활동을 하게 될지 알려주세요."
                   className="placehorder h-40 w-full cursor-text resize-none rounded-s border border-gray-700 p-4 focus:outline-none focus:ring-2 focus:ring-green-950"
@@ -252,6 +258,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
           </div>
         </form>
       </FormProvider>
+      {isOpenError && <Modal type="big" message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>
   );
 });

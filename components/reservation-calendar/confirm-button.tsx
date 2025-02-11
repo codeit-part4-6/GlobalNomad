@@ -3,6 +3,7 @@ import Button from '../common/button';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {patchReservations} from '@/service/api/reservation-calendar/patchReservations.api';
 import {ScaleLoader} from 'react-spinners';
+import Modal from '../common/modal/modal';
 
 interface patchReservationsProps {
   reservationId: number | null;
@@ -10,8 +11,10 @@ interface patchReservationsProps {
 }
 
 export default function ConfirmButton({reservationId, activityId}: patchReservationsProps) {
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [declineLoading, setDeclinedLoading] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+  const [declineLoading, setDeclinedLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalMessage, setModalMessage] = useState<string>('');
   const queryClient = useQueryClient();
 
   const handleConfirmedClick = () => {
@@ -26,6 +29,7 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
     mutationFn: async (status: string) => {
       if (reservationId !== null) {
         await patchReservations({activityId, reservationId, status});
+        return status;
       }
     },
     onMutate: (status: string) => {
@@ -35,7 +39,7 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
         setDeclinedLoading(true);
       }
     },
-    onSuccess: () => {
+    onSuccess: status => {
       setConfirmLoading(false);
       setDeclinedLoading(false);
       queryClient.invalidateQueries({
@@ -47,12 +51,14 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
       queryClient.invalidateQueries({
         queryKey: ['myReservations'],
       });
-      alert('요청을 처리했습니다');
+      setModalMessage(status === 'confirmed' ? '예약이 승인되었습니다.' : '예약이 거절되었습니다.');
+      setIsModalOpen(true);
     },
     onError: () => {
       setConfirmLoading(false);
       setDeclinedLoading(false);
-      alert('실패했어요');
+      setModalMessage('요청을 처리하는데 실패했습니다. 다시 시도해주세요.');
+      setIsModalOpen(true);
     },
   });
 
@@ -76,6 +82,7 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
           {declineLoading ? <ScaleLoader width={2} height={10} color="#112211" /> : '거절하기'}
         </div>
       </Button>
+      {isModalOpen && <Modal type="big" message={modalMessage} onClose={() => setIsModalOpen(false)} />}
     </div>
   );
 }

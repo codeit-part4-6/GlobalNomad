@@ -1,10 +1,9 @@
 import {ServerError} from '@/types/server-error.types';
 import INSTANCE_URL from '../instance';
-import {GetActivitiesResponse} from '@/types/getActivitiesId.types';
 
-export async function getActivitiesId(activityId: number | null): Promise<GetActivitiesResponse> {
+export async function deleteMynotifications(notificationId: number) {
   try {
-    const response = await INSTANCE_URL.get(`/activities/${activityId}`);
+    const response = await INSTANCE_URL.delete(`/my-notifications/${notificationId}`);
     return response.data;
   } catch (error: unknown) {
     const serverError = error as ServerError;

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
@@ -24,6 +25,7 @@ interface IFormInput {
 export default function Page() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const router = useRouter();
 
   const {
     control,
@@ -54,11 +56,17 @@ export default function Page() {
       onSuccess: () => {
         setModalMessage('가입이 완료되었습니다!');
         setIsModalOpen(true);
+        router.push('/');
       },
     });
   };
 
   const passwordValue = watch('password');
+
+  const handleKakaoLogin = () => {
+    const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI2}&response_type=code`;
+    window.location.href = kakaoAuthURL;
+  }
 
   return (
     <>
@@ -189,13 +197,17 @@ export default function Page() {
               <div className="flex justify-center items-center">
                 <hr className="w-[5rem] border border-gray-300" />
                 <span className="text-center text-[0.875rem] font-regular leading-[1.5rem] text-gray-700">
-                  SNS 계정으로 로그인하기
+                  SNS 계정으로 회원가입하기
                 </span>
                 <hr className="w-[5rem] border border-gray-300" />
               </div>
               <div className="flex justify-center gap-[1rem]">
-                <Image src={GoogleIcon} alt="google icon" />
-                <Image src={KakaoIcon} alt="kakao icon" />
+                <button type="button" onClick={() => alert("Google 로그인 기능이 일시적으로 제한되어 있습니다")}>
+                  <Image src={GoogleIcon} alt="google icon" />
+                </button>
+                <button type="button" onClick={handleKakaoLogin}>
+                  <Image src={KakaoIcon} alt="kakao icon" />
+                </button>
               </div>
             </div>
           </div>

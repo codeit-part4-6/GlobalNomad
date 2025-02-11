@@ -1,14 +1,17 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { useAuthStore } from '@/service/store/authStore';
-import { patchMypage } from '@/service/api/users/patchMypage.api';
-import { EditMypageBody } from '@/types/patchMypage.types';
+import {useForm, Controller} from 'react-hook-form';
+import {useMutation} from '@tanstack/react-query';
+import {useAuthStore} from '@/service/store/authStore';
+import {patchMypage} from '@/service/api/users/patchMypage.api';
+import {EditMypageBody} from '@/types/patchMypage.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
-import { useState } from 'react';
+import {useState} from 'react';
+import closeButton from '@/public/icon/ic_close_button.svg';
+import {useRouter} from 'next/navigation';
+import Image from 'next/image';
 
 interface IFormInput {
   email: string;
@@ -20,11 +23,11 @@ interface IFormInput {
 export default function MyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const { user, updateNickname } = useAuthStore();
+  const {user, updateNickname} = useAuthStore();
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: {errors, isValid},
     watch,
   } = useForm<IFormInput>({
     mode: 'onChange',
@@ -35,6 +38,7 @@ export default function MyPage() {
       newPassword: ``,
     },
   });
+  const router = useRouter();
 
   const mypageMutation = useMutation({
     mutationFn: (mypageData: EditMypageBody) => patchMypage(mypageData),
@@ -46,7 +50,7 @@ export default function MyPage() {
         setModalMessage('마이페이지 저장 중 오류가 발생했습니다.');
         setIsModalOpen(true);
       },
-      onSuccess: (data) => {
+      onSuccess: data => {
         updateNickname(data.nickname);
         setModalMessage('마이페이지 정보가 성공적으로 저장되었습니다.');
         setIsModalOpen(true);
@@ -58,33 +62,28 @@ export default function MyPage() {
 
   return (
     <>
-      {isModalOpen && (
-        <Modal
-          type="big"
-          message={modalMessage}
-          onClose={() => setIsModalOpen(false)}
-        />
-      )}
-      <form
-        className="w-[21.875rem] h-[472px] gap-[32px] tablet:w-[40rem]"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <div className="flex justify-between">
-          <p className="text-[32px] font-[700] leading-[42px] tablet:text-[38.19px] tablet:leading-[38.19px]">
-            내 정보
-          </p>
-          {/* 저장하기 버튼 */}
-          <Button
-            className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white ${
-              isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
-            }`}
-            type="submit"
-            disabled={!isValid}
-          >
-            저장하기
-          </Button>
+      {isModalOpen && <Modal type="big" message={modalMessage} onClose={() => setIsModalOpen(false)} />}
+      <form className="h-[472px] w-full gap-[32px]" onSubmit={handleSubmit(onSubmit)}>
+        <div className="mb-4 flex items-center justify-between pc:mb-6">
+          <p className="text-[32px] font-[700] leading-[42px] tablet:leading-[38.19px]">내 정보</p>
+          <div className="flex items-center gap-1">
+            {/* 저장하기 버튼 */}
+            <Button
+              className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white ${
+                isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
+              }`}
+              type="submit"
+              disabled={!isValid}
+            >
+              저장하기
+            </Button>
+            {/* 모달 닫기 - 모바일 */}
+            <div className="relative h-12 w-12 tablet:hidden" onClick={() => router.back()}>
+              <Image src={closeButton} alt="모달 닫기 버튼" className="absolute cursor-pointer" fill />
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-[16px]">
+        <div className="flex w-full flex-col gap-[16px]">
           {/* 닉네임 입력란 */}
           <Controller
             name="nickname"
@@ -96,12 +95,12 @@ export default function MyPage() {
                 message: '열 자 이하로 작성해 주세요.',
               },
             }}
-            render={({ field }) => (
+            render={({field}) => (
               <Input
                 label="닉네임"
                 placeholder="닉네임을 입력해 주세요"
-                labelClassName="block text-lg pb-2"
-                className="h-[3.625rem] w-[21.875rem] tablet:h-[3.625rem] tablet:w-[40rem]"
+                labelClassName="block text-2xl font-bold pb-4"
+                className="h-[3.625rem] w-full tablet:h-[3.625rem]"
                 value={field.value}
                 onChange={field.onChange}
                 error={errors.nickname?.message}
@@ -112,12 +111,12 @@ export default function MyPage() {
           <Controller
             name="email"
             control={control}
-            render={({ field }) => (
+            render={({field}) => (
               <Input
                 label="이메일"
                 placeholder="이메일을 입력해 주세요"
-                labelClassName="block text-lg pb-2"
-                className="h-[3.625rem] w-[21.875rem] tablet:h-[3.625rem] tablet:w-[40rem]"
+                labelClassName="block text-2xl font-bold pb-4"
+                className="h-[3.625rem] w-full tablet:h-[3.625rem]"
                 value={field.value}
                 error={errors.email?.message}
               />
@@ -134,12 +133,12 @@ export default function MyPage() {
                 message: '8자 이상으로 작성해 주세요.',
               },
             }}
-            render={({ field }) => (
+            render={({field}) => (
               <Input
                 label="비밀번호"
                 placeholder="비밀번호를 입력해 주세요"
-                labelClassName="block text-lg pb-2"
-                className="h-[3.625rem] w-[21.875rem] tablet:h-[3.625rem] tablet:w-[40rem]"
+                labelClassName="block text-2xl font-bold pb-4"
+                className="h-[3.625rem] w-full tablet:h-[3.625rem]"
                 value={field.value}
                 onChange={field.onChange}
                 isPassword
@@ -154,15 +153,14 @@ export default function MyPage() {
             control={control}
             rules={{
               required: '필수값입니다.',
-              validate: (value) =>
-                value === passwordValue || '비밀번호가 일치하지 않습니다.',
+              validate: value => value === passwordValue || '비밀번호가 일치하지 않습니다.',
             }}
-            render={({ field }) => (
+            render={({field}) => (
               <Input
                 label="비밀번호 확인"
                 placeholder="비밀번호를 한번 더 입력해 주세요"
-                labelClassName="block text-lg pb-2"
-                className="h-[3.625rem] w-[21.875rem] tablet:h-[3.625rem] tablet:w-[40rem]"
+                labelClassName="block text-2xl font-bold pb-4"
+                className="h-[3.625rem] w-full tablet:h-[3.625rem]"
                 value={field.value}
                 onChange={field.onChange}
                 isPassword

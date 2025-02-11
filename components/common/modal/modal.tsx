@@ -31,7 +31,6 @@ export default function Modal({type, message, onClose, reservationId}: ModalProp
         queryKey: ['reservationList'],
       });
       setLoading(false);
-      alert('예약을 취소했습니다');
       onClose();
     },
     onError: () => {

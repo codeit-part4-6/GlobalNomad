@@ -1,3 +1,4 @@
+'use client';
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';
@@ -97,6 +98,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
                   value={value}
                   onChange={onChange}
                   error={errors.title?.message}
+                  maxLength={50}
                   placeholder="제목 ex) K-뷰티 메이크업 클래스"
                   className="placehorder w-full"
                 />
@@ -134,6 +136,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
                 <textarea
                   required={true}
                   value={value}
+                  maxLength={1000}
                   onChange={onChange}
                   placeholder="체험 중 어떤 활동을 하게 될지 알려주세요."
                   className="placehorder h-40 w-full cursor-text resize-none rounded-s border border-gray-700 p-4 focus:outline-none focus:ring-2 focus:ring-green-950"

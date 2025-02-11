@@ -2,20 +2,20 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
+import {useRouter} from 'next/navigation';
+import {useState} from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {useMutation} from '@tanstack/react-query';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
 import signLogo from '@/public/img/img_signlogo.svg';
 import GoogleIcon from '@/public/icon/ic_google.svg';
 import KakaoIcon from '@/public/icon/ic_kakao.svg';
-import { postSignin } from '@/service/api/auth/postSignin.api';
-import { postTokens } from '@/service/api/auth/postTokens.api';
-import { SigninBody } from '@/types/postSignin.types';
-import { useAuthStore } from '@/service/store/authStore';
+import {postSignin} from '@/service/api/auth/postSignin.api';
+import {postTokens} from '@/service/api/auth/postTokens.api';
+import {SigninBody} from '@/types/postSignin.types';
+import {useAuthStore} from '@/service/store/authStore';
 
 interface IFormInput {
   email: string;
@@ -23,7 +23,7 @@ interface IFormInput {
 }
 
 export default function Page() {
-  const { setLogin } = useAuthStore(); 
+  const {setLogin} = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const router = useRouter();
@@ -51,7 +51,7 @@ export default function Page() {
         setModalMessage('비밀번호가 일치하지 않습니다.');
         setIsModalOpen(true);
       },
-      onSuccess: async (data) => {
+      onSuccess: async data => {
         try {
           // Zustand에 로그인 상태 업데이트
           setLogin(data.accessToken, data.refreshToken, data.user);
@@ -59,11 +59,8 @@ export default function Page() {
           sessionStorage.setItem('accessToken', data.accessToken);
           sessionStorage.setItem('refreshToken', data.refreshToken);
 
-          const { id, email, nickname, profileImageUrl, createdAt, updatedAt } = data.user;
-          sessionStorage.setItem(
-            'userInfo',
-            JSON.stringify({ id, email, nickname, profileImageUrl, createdAt, updatedAt })
-          );
+          const {id, email, nickname, profileImageUrl, createdAt, updatedAt} = data.user;
+          sessionStorage.setItem('userInfo', JSON.stringify({id, email, nickname, profileImageUrl, createdAt, updatedAt}));
 
           const refreshedData = await postTokens(data.refreshToken);
           if (refreshedData) sessionStorage.setItem('accessToken', refreshedData.accessToken);
@@ -80,16 +77,19 @@ export default function Page() {
     setIsModalOpen(false);
   };
 
+  const handleKakaoLogin = () => {
+    const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI}&response_type=code`;
+    console.log(kakaoAuthURL);
+    window.location.href = kakaoAuthURL;
+  };
+
   return (
     <>
-      <div className="flex flex-col items-center max-w-[40rem] m-auto pt-[6.875rem] gap-[1.5rem] tablet:pt-[7.875rem] tablet:gap-[2.5rem] desktop:pt-[7.375rem] desktop:gap-[3.5rem]">
+      <div className="desktop:pt-[7.375rem] desktop:gap-[3.5rem] m-auto flex max-w-[40rem] flex-col items-center gap-[1.5rem] pt-[6.875rem] tablet:gap-[2.5rem] tablet:pt-[7.875rem]">
         <Link href="/">
           <Image src={signLogo} alt="로고" />
         </Link>
-        <form 
-          className="flex flex-col gap-[2.5rem] w-full items-center justify-center tablet:gap-[3rem]" 
-          onSubmit={handleSubmit(onSubmit)}
-        >
+        <form className="flex w-full flex-col items-center justify-center gap-[2.5rem] tablet:gap-[3rem]" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-[1.625rem] tablet:gap-[2rem]">
             <div className="flex flex-col gap-[1.75rem]">
               {/* 이메일 입력란 */}
@@ -140,43 +140,41 @@ export default function Page() {
                   />
                 )}
               />
-              <Button 
+              <Button
                 className={`h-[3.375rem] w-[21.875rem] gap-[0.5rem] rounded-[0.375rem] text-white sm:px-4 tablet:h-[3rem] tablet:w-[40rem] ${
                   isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
                 }`}
                 type="submit"
-                disabled={!isValid}>
+                disabled={!isValid}
+              >
                 로그인 하기
               </Button>
             </div>
-            <span className="text-gray-800 text-[1rem] font-regular leading-[1.19rem] text-center">
+            <span className="text-center text-[1rem] font-regular leading-[1.19rem] text-gray-800">
               회원이 아니신가요?
-              <Link href="/signup" className="underline ml-[0.3125rem]">
+              <Link href="/signup" className="ml-[0.3125rem] underline">
                 회원가입하기
               </Link>
             </span>
             <div className="flex flex-col gap-[1.5rem] tablet:gap-[2.5rem]">
-              <div className="flex justify-center items-center">
+              <div className="flex items-center justify-center">
                 <hr className="w-[5rem] border border-gray-300" />
-                <span className="text-gray-700 text-[0.875rem] leading-[1.5rem] font-regular text-center">
-                  SNS 계정으로 로그인하기
-                </span>
+                <span className="text-center text-[0.875rem] font-regular leading-[1.5rem] text-gray-700">SNS 계정으로 로그인하기</span>
                 <hr className="w-[5rem] border border-gray-300" />
               </div>
               <div className="flex justify-center gap-[1rem]">
-                <Image src={GoogleIcon} alt="google icon" />
-                <Image src={KakaoIcon} alt="kakao icon" />
+                <button type="button" onClick={() => alert('Google 로그인 기능이 일시적으로 제한되어 있습니다')}>
+                  <Image src={GoogleIcon} alt="google icon" />
+                </button>
+                <button type="button" onClick={handleKakaoLogin}>
+                  <Image src={KakaoIcon} alt="kakao icon" />
+                </button>
               </div>
             </div>
           </div>
         </form>
       </div>
-      {isModalOpen && 
-        <Modal 
-          type="big" 
-          message={modalMessage} 
-          onClose={handleCloseModal} 
-        />}
+      {isModalOpen && <Modal type="big" message={modalMessage} onClose={handleCloseModal} />}
     </>
   );
 }
