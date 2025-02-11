@@ -14,7 +14,7 @@ import Modal from '@/components/common/modal/modal';
 
 interface ActivitiesModifyProps {
   onSubmitParent?: (data: PatchActivitiesBody & GetActivitiesResponse) => void;
-  modifyId: number;
+  modifyId: number | null;
   onValidChange?: (isValid: boolean) => void;
 }
 

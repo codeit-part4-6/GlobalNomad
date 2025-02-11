@@ -1,3 +1,4 @@
+'use client';
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';

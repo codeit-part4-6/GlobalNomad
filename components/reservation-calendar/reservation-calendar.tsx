@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 import React, {useEffect, useMemo, useState} from 'react';
 import selectDown from '@/public/icon/ic_chevron_down.svg';
@@ -8,8 +9,10 @@ import {useQuery} from '@tanstack/react-query';
 import {MyActivitiesResponse} from '@/types/activities';
 import {getActivities} from '@/service/api/reservation-calendar/getActivities.api';
 import {ScaleLoader} from 'react-spinners';
+import {useRouter} from 'next/navigation';
 
-export default function ReservationCalendar({onClose}: {onClose: () => void}) {
+export default function ReservationCalendar() {
+  const router = useRouter();
   const [isOptionOpen, setIsOptionOpen] = useState(false);
   const {data, isLoading, isError, error} = useQuery<MyActivitiesResponse>({
     queryKey: ['myActivites'],
@@ -50,7 +53,7 @@ export default function ReservationCalendar({onClose}: {onClose: () => void}) {
       <div className="flex items-start justify-between">
         <p className="mb-8 text-3xl font-bold text-black-50">예약 현황</p>
 
-        <div className="relative h-12 w-12 tablet:hidden" onClick={onClose}>
+        <div className="relative h-12 w-12 tablet:hidden" onClick={() => router.back()}>
           <Image src={closeButton} alt="모달 닫기 버튼" className="absolute cursor-pointer" fill />
         </div>
       </div>

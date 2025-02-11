@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { postOAuth } from '@/service/api/oauth/postOAuth.api';
 import { postOAuthSignin } from '@/service/api/oauth/postOAuthSignin.api';
-import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
 import { useAuthStore } from '@/service/store/authStore';
 import { AxiosError } from 'axios';
 
@@ -44,27 +43,9 @@ export default function Page() {
 
           router.push('/');
         } catch (error: unknown) {
-          if (error instanceof AxiosError && error.response?.status === 404) {
-            try {
-              const signupResponse = await postOAuthSignup({
-                nickname: '기본 닉네임',
-                redirectUri: process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI || '',
-                token: token,
-              });
-
-              console.log('회원가입 성공:', signupResponse);
-              const { setLogin } = useAuthStore.getState();
-              setLogin(
-                signupResponse.accessToken,
-                signupResponse.refreshToken,
-                signupResponse.user
-              );
-
-              router.push('/');
-            } catch (signupError) {
-              console.error('회원가입 실패:', signupError);
-              router.push('/signin');
-            }
+          if (error instanceof AxiosError && (error.response?.status === 403 || error.response?.status === 404)) {
+            console.log('회원가입이 필요합니다. /signup 페이지로 이동합니다.');
+            router.push(`/signup?code=${token}`);
           } else {
             console.error('로그인 에러:', error);
             router.push('/signin');
