@@ -10,6 +10,8 @@ import treatReservation from '@/public/icon/icon_cog.svg';
 import unTreatReservation from '@/public/icon/icon_cog_un.svg';
 import reserveCalendar from '@/public/icon/icon_calendar_check.svg';
 import unReserveCalendar from '@/public/icon/icon_calendar_uncheck.svg';
+import {useAuthStore} from '@/service/store/authStore';
+import {useEffect, useState} from 'react';
 
 interface SideNaviProps {
   selectedMenu: string | null;
@@ -18,18 +20,32 @@ interface SideNaviProps {
 }
 
 export default function SideNavi({selectedMenu, onSelectMenu, isMobile}: SideNaviProps) {
+  const {user} = useAuthStore();
+  console.log(user);
   const menus = [
     {id: 'myinfo', label: '내 정보', icon: accountCheck, nonIcon: accountUncheck},
     {id: 'reserveList', label: '예약 내역', icon: reserveListCheck, nonIcon: reserveListUncheck},
     {id: 'treatReservation', label: '내 체험 관리', icon: treatReservation, nonIcon: unTreatReservation},
     {id: 'reserveCalendar', label: '예약 현황', icon: reserveCalendar, nonIcon: unReserveCalendar},
   ];
+  const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user?.profileImageUrl) {
+      setPreview(user?.profileImageUrl);
+    }
+  }, [user?.profileImageUrl]);
+  console.log(preview);
 
   return (
     <div className="mb-240pxr min-w-full rounded-xl border border-gray-200 bg-white p-6 shadow-sidenavi-box tablet:w-[15.6875rem] tablet:min-w-[15.6875rem] pc:w-[24rem] pc:min-w-[24rem] pc:p-6">
-      <div className="relative mx-auto mb-2 h-40 w-40">
-        <Image src={defaultProfile} alt="기본 프로필" className="absolute" fill priority />
-        <div className="absolute bottom-4 right-4 h-11 w-11">
+      <div className="relative mx-auto mb-2 h-40 w-40 rounded-full shadow-sidenavi-box">
+        {preview ? (
+          <Image src={preview} alt="최초 프로필" className="absolute rounded-full object-cover" fill priority />
+        ) : (
+          <Image src={defaultProfile} alt="기본 프로필" className="absolute rounded-full object-cover" fill priority />
+        )}
+        <div className="absolute bottom-2 right-2 h-11 w-11 cursor-pointer hover:opacity-80">
           <Image src={profileButton} alt="프로필 수정 버튼" fill />
         </div>
       </div>

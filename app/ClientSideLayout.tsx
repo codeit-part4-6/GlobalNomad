@@ -11,7 +11,7 @@ export default function ClientSideLayout({children}: Readonly<{children: React.R
   const [queryClient, setQueryClient] = useState<QueryClient | null>(null);
   const pathname = usePathname();
 
-  const hideFooter = pathname === '/mypage' || pathname === '/signin' || pathname === '/signup';
+  const hideFooter = pathname === '/signin' || pathname === '/signup';
 
   const hideNavbar = pathname === '/login' || pathname === '/signin';
 
