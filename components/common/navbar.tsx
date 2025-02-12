@@ -28,7 +28,7 @@ export default function Navbar() {
 
   const handleDropdownItemClick = (type: string) => {
     if (type === 'mypage') {
-      router.push('/mypage/myinfo');
+      router.push('/mypage');
     } else if (type === 'logout') {
       handleLogout();
     }
