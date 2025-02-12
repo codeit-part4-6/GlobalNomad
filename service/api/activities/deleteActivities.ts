@@ -4,11 +4,13 @@ import {ServerError} from '@/types/server-error.types';
 
 const deleteReservation = async (pageID: string) => {
   try {
+    const accessToken = await getAccessToken();
+
     const res = await INSTANCE_URL.delete(`/my-activities/${pageID}`, {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        Authorization: `Bearer ${getAccessToken()}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
     return res.data;

@@ -1,7 +1,7 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {useQuery} from 'react-query';
 import {getActivitiesSchedule} from '@/service/api/activities/getActivitiesInfo';
-import {ReservationInfoType, SchedulesDateType, SchedulesType} from '@/types/activities-info';
+import {SchedulesType, SchedulesDateType} from '@/types/activities-info';
 import {Calendar} from 'antd';
 import dayjs, {Dayjs} from 'dayjs';
 import locale from 'antd/es/calendar/locale/ko_KR';
@@ -10,8 +10,8 @@ import weekday from 'dayjs/plugin/weekday';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
 import Button from '@/components/common/button';
-
-type Action = {type: 'SET_DAY_SCHEDULE'; payload: SchedulesType};
+import activitiesStore from '@/service/store/activitiesstore';
+import {useParams} from 'next/navigation';
 
 interface CalendarHeaderType {
   value: Dayjs;
@@ -19,13 +19,11 @@ interface CalendarHeaderType {
 }
 interface SmCalendarType {
   pageID: string;
-  state: ReservationInfoType;
   device?: string;
-  dispatch: React.Dispatch<Action>;
-  onSelect: ({date, id, startTime, endTime}: SchedulesDateType) => void;
 }
 
-const defaultTime = {date: '', id: 0, startTime: '', endTime: ''};
+let defaultTime = {date: '', id: 0, startTime: '', endTime: ''};
+
 const defaultSchedule = {
   date: '',
   times: [{startTime: '', endTime: '', id: 0}],
@@ -58,58 +56,56 @@ const CalendarHeader = ({value, onChange}: CalendarHeaderType) => {
   );
 };
 
-const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCalendarType) => {
+const SmCalendar = ({device = 'order'}: SmCalendarType) => {
   dayjs.extend(weekday);
   dayjs.extend(localeData);
   dayjs.extend(weekOfYear);
   dayjs.extend(weekYear);
-  const [selectDate, setSelectDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
-  const [selectTime, setSelectTime] = useState<SchedulesDateType>(state.schedule);
+  const params = useParams();
+  const {selectedSchedule, dailySchedule, updateSelectedSchedule, updateDailySchedule} = activitiesStore();
+  const pageID = params?.id?.toString() || '';
 
-  const {data: schedules} = useQuery<SchedulesType[]>({
-    queryKey: ['schedules', selectDate],
-    queryFn: () => getActivitiesSchedule(pageID, selectDate),
-    enabled: !!selectDate,
+  const {data: monthSchedules, refetch} = useQuery<SchedulesDateType[]>({
+    queryKey: ['schedules', selectedSchedule.date],
+    queryFn: () => getActivitiesSchedule(pageID, selectedSchedule.date),
     notifyOnChangeProps: ['data'],
+    enabled: !!selectedSchedule.date,
   });
 
-  const setScheduleMatch = useCallback(
+  const scheduleMatch = useCallback(
     (date: Dayjs) => {
-      const getTodaySchedule = schedules?.reduce<SchedulesType>((acc, curr) => {
-        if (dayjs(curr.date).isSame(date, 'day')) {
-          acc = curr;
-        }
-        return acc;
-      }, defaultSchedule);
+      if (dayjs(date).isSame(dailySchedule.date)) {
+        const getTodaySchedule = monthSchedules?.reduce<SchedulesDateType>((acc, curr) => {
+          if (dayjs(curr.date).isSame(date, 'day')) {
+            acc = curr;
+          }
+          return acc;
+        }, defaultSchedule);
 
-      if (getTodaySchedule) {
-        if (getTodaySchedule.date.length > 0) {
-          dispatch({type: 'SET_DAY_SCHEDULE', payload: getTodaySchedule});
-        } else {
-          dispatch({type: 'SET_DAY_SCHEDULE', payload: {date: date.format('YYYY-MM-DD'), times: [{startTime: '', endTime: '', id: 0}]}});
+        if (getTodaySchedule && getTodaySchedule.date.length > 0) {
+          updateDailySchedule(getTodaySchedule);
         }
+      } else {
+        return updateDailySchedule({date: date.format('YYYY-MM-DD'), times: []});
       }
     },
-    [dispatch, schedules],
+    [dailySchedule.date, monthSchedules, updateDailySchedule],
   );
 
-  const saveTime = useCallback(
-    (time: SchedulesDateType) => {
-      onSelect(time);
-      setSelectTime(time);
-    },
-    [onSelect],
-  );
-
-  const handleChangeDay = (date: Dayjs) => {
-    setSelectDate(date.format('YYYY-MM-DD'));
-    setScheduleMatch(date);
-    saveTime(defaultTime);
+  const setSelectedSchedule = (time: SchedulesType) => {
+    updateSelectedSchedule(time);
   };
 
-  const handleSelectTime = ({date, id, startTime, endTime}: SchedulesDateType) => {
+  const handleChangeDay = (date: Dayjs) => {
+    scheduleMatch(date);
+    defaultTime = {...defaultTime, date: date.format('YYYY-MM-DD')};
+    setSelectedSchedule(defaultTime);
+    refetch();
+  };
+
+  const handleSelectTime = ({date, id, startTime, endTime}: SchedulesType) => {
     const getData = {date, id, startTime, endTime};
-    saveTime(getData);
+    setSelectedSchedule(getData);
   };
 
   const checkTime = (date: string, hour: string) => {
@@ -118,21 +114,21 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
   };
 
   useEffect(() => {
-    if (state.daySchedule.times.length < 1 && schedules) {
-      setScheduleMatch(dayjs());
+    if (monthSchedules && dailySchedule.times.length < 1) {
+      scheduleMatch(dayjs(dailySchedule.date));
     }
-  }, [schedules, setScheduleMatch, state.daySchedule.times.length]);
+  }, [monthSchedules, scheduleMatch, dailySchedule]);
 
   return (
     <>
       <div className="mx-auto w-305pxr items-center justify-center rounded-lg border border-solid border-gray-100 p-0">
         <Calendar
           locale={locale}
-          value={dayjs(state.daySchedule.date)}
+          value={dayjs(dailySchedule.date)}
           fullscreen={false}
           headerRender={(props: CalendarHeaderType) => <CalendarHeader {...props} />}
-          onChange={handleChangeDay}
-          onSelect={handleChangeDay}
+          onChange={date => handleChangeDay(date)}
+          onSelect={date => handleChangeDay(date)}
         />
       </div>
       <div className="min-w-336pxr flex-col">
@@ -148,19 +144,19 @@ const SmCalendar = ({pageID, state, device = 'order', dispatch, onSelect}: SmCal
           </div>
         </div>
         <div
-          className={`mt-14pxr flex flex-row flex-wrap gap-12pxr overflow-y-scroll ${state.daySchedule.times.length < 4 && 'no-scrollbar'} ${device === 'mobile' ? 'h-220pxr' : 'h-110pxr'}`}
+          className={`mt-14pxr flex flex-row flex-wrap gap-12pxr overflow-y-scroll ${dailySchedule.times.length < 4 && 'no-scrollbar'} ${device === 'mobile' ? 'h-220pxr' : 'h-110pxr'}`}
         >
-          {state.daySchedule.times.map(dt => {
+          {dailySchedule.times.map(dt => {
             return (
               dt.id > 0 && (
                 <Button
-                  className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectTime.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'} ${checkTime(state.daySchedule.date, dt.startTime) && 'border border-red-200'}`}
+                  className={`w-130xr h-46pxr items-center justify-center rounded-lg px-10pxr py-12pxr ${selectedSchedule.id === dt.id ? 'bg-nomad-black' : 'border border-black-50 bg-white'} ${checkTime(dailySchedule.date, dt.startTime) && 'border border-red-200'}`}
                   key={dt.id}
-                  onClick={() => handleSelectTime({date: state.daySchedule.date, id: dt.id, startTime: dt.startTime, endTime: dt.endTime})}
-                  disabled={checkTime(state.daySchedule.date, dt.startTime)}
+                  onClick={() => handleSelectTime({date: dailySchedule.date, id: dt.id, startTime: dt.startTime, endTime: dt.endTime})}
+                  disabled={checkTime(dailySchedule.date, dt.startTime)}
                 >
                   <p
-                    className={`text-lg font-medium ${selectTime.id === dt.id ? 'text-white' : 'text-black-50'}`}
+                    className={`text-lg font-medium ${selectedSchedule.id === dt.id ? 'text-white' : 'text-black-50'}`}
                   >{`${dt.startTime} ~ ${dt.endTime}`}</p>
                 </Button>
               )

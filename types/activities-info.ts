@@ -33,14 +33,14 @@ export interface SchedulesTimeType {
   id: number;
 }
 
-export interface SchedulesDateType {
+export interface SchedulesType {
   date: string;
   startTime: string;
   endTime: string;
   id: number;
 }
 
-export interface SchedulesType {
+export interface SchedulesDateType {
   date: string;
   times: SchedulesTimeType[];
 }
@@ -68,12 +68,4 @@ export interface ActivitiesReviewsType {
 export interface ReservationPost {
   scheduleId: number;
   headCount: number;
-}
-
-export interface ReservationInfoType {
-  person: number;
-  scheduleModal: boolean;
-  personModal: boolean;
-  schedule: SchedulesDateType;
-  daySchedule: SchedulesType;
 }
