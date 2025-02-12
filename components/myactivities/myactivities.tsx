@@ -188,7 +188,7 @@ export default function MyActivities() {
 
           {content === 'manage' && (
             <InfiniteScroll
-              className="h-500pxr w-full pc:h-700pxr"
+              className="h-550pxr w-full pc:h-700pxr"
               queryKey="key"
               fetchData={context => getActivitiesList({...context, meta: {size: 20}})}
               render={group => {
