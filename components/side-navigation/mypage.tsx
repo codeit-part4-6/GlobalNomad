@@ -12,10 +12,12 @@ import {useEffect, useState} from 'react';
 import closeButton from '@/public/icon/ic_close_button.svg';
 import {useRouter} from 'next/navigation';
 import Image from 'next/image';
+import {useImageUrlStore} from '@/service/store/imageURLStore';
 
 interface IFormInput {
   email: string;
   nickname: string;
+  profileImageUrl: string | null;
   password: string;
   newPassword: string;
 }
@@ -23,10 +25,12 @@ interface IFormInput {
 export default function MyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
-  const {user, updateNickname} = useAuthStore();
+  const {user, updateNickname, updateProfileImageUrl} = useAuthStore();
+  const {profileImageUrl} = useImageUrlStore();
   const {
     control,
     handleSubmit,
+    setValue,
     formState: {errors, isValid},
     watch,
   } = useForm<IFormInput>({
@@ -34,6 +38,7 @@ export default function MyPage() {
     defaultValues: {
       email: user ? `${user.email}` : '',
       nickname: user ? `${user.nickname}` : '',
+      profileImageUrl: '',
       password: ``,
       newPassword: ``,
     },
@@ -41,9 +46,16 @@ export default function MyPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // profileImageUrl이 변경될 때마다 폼 값도 업데이트합니다.
+    if (profileImageUrl) {
+      setValue('profileImageUrl', profileImageUrl);
+    }
+  }, [profileImageUrl, setValue]); // profileImageUrl이 변경될 때마다 실행
+
+  useEffect(() => {
     if (!user) {
       router.push('/signin');
-    } 
+    }
   }, [user, router]);
 
   const mypageMutation = useMutation({
@@ -58,6 +70,7 @@ export default function MyPage() {
       },
       onSuccess: data => {
         updateNickname(data.nickname);
+        updateProfileImageUrl(data.profileImageUrl);
         setModalMessage('마이페이지 정보가 성공적으로 저장되었습니다.');
         setIsModalOpen(true);
       },

@@ -11,7 +11,10 @@ import unTreatReservation from '@/public/icon/icon_cog_un.svg';
 import reserveCalendar from '@/public/icon/icon_calendar_check.svg';
 import unReserveCalendar from '@/public/icon/icon_calendar_uncheck.svg';
 import {useAuthStore} from '@/service/store/authStore';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {postProfileImageUrl} from '@/service/api/users/postProfileImageUrl.api';
+import {useImageUrlStore} from '@/service/store/imageURLStore';
+import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 
 interface SideNaviProps {
   selectedMenu: string | null;
@@ -20,8 +23,14 @@ interface SideNaviProps {
 }
 
 export default function SideNavi({selectedMenu, onSelectMenu, isMobile}: SideNaviProps) {
+  const [isPossible, setIsPossible] = useState(false);
   const {user} = useAuthStore();
-  console.log(user);
+  const {setProfileImageUrl} = useImageUrlStore();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isModalOpen = searchParams.get('modal') === 'true';
+
   const menus = [
     {id: 'myinfo', label: '내 정보', icon: accountCheck, nonIcon: accountUncheck},
     {id: 'reserveList', label: '예약 내역', icon: reserveListCheck, nonIcon: reserveListUncheck},
@@ -35,19 +44,39 @@ export default function SideNavi({selectedMenu, onSelectMenu, isMobile}: SideNav
       setPreview(user?.profileImageUrl);
     }
   }, [user?.profileImageUrl]);
-  console.log(preview);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    let profileImageUrl = user?.profileImageUrl;
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setPreview(imageUrl);
+      profileImageUrl = await postProfileImageUrl(file);
+    } else if (!preview) {
+      setPreview(null);
+      profileImageUrl = null;
+    }
+    if (isMobile) {
+      router.push('/mypage/myinfo?modal=true');
+    }
+    setProfileImageUrl(profileImageUrl ?? null);
+  };
+
+  useEffect(() => {
+    setIsPossible(pathname === '/mypage' || pathname === '/mypage/myinfo' || (pathname === '/mypage/myinfo' && isModalOpen));
+  }, [pathname, isModalOpen]);
 
   return (
-    <div className="mb-240pxr min-w-full rounded-xl border border-gray-200 bg-white p-6 shadow-sidenavi-box tablet:w-[15.6875rem] tablet:min-w-[15.6875rem] pc:w-[24rem] pc:min-w-[24rem] pc:p-6">
-      <div className="relative mx-auto mb-2 h-40 w-40 rounded-full shadow-sidenavi-box">
-        {preview ? (
-          <Image src={preview} alt="최초 프로필" className="absolute rounded-full object-cover" fill priority />
-        ) : (
-          <Image src={defaultProfile} alt="기본 프로필" className="absolute rounded-full object-cover" fill priority />
-        )}
-        <div className="absolute bottom-2 right-2 h-11 w-11 cursor-pointer hover:opacity-80">
+    <div className="mb-240pxr min-w-full rounded-xl border border-gray-200 bg-white p-6 tablet:w-[15.6875rem] tablet:min-w-[15.6875rem] pc:w-[24rem] pc:min-w-[24rem] pc:p-6">
+      <div className="relative mx-auto mb-2 h-40 w-40">
+        <Image src={preview || defaultProfile} alt="최초 프로필" className="absolute rounded-full object-cover shadow-sidenavi-box" fill priority />
+        <label
+          htmlFor="profile-upload"
+          className={`absolute bottom-2 right-2 h-11 w-11 cursor-pointer hover:opacity-80 ${!isPossible ? 'hidden' : ''}`}
+        >
           <Image src={profileButton} alt="프로필 수정 버튼" fill />
-        </div>
+          <input type="file" className="hidden" id="profile-upload" onChange={handleFileChange} disabled={!isPossible} />
+        </label>
       </div>
 
       {/* 메뉴 */}
