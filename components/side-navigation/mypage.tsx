@@ -46,11 +46,10 @@ export default function MyPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // profileImageUrl이 변경될 때마다 폼 값도 업데이트합니다.
     if (profileImageUrl) {
       setValue('profileImageUrl', profileImageUrl);
     }
-  }, [profileImageUrl, setValue]); // profileImageUrl이 변경될 때마다 실행
+  }, [profileImageUrl, setValue]);
 
   useEffect(() => {
     if (!user) {
