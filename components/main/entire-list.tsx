@@ -10,8 +10,6 @@ interface EntireListProps {
 }
 
 export default function EntireList({activeCategory, selectedSort}: EntireListProps) {
-  console.log(activeCategory);
-  console.log(selectedSort);
   const {data: entireActivities, isLoading: isEntireLoading} = useQuery<ActivitiesResponse>({
     queryKey: ['EntireActivities', selectedSort, activeCategory],
     queryFn: () =>

@@ -3,11 +3,24 @@ import Image from 'next/image';
 import ExPopular from '@/public/img/img_exPopular.webp';
 import Star from '@/public/icon/ic_yellowStar.svg';
 import Pagenation from '@/components/common/pagenation';
+import {useQuery} from '@tanstack/react-query';
+import {activitiesList} from '@/service/api/activities/getActivities';
+import {ActivitiesResponse} from '@/types/activities';
 interface SearchListProps {
   keyword: string;
 }
 
 export default function SearchList({keyword}: SearchListProps): JSX.Element {
+  const {data: searchActivities, isLoading: isEntireLoading} = useQuery<ActivitiesResponse>({
+    queryKey: ['SearchActivities', keyword],
+    queryFn: () =>
+      activitiesList({
+        method: 'cursor',
+        keyword,
+      }),
+  });
+
+  console.log(searchActivities);
   const handlePageChange = (page: number) => {
     console.log(page);
   };
@@ -19,7 +32,7 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
           <h2 className="text-[1.5rem]/[1.75rem] font-regular text-black-100 tablet:text-[2rem]/[2.375rem]">
             <span className="font-bold">{keyword}</span>(으)로 검색한 결과입니다.
           </h2>
-          <div className="text-lg font-regular">총 200개의 결과</div>
+          <div className="text-lg font-regular">총 {searchActivities?.totalCount}개의 결과</div>
         </section>
         <section>
           <div className="grid grid-cols-2 gap-x-2 gap-y-6 tablet:grid-cols-3 tablet:gap-x-4 tablet:gap-y-[3.75rem] pc:grid-cols-4 pc:gap-x-6 pc:gap-y-[4.313rem]">
