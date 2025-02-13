@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
 import { useAuthStore } from '@/service/store/authStore';
+import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
 import { AxiosError } from 'axios';
 
 export default function SignUpPage() {
@@ -11,18 +11,6 @@ export default function SignUpPage() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const token = searchParams.get('code');
-    if (!token) {
-      setError('잘못된 접근입니다.');
-      router.push('/signin');
-      return;
-    }
-
-    handleSignup(token);
-    /* eslint-disable react-hooks/exhaustive-deps */
-  }, [searchParams]);
 
   const handleSignup = async (token: string) => {
     const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI2 || '';
@@ -58,6 +46,18 @@ export default function SignUpPage() {
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
   };
+
+  useEffect(() => {
+    const token = searchParams.get('code');
+    if (!token) {
+      setError('잘못된 접근입니다.');
+      router.push('/signin');
+      return;
+    }
+
+    handleSignup(token);
+    /* eslint-disable react-hooks/exhaustive-deps */
+  }, [searchParams]);
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
