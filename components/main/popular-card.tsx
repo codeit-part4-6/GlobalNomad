@@ -2,8 +2,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Star from '@/public/icon/ic_yellowStar.svg';
 import {Swiper, SwiperSlide} from 'swiper/react';
-import {Pagination} from 'swiper/modules';
+import SwiperType from 'swiper';
 import {Activities} from '@/types/activities';
+import useLocalStorage from 'use-local-storage';
+import {useEffect, useState} from 'react';
 
 interface PopularCardProps {
   className?: string;
@@ -13,8 +15,26 @@ interface PopularCardProps {
 }
 
 export default function PopularCard({data, className = '', fetchNextpage, hasNextPage}: PopularCardProps) {
+  const [scrollX, setScrollX] = useLocalStorage('places_list_scroll', 0);
+  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
+
+  const onSwiper = (swiper: SwiperType) => {
+    setSwiperInstance(swiper);
+  };
+
+  const onSlideChange = () => {
+    if (swiperInstance) {
+      setScrollX(swiperInstance.realIndex);
+    }
+  };
+
+  useEffect(() => {
+    if (swiperInstance && scrollX !== 0) {
+      swiperInstance.slideTo(scrollX, 0);
+    }
+  }, [swiperInstance, scrollX]);
+
   const handleReachEnd = () => {
-    console.log('현재 스크롤 위치:');
     if (hasNextPage) {
       fetchNextpage();
     }
@@ -23,7 +43,8 @@ export default function PopularCard({data, className = '', fetchNextpage, hasNex
   return (
     <div className={className}>
       <Swiper
-        modules={[Pagination]}
+        onSwiper={onSwiper}
+        onSlideChange={onSlideChange}
         spaceBetween={16}
         slidesPerView="auto"
         onReachEnd={handleReachEnd}
