@@ -1,12 +1,12 @@
 'use client';
 
-import {useState} from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {useRouter} from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Dropbox from '@/components/common/dropbox';
 import Notification from '@/components/common/notification';
-import {useAuthStore} from '@/service/store/authStore';
+import { useAuthStore } from '@/service/store/authStore';
 import navlogo from '@/public/img/img_navlogo.svg';
 import notification from '@/public/icon/ic_notification.svg';
 import defaultProfileImage from '@/public/icon/ic_defaultProfileImage.svg';
