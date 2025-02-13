@@ -15,8 +15,10 @@ import InitialDevice from '@/utils/initial-device';
 import Star from '@/public/icon/ic_star.svg';
 import IconMeatball from '@/public/icon/ic_meatball.svg';
 import LocationIcon from '@/public/icon/icon_location.svg';
-import AdminAuth from '@/utils/admin-auth';
+import isAdmin from '@/utils/admin-auth';
 import deleteReservation from '@/service/api/activities/deleteActivities';
+import AlertModal from '@/components/common/modal/alert-modal';
+import {ResultModalType} from '@/types/common/alert-modal.types';
 
 const DropboxItems = [
   {id: 1, label: '수정하기', type: 'modify'},
@@ -51,30 +53,29 @@ const BannerFromDivceType = ({device, bannerImg, subImages}: BannerType) => {
   }
 };
 
-const ActivitiesUpdateModal = ({pageID, userId}: {pageID: string; userId: number}) => {
-  const adminAuth = AdminAuth(userId);
-  const [isOpenDropbox, setIsOpenDropbox] = useState<boolean>(false);
-
+const ActivitiesUpdate = ({pageID, userId}: {pageID: string; userId: number}) => {
+  const adminAuth = isAdmin(userId);
+  const router = useRouter();
   const queryClient = useQueryClient();
+  const [isDropboxOpen, setIsDropboxOpen] = useState<boolean>(false);
+  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({comment: '', isOpen: false});
 
   const mutation = useMutation({
     mutationFn: async (pageID: string) => {
       await deleteReservation(pageID);
     },
     onSuccess: () => {
-      alert('등록하신 체험 정보를 삭제했습니다.');
+      setIsPostResultModalOpen({comment: '등록하신 체험 정보를 삭제했습니다.', isOpen: true});
       queryClient.setQueryData(['activitiesInfo', 'activitiesReviews', 'schedules'], null);
-      router.push('/');
     },
-    onError: (error: unknown) => {
-      alert(error);
+    onError: error => {
+      setIsPostResultModalOpen({comment: error.message, isOpen: true});
       router.refresh();
     },
   });
 
-  const router = useRouter();
   const handleActivitiesUpdate = (type: string) => {
-    setIsOpenDropbox(false);
+    setIsDropboxOpen(false);
     if (type === 'delete') {
       mutation.mutate(pageID);
     } else {
@@ -83,18 +84,24 @@ const ActivitiesUpdateModal = ({pageID, userId}: {pageID: string; userId: number
     }
   };
 
+  const handleCloseAletModal = () => {
+    setIsPostResultModalOpen({comment: '', isOpen: false});
+    router.push('/');
+  };
+
   return (
     adminAuth && (
       <div>
-        <Image src={IconMeatball} onClick={() => setIsOpenDropbox(true)} width={40} height={40} alt="자세히보기" priority />;
-        {isOpenDropbox && (
+        <Image src={IconMeatball} onClick={() => setIsDropboxOpen(true)} width={40} height={40} alt="자세히보기" priority />;
+        {isDropboxOpen && (
           <Dropbox
             onClick={handleActivitiesUpdate}
-            onClose={() => setIsOpenDropbox(false)}
+            onClose={() => setIsDropboxOpen(false)}
             className="right-0 top-10 z-10 mb-4 mr-4 h-115pxr w-160pxr"
             items={DropboxItems}
           />
         )}
+        {isPostResultModalOpen.isOpen && <AlertModal comment={isPostResultModalOpen.comment} isOpen={handleCloseAletModal} />}
       </div>
     )
   );
@@ -104,26 +111,30 @@ export default function Page() {
   const params = useParams();
   const router = useRouter();
   const [device, setDevice] = useState<string>('mobile');
-  const [pageID, setPageID] = useState<string>('');
+  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({comment: '', isOpen: false});
+  const pageID = params?.id?.toString() || '';
 
   const {
     data: activitiesInfo,
     isSuccess: activitiesSuccess,
     error,
   } = useQuery<ActivitiesInfoType>({
-    queryKey: ['activitiesInfo'],
+    queryKey: ['activitiesInfo', pageID],
     queryFn: () => getActivitiesInfo(pageID),
     enabled: !!pageID,
   });
 
   if (error) {
-    alert(error);
+    setIsPostResultModalOpen({comment: error.message, isOpen: true});
     router.back();
   }
+
+  const handleCloseAletModal = () => {
+    setIsPostResultModalOpen({comment: '', isOpen: false});
+  };
+
   useEffect(() => {
     if (!params?.id) return notFound();
-    setPageID(Array.isArray(params.id) ? params.id[0] : params.id);
-
     const getDeviceType = InitialDevice();
     setDevice(getDeviceType);
   }, [params.id]);
@@ -136,7 +147,7 @@ export default function Page() {
           <div className="flex-row items-center gap-16pxr p-0 text-xl font-bold text-nomad-black tablet:text-3xl pc:text-3xl">
             {activitiesInfo.title}
           </div>
-          <ActivitiesUpdateModal pageID={pageID} userId={activitiesInfo.userId} />
+          <ActivitiesUpdate pageID={pageID} userId={activitiesInfo.userId} />
         </div>
         <div className="flex flex-row gap-6pxr tablet:mb-25pxr pc:mb-25pxr">
           <Image src={Star} alt="별점 이미지" width={16} height={16} priority />
@@ -165,11 +176,12 @@ export default function Page() {
               <KakaoMap address={activitiesInfo.address} houseName={activitiesInfo.address} />
             </div>
             <hr />
-            <Reviews pageID={pageID} />
+            <Reviews />
           </div>
-          <Reservation device={device} pageID={pageID} price={activitiesInfo.price} />
+          <Reservation device={device} price={activitiesInfo.price} />
         </div>
       </div>
+      {isPostResultModalOpen.isOpen && <AlertModal comment={isPostResultModalOpen.comment} isOpen={handleCloseAletModal} />}
     </div>
   ) : (
     <SkeletonLayout />

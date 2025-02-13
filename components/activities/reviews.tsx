@@ -1,22 +1,24 @@
 'use client';
 import React, {useState} from 'react';
 import {useQuery} from 'react-query';
-import {getActivitiesReviews} from '@/service/api/activities/getActivitiesInfo';
+import {useParams} from 'next/navigation';
 import {ActivitiesReviewsType} from '@/types/activities-info';
 import Image from 'next/image';
-import FormatDate from '@/utils/format-date';
+import {getActivitiesReviews} from '@/service/api/activities/getActivitiesInfo';
 import Pagenation from '@/components/common/pagenation';
+import FormatDate from '@/utils/format-date';
 import Star from '@/public/icon/ic_star.svg';
 import DefaultProfile from '@/public/img/img_default_profile.svg';
 
-const Reviews = ({pageID}: {pageID: string}) => {
+const Reviews = () => {
+  const params = useParams();
   const [page, setPage] = useState<number>(1);
+  const pageID = params?.id?.toString() || '';
 
   const {data, isSuccess} = useQuery<ActivitiesReviewsType>({
     queryKey: ['activitiesReviews', page],
     queryFn: () => getActivitiesReviews(pageID, 1, 3),
     enabled: !!page,
-    notifyOnChangeProps: ['data'],
   });
 
   const handlePageChange = (page: number) => {

@@ -1,89 +1,70 @@
 'use client';
-import React, {useReducer} from 'react';
+import React, {useState} from 'react';
 import {useMutation} from 'react-query';
-import {ReservationInfoType, SchedulesDateType, SchedulesType} from '@/types/activities-info';
-import dayjs from 'dayjs';
+import {useParams, useRouter} from 'next/navigation';
+import {ResultModalType} from '@/types/common/alert-modal.types';
 import Image from 'next/image';
 import SmCalendar from '@/components/activities/sm-calendar';
+import activitiesStore from '@/service/store/activitiesstore';
 import Button from '@/components/common/button';
 import OverlayContainer from '@/components/common/modal/overlay-container';
+import AlertModal from '@/components/common/modal/alert-modal';
 import FormatNumberWithCommas from '@/utils/format-number';
 import postReservation from '@/service/api/activities/postActivities';
 import Plus from '@/public/icon/icon_plus.png';
 import Minus from '@/public/icon/icon_minus.png';
 import Cancle from '@/public/icon/icon_cancle.png';
 
-const initialState: ReservationInfoType = {
-  person: 1,
-  scheduleModal: false,
-  personModal: false,
-  schedule: {date: '', startTime: '', endTime: '', id: 0},
-  daySchedule: {date: dayjs().format('YYYY-MM-DD'), times: []},
-};
-
-type Action =
-  | {type: 'SET_PERSON'; payload: number}
-  | {type: 'SET_SCHEDULE_MODAL'; payload: boolean}
-  | {type: 'SET_PERSON_MODAL'; payload: boolean}
-  | {type: 'SET_SCHEDULE'; payload: SchedulesDateType}
-  | {type: 'SET_DAY_SCHEDULE'; payload: SchedulesType};
-
 interface ReservationProps {
   pageID: string;
   price: number;
-  state: ReservationInfoType;
-  dispatch: React.Dispatch<Action>;
+  person: number;
+  selectedSchedule: {date: string; startTime: string; endTime: string; id: number};
+  scheduleModal?: boolean;
+  personModal?: boolean;
   updatePerson: (count: number) => void;
-  updateSchedule: (schedule: SchedulesDateType) => void;
   saveReservation: () => void;
 }
 
-const reservationReducer: (state: ReservationInfoType, action: Action) => ReservationInfoType = (state, action) => {
-  switch (action.type) {
-    case 'SET_PERSON':
-      return {...state, person: action.payload};
-    case 'SET_SCHEDULE_MODAL':
-      return {...state, scheduleModal: action.payload};
-    case 'SET_PERSON_MODAL':
-      return {...state, personModal: action.payload};
-    case 'SET_SCHEDULE':
-      return {...state, schedule: action.payload};
-    case 'SET_DAY_SCHEDULE':
-      return {...state, daySchedule: action.payload};
-    default:
-      return state;
-  }
-};
-
-const Reservation = ({device, pageID, price}: {device: string; pageID: string; price: number}) => {
-  const [state, dispatch] = useReducer(reservationReducer, initialState);
+const Reservation = ({device, price}: {device: string; price: number}) => {
+  const params = useParams();
+  const {person, selectedSchedule, scheduleModal, personModal, updatePerson} = activitiesStore();
+  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({comment: '', isOpen: false});
+  const [isNotiModalOpen, setIsNotiModalOpen] = useState<ResultModalType>({comment: '', isOpen: false});
+  const router = useRouter();
+  const pageID = params?.id?.toString() || '';
 
   const mutation = useMutation(postReservation, {
     onSuccess: () => {
-      alert('체험 예약을 완료했습니다.');
+      setIsPostResultModalOpen({comment: '체험 예약을 완료했습니다.', isOpen: true});
     },
-    onError: (error: unknown) => {
+    onError: error => {
       if (error instanceof Error) {
-        alert(error.message);
+        setIsPostResultModalOpen({comment: error.message, isOpen: true});
       } else {
-        alert('알 수 없는 오류가 발생했습니다.');
+        setIsPostResultModalOpen({comment: '알 수 없는 오류가 발생했습니다.', isOpen: true});
       }
     },
   });
 
-  const handleSelectSchedule = (schedule: SchedulesDateType) => {
-    dispatch({type: 'SET_SCHEDULE', payload: schedule});
+  const handleClosePostResultModal = () => {
+    setIsPostResultModalOpen({comment: '', isOpen: false});
+    router.push('/');
+  };
+
+  const handleCloseNotiModal = () => {
+    setIsNotiModalOpen({comment: '', isOpen: false});
   };
 
   const handleUpdatePerson = (count: number) => {
-    const person = state.person + count;
-    if (person < 1) return alert('최소 예약 인원은 1명입니다.');
-    dispatch({type: 'SET_PERSON', payload: person});
+    const total = person + count;
+    if (total < 1) return setIsNotiModalOpen({comment: '최소 예약 인원은 1명입니다.', isOpen: true});
+    updatePerson(count);
   };
 
   const handleSaveReservation = () => {
-    if (!state.schedule) return alert('예약 정보가 없습니다.');
-    mutation.mutate({pageID: pageID, body: {scheduleId: state.schedule.id, headCount: state.person}});
+    if (!selectedSchedule) return setIsNotiModalOpen({comment: '예약 정보가 없습니다.', isOpen: true});
+    mutation.mutate({pageID: pageID, body: {scheduleId: selectedSchedule.id, headCount: person}});
   };
 
   const ReservationDeviceType = ({device}: {device: string}) => {
@@ -93,9 +74,8 @@ const Reservation = ({device, pageID, price}: {device: string; pageID: string; p
           <ReservationWindowsType
             pageID={pageID}
             price={price}
-            state={state}
-            dispatch={dispatch}
-            updateSchedule={handleSelectSchedule}
+            person={person}
+            selectedSchedule={selectedSchedule}
             updatePerson={handleUpdatePerson}
             saveReservation={handleSaveReservation}
           />
@@ -105,9 +85,9 @@ const Reservation = ({device, pageID, price}: {device: string; pageID: string; p
           <ReservationTabletType
             pageID={pageID}
             price={price}
-            state={state}
-            dispatch={dispatch}
-            updateSchedule={handleSelectSchedule}
+            person={person}
+            selectedSchedule={selectedSchedule}
+            scheduleModal={scheduleModal}
             updatePerson={handleUpdatePerson}
             saveReservation={handleSaveReservation}
           />
@@ -117,9 +97,10 @@ const Reservation = ({device, pageID, price}: {device: string; pageID: string; p
           <ReservationMobileType
             pageID={pageID}
             price={price}
-            state={state}
-            dispatch={dispatch}
-            updateSchedule={handleSelectSchedule}
+            person={person}
+            selectedSchedule={selectedSchedule}
+            scheduleModal={scheduleModal}
+            personModal={personModal}
             updatePerson={handleUpdatePerson}
             saveReservation={handleSaveReservation}
           />
@@ -127,16 +108,22 @@ const Reservation = ({device, pageID, price}: {device: string; pageID: string; p
     }
   };
 
-  return <ReservationDeviceType device={device} />;
+  return (
+    <>
+      <ReservationDeviceType device={device} />
+      {isPostResultModalOpen.isOpen && <AlertModal comment={isPostResultModalOpen.comment} isOpen={handleClosePostResultModal} />}
+      {isNotiModalOpen.isOpen && <AlertModal comment={isNotiModalOpen.comment} isOpen={handleCloseNotiModal} />}
+    </>
+  );
 };
 
-const ReservationWindowsType = ({pageID, price, state, dispatch, updateSchedule, updatePerson, saveReservation}: ReservationProps) => {
+const ReservationWindowsType = ({pageID, price, person, selectedSchedule, updatePerson, saveReservation}: ReservationProps) => {
   return (
     <div className="rounded-xl border border-solid border-gray-200 bg-white px-24pxr pb-18pxr pt-24pxr shadow-sidenavi-box tablet:h-full pc:min-h-748pxr pc:min-w-384pxr">
       <div className="mb-16pxr">
         <div className="flex w-auto flex-row gap-3">
           <p className="mb-16pxr text-3xl font-bold text-black-100">{`₩ ${FormatNumberWithCommas(price)}`}</p>
-          <p className="mb-16pxr text-2xl font-normal leading-10 text-gray-800">{`/ ${state.person}인`}</p>
+          <p className="mb-16pxr text-2xl font-normal leading-10 text-gray-800">{`/ ${person}인`}</p>
         </div>
         <hr />
       </div>
@@ -144,7 +131,7 @@ const ReservationWindowsType = ({pageID, price, state, dispatch, updateSchedule,
         <div className="flex w-auto flex-row gap-3">
           <p className="mb-16pxr text-xl font-bold text-nomad-black">날짜</p>
         </div>
-        <SmCalendar pageID={pageID} state={state} dispatch={dispatch} onSelect={updateSchedule} />
+        <SmCalendar pageID={pageID} />
       </div>
       <hr />
       <div className="mb-24pxr mt-12pxr">
@@ -156,7 +143,7 @@ const ReservationWindowsType = ({pageID, price, state, dispatch, updateSchedule,
           >
             <Image src={Minus} width={20} height={20} alt="minus" />
           </Button>
-          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{state.person}</p>
+          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{person}</p>
           <Button
             className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
             onClick={() => updatePerson(1)}
@@ -165,8 +152,8 @@ const ReservationWindowsType = ({pageID, price, state, dispatch, updateSchedule,
           </Button>
         </div>
         <Button
-          className={`my-24pxr flex h-56pxr w-full flex-row items-center justify-center gap-4pxr rounded-s px-8pxr py-40pxr ${!state.schedule?.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
-          disabled={!state.schedule?.id}
+          className={`my-24pxr flex h-56pxr w-full flex-row items-center justify-center gap-4pxr rounded-s px-8pxr py-40pxr ${!selectedSchedule?.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
+          disabled={!selectedSchedule?.id}
           onClick={saveReservation}
         >
           <p className="text-lg font-bold text-white">예약하기</p>
@@ -175,15 +162,17 @@ const ReservationWindowsType = ({pageID, price, state, dispatch, updateSchedule,
       <hr />
       <div className="mt-16pxr flex flex-row items-center justify-between">
         <p className="text-xl font-bold text-nomad-black">총 합계</p>
-        <p className="text-xl font-bold text-nomad-black">{`₩ ${FormatNumberWithCommas(price * state.person)}`}</p>
+        <p className="text-xl font-bold text-nomad-black">{`₩ ${FormatNumberWithCommas(price * person)}`}</p>
       </div>
     </div>
   );
 };
 
-const ReservationTabletType = ({pageID, price, state, dispatch, updateSchedule, updatePerson, saveReservation}: ReservationProps) => {
+const ReservationTabletType = ({pageID, price, person, selectedSchedule, scheduleModal, updatePerson, saveReservation}: ReservationProps) => {
+  const {updateScheduleModal} = activitiesStore();
+
   const handleOpenModal = (status: boolean) => {
-    dispatch({type: 'SET_SCHEDULE_MODAL', payload: status});
+    updateScheduleModal(status);
   };
 
   return (
@@ -191,7 +180,7 @@ const ReservationTabletType = ({pageID, price, state, dispatch, updateSchedule, 
       <div className="mb-16pxr">
         <div className="flex w-auto flex-row gap-3">
           <p className="mb-16pxr text-2xl font-bold text-black-100">{`₩ ${FormatNumberWithCommas(price)}`}</p>
-          <p className="mb-16pxr text-2xl font-normal leading-8 text-gray-800">{`/ ${state.person}인`}</p>
+          <p className="mb-16pxr text-2xl font-normal leading-8 text-gray-800">{`/ ${person}인`}</p>
         </div>
         <hr />
       </div>
@@ -205,8 +194,8 @@ const ReservationTabletType = ({pageID, price, state, dispatch, updateSchedule, 
         >
           날짜 선택하기
         </Button>
-        {state.schedule.date.length > 0 && (
-          <p className="text-lg font-semibold text-nomad-black">{`${state.schedule.date} ${state.schedule.startTime} ~ ${state.schedule.endTime}`}</p>
+        {selectedSchedule.date.length > 0 && (
+          <p className="text-lg font-semibold text-nomad-black">{`${selectedSchedule.date} ${selectedSchedule.startTime} ~ ${selectedSchedule.endTime}`}</p>
         )}
       </div>
       <hr />
@@ -219,7 +208,7 @@ const ReservationTabletType = ({pageID, price, state, dispatch, updateSchedule, 
           >
             <Image src={Minus} width={20} height={20} alt="minus" />
           </Button>
-          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{state.person}</p>
+          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{person}</p>
           <Button
             className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
             onClick={() => updatePerson(1)}
@@ -228,8 +217,8 @@ const ReservationTabletType = ({pageID, price, state, dispatch, updateSchedule, 
           </Button>
         </div>
         <Button
-          className={`my-24pxr flex h-56pxr w-full flex-row items-center justify-center gap-4pxr rounded-md px-8pxr py-40pxr ${!state.schedule.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
-          disabled={state.schedule.id === 0}
+          className={`my-24pxr flex h-56pxr w-full flex-row items-center justify-center gap-4pxr rounded-md px-8pxr py-40pxr ${!selectedSchedule.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
+          disabled={selectedSchedule.id === 0}
           onClick={saveReservation}
         >
           <p className="text-lg font-bold text-white">예약하기</p>
@@ -238,9 +227,9 @@ const ReservationTabletType = ({pageID, price, state, dispatch, updateSchedule, 
       <hr />
       <div className="mt-16pxr flex flex-row items-center justify-between">
         <p className="text-xl font-bold text-nomad-black">총 합계</p>
-        <p className="text-xl font-bold text-nomad-black">{`₩ ${FormatNumberWithCommas(price * state.person)}`}</p>
+        <p className="text-xl font-bold text-nomad-black">{`₩ ${FormatNumberWithCommas(price * person)}`}</p>
       </div>
-      {state.scheduleModal && (
+      {scheduleModal && (
         <OverlayContainer onClose={() => handleOpenModal(false)}>
           <div className="relative max-h-700pxr w-480pxr rounded-3xl bg-white px-24pxr pb-32pxr pt-28pxr" onClick={e => e.stopPropagation()}>
             <div className="mb-30pxr flex flex-row justify-between">
@@ -250,11 +239,11 @@ const ReservationTabletType = ({pageID, price, state, dispatch, updateSchedule, 
               </Button>
             </div>
             <div className="mb-100pxr">
-              <SmCalendar pageID={pageID} state={state} dispatch={dispatch} onSelect={updateSchedule} />
+              <SmCalendar pageID={pageID} />
             </div>
             <Button
-              className={`absolute bottom-32pxr left-24pxr flex h-56pxr min-w-432pxr items-center justify-center rounded-md ${!state.schedule.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
-              disabled={!state.schedule.id}
+              className={`absolute bottom-32pxr left-24pxr flex h-56pxr min-w-432pxr items-center justify-center rounded-md ${!selectedSchedule.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
+              disabled={!selectedSchedule.id}
               onClick={() => handleOpenModal(false)}
             >
               <p className="text-lg font-bold text-white">확인</p>
@@ -266,17 +255,29 @@ const ReservationTabletType = ({pageID, price, state, dispatch, updateSchedule, 
   );
 };
 
-const ReservationMobileType = ({pageID, price, state, dispatch, updateSchedule, updatePerson, saveReservation}: ReservationProps) => {
+const ReservationMobileType = ({
+  pageID,
+  price,
+  person,
+  selectedSchedule,
+  scheduleModal,
+  personModal,
+  updatePerson,
+  saveReservation,
+}: ReservationProps) => {
+  const {updateScheduleModal, updatePersonModal} = activitiesStore();
+
   const handleOpenScheduleModal = (status: boolean) => {
-    dispatch({type: 'SET_SCHEDULE_MODAL', payload: status});
+    updateScheduleModal(status);
   };
+
   const handleOpenPersonModal = () => {
-    dispatch({type: 'SET_SCHEDULE_MODAL', payload: false});
-    dispatch({type: 'SET_PERSON_MODAL', payload: true});
+    updateScheduleModal(false);
+    handleClosePersonModal(true);
   };
 
   const handleClosePersonModal = (status: boolean) => {
-    dispatch({type: 'SET_PERSON_MODAL', payload: status});
+    updatePersonModal(status);
   };
 
   return (
@@ -285,23 +286,23 @@ const ReservationMobileType = ({pageID, price, state, dispatch, updateSchedule, 
         <div className="flex flex-row flex-wrap justify-between px-18pxr py-18pxr">
           <div className="flex flex-col items-start">
             <div className="flex h-35pxr w-auto flex-row gap-3">
-              <p className="text-xl font-bold text-nomad-black">{`₩ ${FormatNumberWithCommas(price * state.person)}`}</p>
-              <p className="mb-16pxr text-xl font-normal leading-8 text-gray-800">{`/ ${state.person}인`}</p>
+              <p className="text-xl font-bold text-nomad-black">{`₩ ${FormatNumberWithCommas(price * person)}`}</p>
+              <p className="mb-16pxr text-xl font-normal leading-8 text-gray-800">{`/ ${person}인`}</p>
             </div>
             <Button className="border-0 bg-white text-lg font-semibold text-primary" onClick={() => handleOpenScheduleModal(true)}>
               <ins>날짜 선택하기</ins>
             </Button>
           </div>
           <Button
-            className={`h-48pxr min-w-106pxr items-center justify-center rounded-md text-lg font-bold text-white ${!state.schedule.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
-            disabled={state.schedule.id === 0}
+            className={`h-48pxr min-w-106pxr items-center justify-center rounded-md text-lg font-bold text-white ${!selectedSchedule.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
+            disabled={selectedSchedule.id === 0}
             onClick={saveReservation}
           >
             예약하기
           </Button>
         </div>
       </div>
-      {state.scheduleModal && (
+      {scheduleModal && (
         <OverlayContainer onClose={() => handleOpenScheduleModal(false)}>
           <div className="relative h-full w-373pxr bg-white px-24pxr pb-40pxr pt-24pxr" onClick={e => e.stopPropagation()}>
             <div className="mb-30pxr flex flex-row justify-between">
@@ -312,10 +313,10 @@ const ReservationMobileType = ({pageID, price, state, dispatch, updateSchedule, 
                 <Image src={Cancle} width={40} height={40} alt="cancle" />
               </Button>
             </div>
-            <SmCalendar pageID={pageID} device={'mobile'} state={state} dispatch={dispatch} onSelect={updateSchedule} />
+            <SmCalendar pageID={pageID} device={'mobile'} />
             <Button
-              className={`absolute bottom-40pxr left-24pxr flex h-56pxr min-w-327pxr flex-row items-center justify-center rounded-md ${!state.schedule?.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
-              disabled={!state.schedule.id}
+              className={`absolute bottom-40pxr left-24pxr flex h-56pxr min-w-327pxr flex-row items-center justify-center rounded-md ${!selectedSchedule?.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
+              disabled={!selectedSchedule.id}
               onClick={handleOpenPersonModal}
             >
               <p className="text-lg font-bold text-white">다음</p>
@@ -323,7 +324,7 @@ const ReservationMobileType = ({pageID, price, state, dispatch, updateSchedule, 
           </div>
         </OverlayContainer>
       )}
-      {state.personModal && (
+      {personModal && (
         <OverlayContainer onClose={() => handleClosePersonModal(false)}>
           <div className="relative h-full min-w-373pxr bg-white px-24pxr pb-40pxr pt-24pxr" onClick={e => e.stopPropagation()}>
             <div className="mb-30pxr flex flex-row justify-between">
@@ -343,7 +344,7 @@ const ReservationMobileType = ({pageID, price, state, dispatch, updateSchedule, 
                 >
                   <Image src={Minus} width={20} height={20} alt="minus" />
                 </Button>
-                <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{state.person}</p>
+                <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{person}</p>
                 <Button
                   className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
                   onClick={() => updatePerson(1)}
@@ -354,7 +355,7 @@ const ReservationMobileType = ({pageID, price, state, dispatch, updateSchedule, 
             </div>
             <Button
               className="absolute bottom-40pxr left-24pxr flex h-56pxr min-w-327pxr flex-row items-center justify-center rounded-md bg-nomad-black"
-              disabled={!state.schedule.id}
+              disabled={!selectedSchedule.id}
               onClick={() => handleClosePersonModal(false)}
             >
               <p className="text-lg font-bold text-white">확인</p>

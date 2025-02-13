@@ -1,5 +1,5 @@
 import INSTANCE_URL from '@/service/api/instance';
-import {ActivitiesInfoType, ActivitiesReviewsType, SchedulesType} from '@/types/activities-info';
+import {ActivitiesInfoType, ActivitiesReviewsType, SchedulesDateType} from '@/types/activities-info';
 import {ServerError} from '@/types/server-error.types';
 
 export async function getActivitiesInfo(pageID: string): Promise<ActivitiesInfoType> {
@@ -13,7 +13,7 @@ export async function getActivitiesInfo(pageID: string): Promise<ActivitiesInfoT
   }
 }
 
-export async function getActivitiesSchedule(pageID: string, date: string | undefined): Promise<SchedulesType[]> {
+export async function getActivitiesSchedule(pageID: string, date: string | undefined): Promise<SchedulesDateType[]> {
   if (!date) return [];
   const params = new URLSearchParams();
   const splitDate = date.split('-');
