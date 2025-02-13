@@ -210,7 +210,7 @@ export default function Page() {
           </div>
         </form>
       </div>
-      {isModalOpen && <Modal type="big" message={modalMessage} onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && <Modal message={modalMessage} onClose={() => setIsModalOpen(false)} />}
     </>
   );
 }
