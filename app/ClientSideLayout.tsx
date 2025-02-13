@@ -25,10 +25,12 @@ export default function ClientSideLayout({children}: Readonly<{children: React.R
 
   return (
     <QueryClientProvider client={queryClient}>
-      {!hideNavbar && <Navbar />}
-      {children}
-      <ReactQueryDevtools initialIsOpen={false} />
-      {!hideFooter && <Footer />}
+      <div className="flex min-h-screen flex-col">
+        {!hideNavbar && <Navbar />}
+        {children}
+        <ReactQueryDevtools initialIsOpen={false} />
+        {!hideFooter && <Footer />}
+      </div>
     </QueryClientProvider>
   );
 }

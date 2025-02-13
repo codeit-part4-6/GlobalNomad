@@ -85,7 +85,7 @@ export default function Page() {
 
   return (
     <>
-      <div className="pt-[6.875rem] gap-[1.5rem] m-auto flex max-w-[40rem] flex-col items-center desktop:pt-[7.375rem] desktop:gap-[3.5rem] desktop:w-[640px] desktop:h-[779px] desktop:top-[118px] desktop:left-[640px] tablet:gap-[2.5rem] tablet:pt-[7.875rem] tablet:w-[640px] tablet:h-[779px] tablet:top-[118px] tablet:left-[52px]">
+      <div className="desktop:pt-[7.375rem] desktop:gap-[3.5rem] desktop:w-[640px] desktop:h-[779px] desktop:top-[118px] desktop:left-[640px] m-auto flex max-w-[40rem] flex-col items-center gap-[1.5rem] pt-[6.875rem] tablet:left-[52px] tablet:top-[118px] tablet:h-[779px] tablet:w-[640px] tablet:gap-[2.5rem] tablet:pt-[7.875rem]">
         <Link href="/">
           <Image src={signLogo} alt="로고" />
         </Link>
@@ -156,13 +156,13 @@ export default function Page() {
                 회원가입하기
               </Link>
             </span>
-            <div className="flex flex-col gap-[1.5rem] tablet:gap-[2.5rem]">
+            <div className="flex w-full flex-col gap-[1.5rem] tablet:gap-[2.5rem]">
               <div className="flex items-center justify-center">
-                <hr className="w-[180px] border border-gray-300" />
-                <span className="text-center text-[0.875rem] font-regular leading-[1.5rem] text-gray-700 w-[205px] h-[32px]">
+                <hr className="w-full border border-gray-300" />
+                <span className="whitespace-nowrap px-5 text-center text-[0.875rem] font-regular leading-[1.5rem] text-gray-700">
                   SNS 계정으로 로그인하기
                 </span>
-                <hr className="w-[180px] border border-gray-300" />
+                <hr className="w-full border border-gray-300" />
               </div>
               <div className="flex justify-center gap-[1rem]">
                 <button type="button" onClick={() => alert('Google 로그인 기능이 일시적으로 제한되어 있습니다')}>

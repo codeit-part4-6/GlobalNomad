@@ -24,7 +24,7 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
       </head>
       <body className="max-w-full">
         <ClientSideLayout>
-          <main>{children}</main>
+          <main className="flex-grow">{children}</main>
         </ClientSideLayout>
       </body>
     </html>
