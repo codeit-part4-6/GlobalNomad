@@ -3,28 +3,38 @@ import Link from 'next/link';
 import Star from '@/public/icon/ic_yellowStar.svg';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Pagination} from 'swiper/modules';
-import {ActivitiesResponse} from '@/types/activities';
+import {Activities} from '@/types/activities';
 
 interface PopularCardProps {
   className?: string;
-  data?: ActivitiesResponse;
+  data?: Activities[];
+  fetchNextpage: () => void;
+  hasNextPage: boolean;
 }
 
-export default function PopularCard({data, className = ''}: PopularCardProps) {
+export default function PopularCard({data, className = '', fetchNextpage, hasNextPage}: PopularCardProps) {
+  const handleReachEnd = () => {
+    console.log('현재 스크롤 위치:');
+    if (hasNextPage) {
+      fetchNextpage();
+    }
+  };
+
   return (
     <div className={className}>
       <Swiper
         modules={[Pagination]}
         spaceBetween={16}
         slidesPerView="auto"
+        onReachEnd={handleReachEnd}
         breakpoints={{
           340: {slidesPerView: 2, spaceBetween: 10},
           745: {slidesPerView: 2},
           1200: {slidesPerView: 3},
         }}
       >
-        {data?.activities?.map(({title, price, bannerImageUrl, rating, reviewCount, id}) => (
-          <SwiperSlide key={id}>
+        {data?.map(({title, price, bannerImageUrl, rating, reviewCount, id}, index) => (
+          <SwiperSlide key={`${id}-${index}`}>
             <Link href={`/activities/${id}`}>
               <div className="relative flex h-[186px] w-[186px] items-end overflow-hidden rounded-3xl bg-gray-300 tablet:h-[384px] tablet:w-[384px]">
                 {/* 배경 이미지 */}
