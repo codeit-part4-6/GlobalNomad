@@ -1,5 +1,5 @@
 export const categories = [
-  {id: 'culture', label: '문화·예술'},
+  {id: 'culture', label: '문화 · 예술'},
   {id: 'food', label: '식음료'},
   {id: 'sports', label: '스포츠'},
   {id: 'tour', label: '투어'},

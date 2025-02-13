@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import {useState, useRef} from 'react';
+import {useRef} from 'react';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation} from 'swiper/modules'; // Navigation, Pagination 모듈 추가
 import 'swiper/css';
@@ -19,11 +19,11 @@ interface OptionType {
 }
 
 export default function Option({className, activeCategory, setActiveCategory}: OptionType) {
-  const [optionState, setOptionState] = useState({price: '가격'});
-
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setOptionState({...optionState, price: event.target.value});
-  };
+  // const [optionState, setOptionState] = useState({price: '가격'});
+  // console.log(optionState);
+  // const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setOptionState({...optionState, price: event.target.value});
+  // };
 
   // Swiper 인스턴스 참조
   const swiperRef = useRef<any>(null);
@@ -74,14 +74,13 @@ export default function Option({className, activeCategory, setActiveCategory}: O
       >
         <Image src={arrow} alt="오른쪽 화살표" width={7} height={13} />
       </Button>
-
-      <select defaultValue="default" onChange={handleChange} className="rounded border px-2 py-1">
+      {/* <select defaultValue="default" onChange={handleChange} className="rounded border px-2 py-1">
         <option value="default" disabled hidden>
           가격
         </option>
         <option value="price_desc">가격이 낮은 순</option>
         <option value="price_asc">가격이 높은 순</option>
-      </select>
+      </select> */}
     </div>
   );
 }

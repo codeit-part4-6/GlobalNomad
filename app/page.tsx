@@ -1,14 +1,15 @@
 'use client';
 
-import {useQueries, useQuery} from '@tanstack/react-query';
+import {useQueries} from '@tanstack/react-query';
 import {useEffect, useState} from 'react';
 import Search from '@/components/main/search';
-import Option from '@/components/main/option';
 import SearchList from '@/components/main/search-list';
 import PopularCard from '@/components/main/popular-card';
 import {activitiesList} from '@/service/api/activities/getActivities';
-import EntireCard from '@/components/main/entire-card';
-import {ActivitiesBody, ActivitiesResponse} from '@/types/activities';
+import EntireList from '@/components/main/entire-list';
+import SortSelect from '@/components/main/sort-select';
+import Option from '@/components/main/option';
+import {ActivitiesBody} from '@/types/activities';
 
 // ✅ 여러 개의 API를 병렬 호출하는 커스텀 훅
 const useMultipleActivities = () => {
@@ -18,44 +19,15 @@ const useMultipleActivities = () => {
         queryKey: ['popular', {method: 'offset', category: undefined, sort: 'most_reviewed', size: 1000, page: 1}],
         queryFn: () => activitiesList({method: 'offset', category: undefined, sort: 'most_reviewed', size: 1000, page: 1}),
       },
-      // {
-      //   queryKey: ['entire', {method: 'cursor', category: undefined, sort: 'latest', size: 1000, page: 1}],
-      //   queryFn: () => activitiesList({method: 'offset', category: undefined, sort: 'latest', size: 1000, page: 1}),
-      // },
     ],
   });
 };
-
-// const fetchActivitiesByCategory = async (category: string) => {
-//   return await activitiesList({method: 'offset', category, size: 20, page: 1});
-// };
-
-// // ✅ 카테고리 변경 시 실행되는 함수 (데이터 요청)
-// const handleCategoryChange = (category: '문화·예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙') => {
-//   refetch({category}); // ✅ API 요청 실행
-// };
-
-// const {refetch} = useQuery({
-//   queryKey: ['activities', 'category'],
-//   queryFn: () => fetchActivitiesByCategory('문화·예술'), // 기본 카테고리 요청
-//   enabled: false, // 기본적으로 자동 실행 X (refetch로 실행)
-// });
 
 export default function Mainpage() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isShown, setIsShown] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined); // 현재 선택된 카테고리
   const [selectedSort, setSelectedSort] = useState<ActivitiesBody['sort']>('latest');
-  console.log(activeCategory);
-  const {data: entireActivities, isLoading: isEntireLoading} = useQuery<ActivitiesResponse>({
-    queryKey: ['EntireActivities', selectedSort, activeCategory],
-    queryFn: () =>
-      activitiesList({
-        method: 'cursor',
-        sort: selectedSort,
-        category: activeCategory,
-      }),
-  });
 
   // ✅ 여러 개의 API 호출 (인기 체험 + 모든 체험)
   const [popularQuery] = useMultipleActivities();
@@ -73,7 +45,7 @@ export default function Mainpage() {
   }, [searchKeyword]);
 
   // ✅ 로딩 상태 처리
-  if (popularQuery.isLoading || isEntireLoading) {
+  if (popularQuery.isLoading) {
     return <p>Loading...</p>;
   }
 
@@ -95,19 +67,16 @@ export default function Mainpage() {
             <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-[2.25rem]/[2.625rem]">🔥 인기 체험</h2>
             <PopularCard className="min-w-[24.25rem] max-w-[75rem]" data={popularQuery.data} />
           </section>
-
-          <Option
-            className="pc:mt-15 mb-6 mt-10 flex min-w-[21.25rem] max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]"
-            // onChange={category => handleCategoryChange(category.type)}
-            activeCategory={activeCategory}
-            setActiveCategory={setActiveCategory}
-          />
-
           {/* ✅ 모든 체험 섹션 */}
-          <section className="mb-24pxr mt-24pxr flex max-w-[75rem] flex-col items-start justify-center gap-24pxr tablet:mt-35pxr tablet:gap-32pxr">
-            <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-3xl">🥽 모든 체험</h2>
-            <EntireCard data={entireActivities} />
-          </section>
+          <div className="flex items-center">
+            <Option
+              className="pc:mt-15 mb-6 mt-10 flex min-w-[21.25rem] max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]"
+              activeCategory={activeCategory}
+              setActiveCategory={setActiveCategory}
+            />
+            <SortSelect selectedSort={selectedSort} onSelectedSort={setSelectedSort} />
+          </div>
+          <EntireList activeCategory={activeCategory} selectedSort={selectedSort} />
         </div>
       )}
     </div>
