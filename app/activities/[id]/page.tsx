@@ -73,18 +73,27 @@ const ActivitiesUpdate = ({pageID, userId}: {pageID: string; userId: number}) =>
     },
   });
 
+  const moveMypage = ({type, movePageID}: {type: string; movePageID?: string}) => {
+    const device = InitialDevice();
+    const params = new URLSearchParams(`type=${type}`);
+    if (device === 'mobile') params.set('modal', 'true');
+    if (movePageID) params.set('id', movePageID);
+
+    router.push(`/mypage/treatReservation?${params.toString()}`);
+  };
+
   const handleActivitiesUpdate = (type: string) => {
     setIsDropboxOpen(false);
     if (type === 'delete') {
       mutation.mutate(pageID);
     } else {
-      router.push('/mypage/treatReservation?type=manage');
+      moveMypage({type: 'modify', movePageID: pageID});
     }
   };
 
   const handleCloseAletModal = () => {
     setIsPostResultModalOpen({message: '', isOpen: false});
-    router.push('/mypage/treatReservation?type=manage');
+    moveMypage({type: 'manage'});
   };
 
   return (
