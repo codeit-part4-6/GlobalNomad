@@ -1,19 +1,19 @@
 'use client';
 
+import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
-import {useRouter} from 'next/navigation';
-import {useState} from 'react';
-import {useForm, Controller} from 'react-hook-form';
-import {useMutation} from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { SignupBody } from '@/types/postSignup.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
+import { postSignup } from '@/service/api/users/postSignup.api';
 import signLogo from '@/public/img/img_signlogo.svg';
 import GoogleIcon from '@/public/icon/ic_google.svg';
 import KakaoIcon from '@/public/icon/ic_kakao.svg';
-import {postSignup} from '@/service/api/users/postSignup.api';
-import {SignupBody} from '@/types/postSignup.types';
 
 interface IFormInput {
   email: string;
