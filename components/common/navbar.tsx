@@ -60,7 +60,13 @@ export default function Navbar() {
                   <hr className="border:bg-gray-100 h-[22px] w-0 border-[1px]" />
                   <div className="relative flex items-center justify-center gap-10pxr">
                     <div onClick={toggleDropdown} className="flex cursor-pointer items-center gap-2">
-                      <Image src={user.profileImageUrl || defaultProfileImage} alt="프로필 이미지" width={42.29} height={32} />
+                      <Image
+                        src={user.profileImageUrl || defaultProfileImage}
+                        alt="프로필 이미지"
+                        width={42.29}
+                        height={32}
+                        className="rounded-full"
+                      />
                       <div>{user.nickname}</div>
                     </div>
                     {isDropdown && (

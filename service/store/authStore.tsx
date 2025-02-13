@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import {create} from 'zustand';
 
 interface AuthState {
   accessToken: string | null;
@@ -11,17 +11,14 @@ interface AuthState {
     createdAt: string;
     updatedAt: string;
   } | null;
-  setLogin: (
-    accessToken: string,
-    refreshToken: string,
-    user: AuthState['user']
-  ) => void;
+  setLogin: (accessToken: string, refreshToken: string, user: AuthState['user']) => void;
   setLogout: () => void;
   updateNickname: (nickname: string) => void;
+  updateProfileImageUrl: (profileImageUrl: string | null) => void;
 }
 
 // 상태가 페이지 새로고침 후에도 유지되도록 sessionStorage에서 상태를 로드
-export const useAuthStore = create<AuthState>((set) => {
+export const useAuthStore = create<AuthState>(set => {
   let storedUser = null;
   let storedAccessToken = null;
   let storedRefreshToken = null;
@@ -47,7 +44,7 @@ export const useAuthStore = create<AuthState>((set) => {
         sessionStorage.setItem('refreshToken', refreshToken);
         sessionStorage.setItem('userInfo', JSON.stringify(user));
       }
-      set({ accessToken, refreshToken, user });
+      set({accessToken, refreshToken, user});
     },
     setLogout: () => {
       if (typeof window !== 'undefined') {
@@ -55,16 +52,25 @@ export const useAuthStore = create<AuthState>((set) => {
         sessionStorage.removeItem('refreshToken');
         sessionStorage.removeItem('userInfo');
       }
-      set({ accessToken: null, refreshToken: null, user: null });
+      set({accessToken: null, refreshToken: null, user: null});
     },
-    updateNickname: (nickname) =>
-      set((state) => {
+    updateNickname: nickname =>
+      set(state => {
         if (!state.user) return {};
-        const updatedUser = { ...state.user, nickname };
+        const updatedUser = {...state.user, nickname};
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('userInfo', JSON.stringify(updatedUser));
         }
-        return { user: updatedUser };
+        return {user: updatedUser};
+      }),
+    updateProfileImageUrl: profileImageUrl =>
+      set(state => {
+        if (!state.user) return {};
+        const updatedUser = {...state.user, profileImageUrl};
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('userInfo', JSON.stringify(updatedUser));
+        }
+        return {user: updatedUser};
       }),
   };
 });
