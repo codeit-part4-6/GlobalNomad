@@ -1,18 +1,18 @@
 'use client';
 
-import {useForm, Controller} from 'react-hook-form';
-import {useMutation} from '@tanstack/react-query';
-import {useAuthStore} from '@/service/store/authStore';
-import {patchMypage} from '@/service/api/users/patchMypage.api';
-import {EditMypageBody} from '@/types/patchMypage.types';
+import { useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { EditMypageBody } from '@/types/patchMypage.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
-import {useEffect, useState} from 'react';
+import { patchMypage } from '@/service/api/users/patchMypage.api';
+import { useAuthStore } from '@/service/store/authStore';
+import { useImageUrlStore } from '@/service/store/imageURLStore';
 import closeButton from '@/public/icon/ic_close_button.svg';
-import {useRouter} from 'next/navigation';
-import Image from 'next/image';
-import {useImageUrlStore} from '@/service/store/imageURLStore';
 
 interface IFormInput {
   email: string;
