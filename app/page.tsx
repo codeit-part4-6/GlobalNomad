@@ -1,6 +1,6 @@
 'use client';
 
-import {useQueries} from '@tanstack/react-query';
+import {useQueries, useQuery} from '@tanstack/react-query';
 import {useEffect, useState} from 'react';
 import Search from '@/components/main/search';
 import Option from '@/components/main/option';
@@ -8,6 +8,7 @@ import SearchList from '@/components/main/search-list';
 import PopularCard from '@/components/main/popular-card';
 import {activitiesList} from '@/service/api/activities/getActivities';
 import EntireCard from '@/components/main/entire-card';
+import {ActivitiesBody, ActivitiesResponse} from '@/types/activities';
 
 // ✅ 여러 개의 API를 병렬 호출하는 커스텀 훅
 const useMultipleActivities = () => {
@@ -17,10 +18,10 @@ const useMultipleActivities = () => {
         queryKey: ['popular', {method: 'offset', category: undefined, sort: 'most_reviewed', size: 1000, page: 1}],
         queryFn: () => activitiesList({method: 'offset', category: undefined, sort: 'most_reviewed', size: 1000, page: 1}),
       },
-      {
-        queryKey: ['entire', {method: 'offset', category: undefined, sort: 'latest', size: 1000, page: 1}],
-        queryFn: () => activitiesList({method: 'offset', category: undefined, sort: 'latest', size: 1000, page: 1}),
-      },
+      // {
+      //   queryKey: ['entire', {method: 'cursor', category: undefined, sort: 'latest', size: 1000, page: 1}],
+      //   queryFn: () => activitiesList({method: 'offset', category: undefined, sort: 'latest', size: 1000, page: 1}),
+      // },
     ],
   });
 };
@@ -43,9 +44,21 @@ const useMultipleActivities = () => {
 export default function Mainpage() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isShown, setIsShown] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined); // 현재 선택된 카테고리
+  const [selectedSort, setSelectedSort] = useState<ActivitiesBody['sort']>('latest');
+  console.log(activeCategory);
+  const {data: entireActivities, isLoading: isEntireLoading} = useQuery<ActivitiesResponse>({
+    queryKey: ['EntireActivities', selectedSort, activeCategory],
+    queryFn: () =>
+      activitiesList({
+        method: 'cursor',
+        sort: selectedSort,
+        category: activeCategory,
+      }),
+  });
 
   // ✅ 여러 개의 API 호출 (인기 체험 + 모든 체험)
-  const [popularQuery, entireQuery] = useMultipleActivities();
+  const [popularQuery] = useMultipleActivities();
 
   // ✅ 검색어 입력 시 검색 실행
   const handleClick = (keyword: string) => {
@@ -60,7 +73,7 @@ export default function Mainpage() {
   }, [searchKeyword]);
 
   // ✅ 로딩 상태 처리
-  if (popularQuery.isLoading || entireQuery.isLoading) {
+  if (popularQuery.isLoading || isEntireLoading) {
     return <p>Loading...</p>;
   }
 
@@ -86,12 +99,14 @@ export default function Mainpage() {
           <Option
             className="pc:mt-15 mb-6 mt-10 flex min-w-[21.25rem] max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]"
             // onChange={category => handleCategoryChange(category.type)}
+            activeCategory={activeCategory}
+            setActiveCategory={setActiveCategory}
           />
 
           {/* ✅ 모든 체험 섹션 */}
           <section className="mb-24pxr mt-24pxr flex max-w-[75rem] flex-col items-start justify-center gap-24pxr tablet:mt-35pxr tablet:gap-32pxr">
             <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-3xl">🥽 모든 체험</h2>
-            <EntireCard data={entireQuery.data} />
+            <EntireCard data={entireActivities} />
           </section>
         </div>
       )}
