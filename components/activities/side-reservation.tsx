@@ -6,9 +6,9 @@ import {ResultModalType} from '@/types/common/alert-modal.types';
 import Image from 'next/image';
 import SmCalendar from '@/components/activities/sm-calendar';
 import activitiesStore from '@/service/store/activitiesstore';
+import Modal from '@/components/common/modal/modal';
 import Button from '@/components/common/button';
 import OverlayContainer from '@/components/common/modal/overlay-container';
-import AlertModal from '@/components/common/modal/alert-modal';
 import FormatNumberWithCommas from '@/utils/format-number';
 import postReservation from '@/service/api/activities/postActivities';
 import Plus from '@/public/icon/icon_plus.png';
@@ -29,41 +29,41 @@ interface ReservationProps {
 const Reservation = ({device, price}: {device: string; price: number}) => {
   const params = useParams();
   const {person, selectedSchedule, scheduleModal, personModal, updatePerson} = activitiesStore();
-  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({comment: '', isOpen: false});
-  const [isNotiModalOpen, setIsNotiModalOpen] = useState<ResultModalType>({comment: '', isOpen: false});
+  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
+  const [isNotiModalOpen, setIsNotiModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
   const router = useRouter();
   const pageID = params?.id?.toString() || '';
 
   const mutation = useMutation(postReservation, {
     onSuccess: () => {
-      setIsPostResultModalOpen({comment: '체험 예약을 완료했습니다.', isOpen: true});
+      setIsPostResultModalOpen({message: '체험 예약을 완료했습니다.', isOpen: true});
     },
     onError: error => {
       if (error instanceof Error) {
-        setIsPostResultModalOpen({comment: error.message, isOpen: true});
+        setIsPostResultModalOpen({message: error.message, isOpen: true});
       } else {
-        setIsPostResultModalOpen({comment: '알 수 없는 오류가 발생했습니다.', isOpen: true});
+        setIsPostResultModalOpen({message: '알 수 없는 오류가 발생했습니다.', isOpen: true});
       }
     },
   });
 
   const handleClosePostResultModal = () => {
-    setIsPostResultModalOpen({comment: '', isOpen: false});
-    router.push('/');
+    setIsPostResultModalOpen({message: '', isOpen: false});
+    router.push('/mypage/reserveList');
   };
 
   const handleCloseNotiModal = () => {
-    setIsNotiModalOpen({comment: '', isOpen: false});
+    setIsNotiModalOpen({message: '', isOpen: false});
   };
 
   const handleUpdatePerson = (count: number) => {
     const total = person + count;
-    if (total < 1) return setIsNotiModalOpen({comment: '최소 예약 인원은 1명입니다.', isOpen: true});
+    if (total < 1) return setIsNotiModalOpen({message: '최소 예약 인원은 1명입니다.', isOpen: true});
     updatePerson(count);
   };
 
   const handleSaveReservation = () => {
-    if (!selectedSchedule) return setIsNotiModalOpen({comment: '예약 정보가 없습니다.', isOpen: true});
+    if (!selectedSchedule) return setIsNotiModalOpen({message: '예약 정보가 없습니다.', isOpen: true});
     mutation.mutate({pageID: pageID, body: {scheduleId: selectedSchedule.id, headCount: person}});
   };
 
@@ -111,8 +111,8 @@ const Reservation = ({device, price}: {device: string; price: number}) => {
   return (
     <>
       <ReservationDeviceType device={device} />
-      {isPostResultModalOpen.isOpen && <AlertModal comment={isPostResultModalOpen.comment} isOpen={handleClosePostResultModal} />}
-      {isNotiModalOpen.isOpen && <AlertModal comment={isNotiModalOpen.comment} isOpen={handleCloseNotiModal} />}
+      {isPostResultModalOpen.isOpen && <Modal message={isPostResultModalOpen.message} onClose={handleClosePostResultModal} />}
+      {isNotiModalOpen.isOpen && <Modal message={isNotiModalOpen.message} onClose={handleCloseNotiModal} />}
     </>
   );
 };
