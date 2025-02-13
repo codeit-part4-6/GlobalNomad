@@ -6,12 +6,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { EditMypageBody } from '@/types/patchMypage.types';
-import { useAuthStore } from '@/service/store/authStore';
-import {useImageUrlStore} from '@/service/store/imageURLStore';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
 import { patchMypage } from '@/service/api/users/patchMypage.api';
+import { useAuthStore } from '@/service/store/authStore';
+import { useImageUrlStore } from '@/service/store/imageURLStore';
 import closeButton from '@/public/icon/ic_close_button.svg';
 
 interface IFormInput {

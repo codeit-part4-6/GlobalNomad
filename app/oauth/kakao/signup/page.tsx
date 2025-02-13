@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuthStore } from '@/service/store/authStore';
 import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
+import { useAuthStore } from '@/service/store/authStore';
 import { AxiosError } from 'axios';
 
 export default function SignUpPage() {
