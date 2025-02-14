@@ -1,15 +1,15 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {useRouter} from 'next/navigation';
-import {useState} from 'react';
-import {useAuthStore} from '@/service/store/authStore';
+import { useRouter } from 'next/navigation';
+import Dropbox from '@/components/common/dropbox';
+import Notification from '@/components/common/notification';
+import { useAuthStore } from '@/service/store/authStore';
 import navlogo from '@/public/img/img_navlogo.svg';
 import notification from '@/public/icon/ic_notification.svg';
 import defaultProfileImage from '@/public/icon/ic_defaultProfileImage.svg';
-import Dropbox from '@/components/common/dropbox';
-import Notification from '@/components/common/notification';
 
 export default function Navbar() {
   const {user, setLogout} = useAuthStore();

@@ -277,7 +277,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
           </div>
         </form>
       </FormProvider>
-      {isOpenError && <Modal type="big" message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
+      {isOpenError && <Modal message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>
   );
 });
