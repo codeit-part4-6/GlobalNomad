@@ -36,7 +36,6 @@ export default function EntireList({activeCategory, selectedSort}: EntireListPro
       const newSize = getPageSize(window.innerWidth);
       setPageSize(newSize);
     };
-    console.log(window.innerWidth);
     updateSize();
     window.addEventListener('resize', updateSize);
 
