@@ -24,7 +24,7 @@ const useMultipleActivities = () => {
 };
 
 export default function Mainpage() {
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState<string | undefined>(undefined);
   const [isShown, setIsShown] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined); // 현재 선택된 카테고리
   const [selectedSort, setSelectedSort] = useState<ActivitiesBody['sort']>('latest');
@@ -33,7 +33,7 @@ export default function Mainpage() {
   const [popularQuery] = useMultipleActivities();
 
   // ✅ 검색어 입력 시 검색 실행
-  const handleClick = (keyword: string) => {
+  const handleClick = (keyword: string | undefined) => {
     setSearchKeyword(keyword);
     setIsShown(true);
   };

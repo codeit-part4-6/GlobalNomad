@@ -1,4 +1,4 @@
-import {JSX} from 'react';
+import {JSX, useEffect, useState} from 'react';
 import Image from 'next/image';
 import Star from '@/public/icon/ic_yellowStar.svg';
 import Pagenation from '@/components/common/pagenation';
@@ -7,32 +7,44 @@ import {activitiesList} from '@/service/api/activities/getActivities';
 import {ActivitiesResponse} from '@/types/activities';
 import FormattedPrice from '@/utils/formatted-price';
 import {ScaleLoader} from 'react-spinners';
+import {getSearchPageSize} from '@/utils/search-page-size';
 interface SearchListProps {
-  keyword: string;
+  keyword: string | undefined;
 }
 
 export default function SearchList({keyword}: SearchListProps): JSX.Element {
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(getSearchPageSize(window.innerWidth));
   const {data: searchActivities, isLoading: isEntireLoading} = useQuery<ActivitiesResponse>({
-    queryKey: ['SearchActivities', keyword],
-    queryFn: () =>
+    queryKey: ['SearchActivities', keyword, page, pageSize],
+    queryFn: (): Promise<ActivitiesResponse> =>
       activitiesList({
-        method: 'cursor',
+        method: 'offset',
         keyword,
+        sort: 'latest',
+        page,
+        size: pageSize,
       }),
+    enabled: !!keyword,
   });
 
-  console.log(searchActivities);
   const handlePageChange = (page: number) => {
-    console.log(page);
+    setPage(page);
   };
 
-  if (isEntireLoading) {
-    return (
-      <div>
-        <ScaleLoader />
-      </div>
-    );
-  }
+  useEffect(() => {
+    const updateSize = () => {
+      const newSize = getSearchPageSize(window.innerWidth);
+      setPageSize(newSize);
+    };
+
+    updateSize();
+    window.addEventListener('resize', updateSize);
+
+    return () => {
+      window.removeEventListener('resize', updateSize);
+    };
+  }, []);
 
   return (
     <div className="mb-[12.688rem] tablet:mb-[41.063rem] pc:mb-[20.375rem]">
@@ -71,7 +83,12 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
           </div>
         </section>
       </div>
-      <Pagenation size={31} showItemCount={3} onChange={handlePageChange} />
+      {isEntireLoading && (
+        <div>
+          <ScaleLoader />
+        </div>
+      )}
+      <Pagenation size={searchActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />
     </div>
   );
 }
