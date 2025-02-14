@@ -12,7 +12,7 @@ interface BannerType {
 const BannerFromDivceType = ({device, bannerImg, subImages}: BannerType) => {
   switch (device) {
     case 'mobile':
-      return <div className="relative h-310pxr w-full">{bannerImg && <Image src={bannerImg} fill alt="bannerImag" />}</div>;
+      return <div className="relative h-310pxr w-full">{bannerImg && <Image src={bannerImg} fill alt="bannerImag" priority />}</div>;
     default:
       return (
         <div className="my-32pxr mb-85pxr flex min-h-310pxr min-w-375pxr flex-row gap-8pxr tablet:min-h-310pxr tablet:min-w-696pxr pc:min-h-534pxr pc:min-w-[75rem]">
