@@ -26,7 +26,7 @@ export default function EntireList({activeCategory, selectedSort}: EntireListPro
         page,
       }),
   });
-
+  console.log(selectedSort);
   const handlePageChange = (page: number) => {
     setPage(page);
   };
@@ -36,7 +36,6 @@ export default function EntireList({activeCategory, selectedSort}: EntireListPro
       const newSize = getPageSize(window.innerWidth);
       setPageSize(newSize);
     };
-    console.log(window.innerWidth);
     updateSize();
     window.addEventListener('resize', updateSize);
 
@@ -44,6 +43,10 @@ export default function EntireList({activeCategory, selectedSort}: EntireListPro
       window.removeEventListener('resize', updateSize);
     };
   }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeCategory]);
 
   if (isEntireLoading) {
     return (
@@ -54,10 +57,12 @@ export default function EntireList({activeCategory, selectedSort}: EntireListPro
   }
 
   return (
-    <section className="mb-24pxr mt-24pxr flex max-w-[75rem] flex-col items-start justify-center gap-24pxr tablet:mt-35pxr tablet:gap-32pxr">
+    <section className="mb-24pxr mt-24pxr flex w-full max-w-[75rem] flex-col items-start justify-center gap-24pxr tablet:mt-35pxr tablet:gap-32pxr">
       <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-3xl">🥽 모든 체험</h2>
       <EntireCard data={entireActivities} />
-      <Pagenation size={entireActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />
+      <div className="mx-auto">
+        <Pagenation size={entireActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />
+      </div>
     </section>
   );
 }
