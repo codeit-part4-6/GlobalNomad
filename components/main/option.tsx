@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import {useState, useRef} from 'react';
+import {useRef} from 'react';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation} from 'swiper/modules'; // Navigation, Pagination 모듈 추가
 import 'swiper/css';
@@ -10,30 +10,23 @@ import 'swiper/css/pagination';
 import Button from '@/components/common/button';
 import arrow from '@/public/icon/ic_arrow_next.svg';
 import Image from 'next/image';
+import {categories} from '@/constant/categories';
 
 interface OptionType {
   className: string;
+  setActiveCategory: (category: string) => void;
+  activeCategory: string | undefined;
 }
 
-export default function Option({className}: OptionType) {
-  const [optionState, setOptionState] = useState({price: '가격'});
-  const [activeCategory, setActiveCategory] = useState<string | null>(null); // 현재 선택된 카테고리
-
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setOptionState({...optionState, price: event.target.value});
-  };
+export default function Option({className, activeCategory, setActiveCategory}: OptionType) {
+  // const [optionState, setOptionState] = useState({price: '가격'});
+  // console.log(optionState);
+  // const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setOptionState({...optionState, price: event.target.value});
+  // };
 
   // Swiper 인스턴스 참조
   const swiperRef = useRef<any>(null);
-
-  const categories = [
-    {id: 'culture', label: '문화·예술'},
-    {id: 'food', label: '식음료'},
-    {id: 'sports', label: '스포츠'},
-    {id: 'tour', label: '투어'},
-    {id: 'sightseeing', label: '관광'},
-    {id: 'wellbeing', label: '웰빙'},
-  ];
 
   // 오른쪽으로 이동하는 함수
   const handleNextClick = () => {
@@ -66,7 +59,7 @@ export default function Option({className}: OptionType) {
             <Button
               type="button"
               className={`tablet:w-30 flex h-10 w-20 items-center justify-center gap-2 rounded-[0.938rem] border border-primary text-lg font-medium text-primary hover:bg-secondary tablet:h-[3.625rem] tablet:gap-[0.875rem] tablet:text-2lg pc:w-[7.938rem] pc:gap-6 ${activeCategory === category.id ? 'bg-primary text-white' : ''} `}
-              onClick={() => setActiveCategory(category.id)} // 버튼 클릭 시 상태 변경
+              onClick={() => setActiveCategory(category.label)} // 버튼 클릭 시 상태 변경
             >
               {category.label}
             </Button>
@@ -81,14 +74,13 @@ export default function Option({className}: OptionType) {
       >
         <Image src={arrow} alt="오른쪽 화살표" width={7} height={13} />
       </Button>
-
-      <select defaultValue="default" onChange={handleChange} className="rounded border px-2 py-1">
+      {/* <select defaultValue="default" onChange={handleChange} className="rounded border px-2 py-1">
         <option value="default" disabled hidden>
           가격
         </option>
         <option value="price_desc">가격이 낮은 순</option>
         <option value="price_asc">가격이 높은 순</option>
-      </select>
+      </select> */}
     </div>
   );
 }

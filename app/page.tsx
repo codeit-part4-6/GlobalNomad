@@ -3,11 +3,13 @@
 import {useInfiniteQuery, useQueries} from '@tanstack/react-query';
 import {useEffect, useState} from 'react';
 import Search from '@/components/main/search';
-import Option from '@/components/main/option';
 import SearchList from '@/components/main/search-list';
 import PopularCard from '@/components/main/popular-card';
 import {activitiesList} from '@/service/api/activities/getActivities';
-import EntireCard from '@/components/main/entire-card';
+import EntireList from '@/components/main/entire-list';
+import SortSelect from '@/components/main/sort-select';
+import Option from '@/components/main/option';
+import {ActivitiesBody} from '@/types/activities';
 import {ActivitiesResponse} from '@/types/activities';
 import {ClipLoader} from 'react-spinners';
 
@@ -19,32 +21,15 @@ const useMultipleActivities = () => {
         queryKey: ['popular', {method: 'offset', category: undefined, sort: 'most_reviewed', size: 1000, page: 1}],
         queryFn: () => activitiesList({method: 'offset', category: undefined, sort: 'most_reviewed', size: 1000, page: 1}),
       },
-      {
-        queryKey: ['entire', {method: 'offset', category: undefined, sort: 'latest', size: 1000, page: 1}],
-        queryFn: () => activitiesList({method: 'offset', category: undefined, sort: 'latest', size: 1000, page: 1}),
-      },
     ],
   });
 };
 
-// const fetchActivitiesByCategory = async (category: string) => {
-//   return await activitiesList({method: 'offset', category, size: 20, page: 1});
-// };
-
-// // ✅ 카테고리 변경 시 실행되는 함수 (데이터 요청)
-// const handleCategoryChange = (category: '문화·예술' | '식음료' | '스포츠' | '투어' | '관광' | '웰빙') => {
-//   refetch({category}); // ✅ API 요청 실행
-// };
-
-// const {refetch} = useQuery({
-//   queryKey: ['activities', 'category'],
-//   queryFn: () => fetchActivitiesByCategory('문화·예술'), // 기본 카테고리 요청
-//   enabled: false, // 기본적으로 자동 실행 X (refetch로 실행)
-// });
-
 export default function Mainpage() {
-  const [searchKeyword, setSearchKeyword] = useState('');
+  const [searchKeyword, setSearchKeyword] = useState<string | undefined>(undefined);
   const [isShown, setIsShown] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined); // 현재 선택된 카테고리
+  const [selectedSort, setSelectedSort] = useState<ActivitiesBody['sort']>('latest');
 
   const {
     data,
@@ -76,11 +61,10 @@ export default function Mainpage() {
   });
 
   // ✅ 여러 개의 API 호출 (인기 체험 + 모든 체험)
-  const [popularQuery, entireQuery] = useMultipleActivities();
-  console.log(popularQuery);
+  const [popularQuery] = useMultipleActivities();
 
   // ✅ 검색어 입력 시 검색 실행
-  const handleClick = (keyword: string) => {
+  const handleClick = (keyword: string | undefined) => {
     setSearchKeyword(keyword);
     setIsShown(true);
   };
@@ -91,6 +75,10 @@ export default function Mainpage() {
     }
   }, [searchKeyword]);
 
+  // ✅ 로딩 상태 처리
+  if (popularQuery.isLoading) {
+    return <p>Loading...</p>;
+  }
   const popularList = data?.pages.flatMap(page => page.activities) || [];
 
   return (
@@ -117,17 +105,16 @@ export default function Mainpage() {
               </div>
             )}
           </section>
-
-          <Option
-            className="pc:mt-15 mb-6 mt-10 flex min-w-[21.25rem] max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]"
-            // onChange={category => handleCategoryChange(category.type)}
-          />
-
           {/* ✅ 모든 체험 섹션 */}
-          <section className="mb-24pxr mt-24pxr flex max-w-[75rem] flex-col items-start justify-center gap-24pxr tablet:mt-35pxr tablet:gap-32pxr">
-            <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-3xl">🥽 모든 체험</h2>
-            <EntireCard data={entireQuery.data} />
-          </section>
+          <div className="flex items-center">
+            <Option
+              className="pc:mt-15 mb-6 mt-10 flex min-w-[21.25rem] max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]"
+              activeCategory={activeCategory}
+              setActiveCategory={setActiveCategory}
+            />
+            <SortSelect selectedSort={selectedSort} onSelectedSort={setSelectedSort} />
+          </div>
+          <EntireList activeCategory={activeCategory} selectedSort={selectedSort} />
         </div>
       )}
     </div>

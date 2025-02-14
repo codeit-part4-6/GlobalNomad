@@ -18,7 +18,7 @@ export interface CardData {
 }
 
 export interface ActivitiesResponse {
-  cursorId: number;
+  cursorId?: number;
   totalCount: number;
   activities: Activities[];
 }
