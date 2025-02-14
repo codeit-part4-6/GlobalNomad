@@ -220,8 +220,8 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
           {content === 'manage' && (
             <InfiniteScroll
               className="h-550pxr w-full pc:h-700pxr"
-              queryKey="key"
-              fetchData={context => getActivitiesList({...context, meta: {size: 20}})}
+              queryKey="myactivities"
+              fetchData={context => getActivitiesList({...context, meta: {size: 8}})}
               render={group => {
                 if (!group.pages || group.pages.length === 0) {
                   return <NonDataPage />;
