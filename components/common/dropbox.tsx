@@ -1,7 +1,7 @@
 'use client';
 import {useCallback, useEffect, useRef} from 'react';
 
-interface Item {
+export interface Item {
   id: number;
   label: string;
   type?: string;

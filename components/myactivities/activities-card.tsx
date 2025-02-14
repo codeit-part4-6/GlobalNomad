@@ -1,14 +1,10 @@
+import {useEffect, useState} from 'react';
 import Image from 'next/image';
-import iconStar from '@/public/icon/ic_star.svg';
-import iconMeatball from '@/public/icon/ic_meatball.svg';
 import {Activity} from '@/types/myactivities';
 import Dropbox from '@/components/common/dropbox';
-import {useEffect, useState} from 'react';
-
-const items = [
-  {id: 1, label: '수정하기', type: 'modify'},
-  {id: 2, label: '삭제하기', type: 'delete'},
-];
+import iconStar from '@/public/icon/ic_star.svg';
+import iconMeatball from '@/public/icon/ic_meatball.svg';
+import {dropboxItems} from '@/constant/myactivities-constant';
 
 interface ActivitiesCardProps {
   data: Activity;
@@ -23,7 +19,6 @@ export default function ActivitiesCard({data, onClickModify, onClickDelete}: Act
   const handleClick = (type: string) => {
     setIsOpenDropbox(false);
     setModalType(type);
-    // setIsOpenModal(true);
   };
 
   useEffect(() => {
@@ -69,7 +64,7 @@ export default function ActivitiesCard({data, onClickModify, onClickDelete}: Act
             onClick={handleClick}
             onClose={() => setIsOpenDropbox(false)}
             className="bottom-[-90pxr] right-0 z-10 mb-4 mr-4 w-160pxr"
-            items={items}
+            items={dropboxItems}
           />
         )}
       </div>

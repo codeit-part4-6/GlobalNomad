@@ -1,9 +1,15 @@
 import {useState, useEffect, useRef} from 'react';
 import Image from 'next/image';
 
+export interface SelectOption {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
 export interface SelectBoxType {
   className?: string;
-  options: {value: string; label: string; disabled?: boolean}[];
+  options: SelectOption[];
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   selectButtonImage?: string;

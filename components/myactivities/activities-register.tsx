@@ -1,13 +1,13 @@
 'use client';
 import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react';
+import {Controller, FormProvider, SubmitHandler, useForm} from 'react-hook-form';
+import {PostActivitiesBody} from '@/types/postActivities.types';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';
-import {Controller, FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import arrowDown from '@/public/icon/icon_arrow_down.svg';
 import AddressModal from './address-modal';
 import ImageList from './image-list';
-import {PostActivitiesBody} from '@/types/postActivities.types';
 import TimeList from './time-list';
+import arrowDown from '@/public/icon/icon_arrow_down.svg';
 
 interface ActivitiesRegisterProps {
   onSubmitParent?: (data: PostActivitiesBody) => void;

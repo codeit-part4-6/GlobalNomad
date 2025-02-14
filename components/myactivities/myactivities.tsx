@@ -1,23 +1,24 @@
 'use client';
-import Button from '@/components/common/button';
 import {useState, useRef, Fragment, useEffect} from 'react';
-import ActivitiesRegister from './activities-register';
-import Modal from '@/components/common/modal/modal';
-import Image from 'next/image';
-import closeButton from '@/public/icon/ic_close_button.svg';
-import InfiniteScroll from '@/components/common/lnfiniteScroll';
-import {getActivitiesList} from '@/service/api/myactivities/getActivities';
-import {Activity} from '@/types/myactivities';
-import ActivitiesCard from './activities-card';
-import {postActivities} from '@/service/api/myactivities/postActivities';
-import {PostActivitiesBody} from '@/types/postActivities.types';
 import {useMutation} from '@tanstack/react-query';
-import ActivitiesModify from './activities-modify';
+import Image from 'next/image';
+import {Activity} from '@/types/myactivities';
+import {PostActivitiesBody} from '@/types/postActivities.types';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
+import Button from '@/components/common/button';
+import Modal from '@/components/common/modal/modal';
+import InfiniteScroll from '@/components/common/lnfiniteScroll';
+import ActivitiesRegister from './activities-register';
+import ActivitiesModify from './activities-modify';
+import ActivitiesCard from './activities-card';
+import {getActivitiesList} from '@/service/api/myactivities/getActivities';
 import {patchActivities} from '@/service/api/myactivities/patchActivities.api';
 import {deleteActivities} from '@/service/api/myactivities/deleteActivities.api';
+import {postActivities} from '@/service/api/myactivities/postActivities';
+
 import {useRouter} from 'next/navigation';
 import NonDataPage from './non-data';
+import closeButton from '@/public/icon/ic_close_button.svg';
 
 type ContentType = 'manage' | 'register' | 'modify' | 'delete';
 

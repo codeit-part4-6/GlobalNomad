@@ -1,12 +1,12 @@
-import cancleBtn from '@/public/icon/ic_cancle_btn.svg';
-import plusIcon from '@/public/icon/ic_plus_icon.svg';
-import Image from 'next/image';
-import {Controller, FieldValues, Path, useFormContext, UseFormTrigger} from 'react-hook-form';
 import {useState, useRef, useEffect} from 'react';
-import {postImage} from '@/service/api/myactivities/postImage.api';
+import {Controller, FieldValues, Path, useFormContext, UseFormTrigger} from 'react-hook-form';
+import Image from 'next/image';
 import {useMutation} from '@tanstack/react-query';
 import {SubImage} from '@/types/getActivitiesId.types';
-import Modal from '../common/modal/modal';
+import {postImage} from '@/service/api/myactivities/postImage.api';
+import Modal from '@/components/common/modal/modal';
+import cancleBtn from '@/public/icon/ic_cancle_btn.svg';
+import plusIcon from '@/public/icon/ic_plus_icon.svg';
 
 interface ImageListType<T extends FieldValues> {
   maxImages?: number;
