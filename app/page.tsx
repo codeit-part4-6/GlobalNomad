@@ -7,7 +7,6 @@ import SearchList from '@/components/main/search-list';
 import PopularCard from '@/components/main/popular-card';
 import {activitiesList} from '@/service/api/activities/getActivities';
 import EntireList from '@/components/main/entire-list';
-import SortSelect from '@/components/main/sort-select';
 import Option from '@/components/main/option';
 import {ActivitiesBody} from '@/types/activities';
 import {ActivitiesResponse} from '@/types/activities';
@@ -90,13 +89,14 @@ export default function Mainpage() {
             )}
           </section>
           {/* ✅ 모든 체험 섹션 */}
-          <div className="flex w-full items-center">
+          <div className="pc:mt-15 pc: mb-6 mt-10 flex w-full items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem] pc:max-w-[1200px]">
             <Option
-              className="pc:mt-15 mb-6 mt-10 flex min-w-[21.25rem] max-w-[75.25rem] items-center justify-between tablet:mb-[2.188rem] tablet:mt-[3.375rem]"
               activeCategory={activeCategory}
               setActiveCategory={setActiveCategory}
+              selectedSort={selectedSort}
+              onSelectedSort={setSelectedSort}
             />
-            <SortSelect selectedSort={selectedSort} onSelectedSort={setSelectedSort} />
+            {/* <SortSelect selectedSort={selectedSort} onSelectedSort={setSelectedSort} /> */}
           </div>
           <EntireList activeCategory={activeCategory} selectedSort={selectedSort} />
         </div>

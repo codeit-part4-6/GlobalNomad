@@ -9,14 +9,14 @@ interface EntireCardProps {
 
 export default function EntireCard({data}: EntireCardProps) {
   return (
-    <div className="flex flex-col">
+    <div className="flex w-full flex-col">
       {/* 카드 리스트 (Grid 레이아웃) */}
       <div className="grid w-full grid-cols-2 gap-x-2 gap-y-4 tablet:grid-cols-3 tablet:gap-x-8 tablet:gap-y-6 pc:grid-cols-4 pc:gap-x-6 pc:gap-y-12">
         {data?.activities?.map(({title, price, bannerImageUrl, rating, reviewCount, id}) => (
           <div key={id} className="flex flex-col gap-4">
             <Link href={`/activities/${id}`}>
               {/* 배경 이미지 */}
-              <div className="relative flex h-[186px] w-[186px] overflow-hidden rounded-3xl bg-gray-300 tablet:h-[221px] tablet:w-[221px] pc:h-[283px] pc:w-[283px]">
+              <div className="relative flex h-[186px] w-full overflow-hidden rounded-3xl bg-gray-300 tablet:h-[221px] pc:h-[283px] pc:min-w-[283px]">
                 <Image src={bannerImageUrl} alt={title} layout="fill" objectFit="cover" />
               </div>
 
