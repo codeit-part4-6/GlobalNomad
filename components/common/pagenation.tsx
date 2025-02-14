@@ -4,7 +4,7 @@ import Button from './button';
 import Image from 'next/image';
 
 interface PagenationType {
-  size: number;
+  size: number | undefined;
   showItemCount: number;
   onChange: (page: number) => void;
 }

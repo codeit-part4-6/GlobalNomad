@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Star from '@/public/icon/ic_yellowStar.svg';
-import Pagenation from '../common/pagenation';
 import {ActivitiesResponse} from '@/types/activities';
 
 interface EntireCardProps {
@@ -9,10 +8,6 @@ interface EntireCardProps {
 }
 
 export default function EntireCard({data}: EntireCardProps) {
-  const handlePageChange = (page: number) => {
-    console.log(page);
-  };
-
   return (
     <div className="flex flex-col">
       {/* 카드 리스트 (Grid 레이아웃) */}
@@ -43,7 +38,6 @@ export default function EntireCard({data}: EntireCardProps) {
           </div>
         ))}
       </div>
-      <Pagenation size={16} showItemCount={1} onChange={handlePageChange} />
     </div>
   );
 }
