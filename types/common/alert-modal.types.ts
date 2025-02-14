@@ -1,9 +1,9 @@
 export interface ResultModalType {
-  comment: string;
+  message: string;
   isOpen: boolean;
 }
 
 export interface AlertModalType {
-  isOpen: () => void;
+  onClose: () => void;
   comment: string;
 }

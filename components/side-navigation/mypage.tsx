@@ -1,18 +1,18 @@
 'use client';
 
-import {useForm, Controller} from 'react-hook-form';
-import {useMutation} from '@tanstack/react-query';
-import {useAuthStore} from '@/service/store/authStore';
-import {patchMypage} from '@/service/api/users/patchMypage.api';
-import {EditMypageBody} from '@/types/patchMypage.types';
+import { useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { EditMypageBody } from '@/types/patchMypage.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
-import {useEffect, useState} from 'react';
+import { patchMypage } from '@/service/api/users/patchMypage.api';
+import { useAuthStore } from '@/service/store/authStore';
+import { useImageUrlStore } from '@/service/store/imageURLStore';
 import closeButton from '@/public/icon/ic_close_button.svg';
-import {useRouter} from 'next/navigation';
-import Image from 'next/image';
-import {useImageUrlStore} from '@/service/store/imageURLStore';
 
 interface IFormInput {
   email: string;
@@ -80,7 +80,7 @@ export default function MyPage() {
 
   return (
     <>
-      {isModalOpen && <Modal type="big" message={modalMessage} onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && <Modal message={modalMessage} onClose={() => setIsModalOpen(false)} />}
       <form className="h-[472px] w-full gap-[32px]" onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4 flex items-center justify-between pc:mb-6">
           <p className="text-[32px] font-[700] leading-[42px] tablet:leading-[38.19px]">내 정보</p>

@@ -2,10 +2,11 @@
 import React, {useEffect, useState} from 'react';
 import {useMutation, useQueryClient, useQuery} from '@tanstack/react-query';
 import {StaticImport} from 'next/dist/shared/lib/get-img-props';
-import {notFound, useParams, useRouter} from 'next/navigation';
+import {useParams, useRouter} from 'next/navigation';
 import {ActivitiesInfoType} from '@/types/activities-info';
 import {getActivitiesInfo} from '@/service/api/activities/getActivitiesInfo';
 import Image from 'next/image';
+import Modal from '@/components/common/modal/modal';
 import SkeletonLayout from '@/app/activities/[id]/skeleton';
 import Reservation from '@/components/activities/side-reservation';
 import KakaoMap from '@/components/activities/kakomap';
@@ -17,7 +18,6 @@ import IconMeatball from '@/public/icon/ic_meatball.svg';
 import LocationIcon from '@/public/icon/icon_location.svg';
 import isAdmin from '@/utils/admin-auth';
 import deleteReservation from '@/service/api/activities/deleteActivities';
-import AlertModal from '@/components/common/modal/alert-modal';
 import {ResultModalType} from '@/types/common/alert-modal.types';
 
 const DropboxItems = [
@@ -58,35 +58,42 @@ const ActivitiesUpdate = ({pageID, userId}: {pageID: string; userId: number}) =>
   const router = useRouter();
   const queryClient = useQueryClient();
   const [isDropboxOpen, setIsDropboxOpen] = useState<boolean>(false);
-  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({comment: '', isOpen: false});
+  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
 
   const mutation = useMutation({
     mutationFn: async (pageID: string) => {
       await deleteReservation(pageID);
     },
     onSuccess: () => {
-      setIsPostResultModalOpen({comment: '등록하신 체험 정보를 삭제했습니다.', isOpen: true});
+      setIsPostResultModalOpen({message: '등록하신 체험 정보를 삭제했습니다.', isOpen: true});
       queryClient.setQueryData(['activitiesInfo', 'activitiesReviews', 'schedules'], null);
     },
     onError: error => {
-      setIsPostResultModalOpen({comment: error.message, isOpen: true});
-      router.refresh();
+      setIsPostResultModalOpen({message: error.message, isOpen: true});
     },
   });
+
+  const moveMypage = ({type, movePageID}: {type: string; movePageID?: string}) => {
+    const device = InitialDevice();
+    const params = new URLSearchParams(`type=${type}`);
+    if (device === 'mobile') params.set('modal', 'true');
+    if (movePageID) params.set('id', movePageID);
+
+    router.push(`/mypage/treatReservation?${params.toString()}`);
+  };
 
   const handleActivitiesUpdate = (type: string) => {
     setIsDropboxOpen(false);
     if (type === 'delete') {
       mutation.mutate(pageID);
     } else {
-      // mypage에서 병렬 라우팅 작업 완료시 해당 링크로 이동시켜줘야합니다.
-      router.push('/mypage');
+      moveMypage({type: 'modify', movePageID: pageID});
     }
   };
 
   const handleCloseAletModal = () => {
-    setIsPostResultModalOpen({comment: '', isOpen: false});
-    router.push('/');
+    setIsPostResultModalOpen({message: '', isOpen: false});
+    moveMypage({type: 'manage'});
   };
 
   return (
@@ -101,7 +108,7 @@ const ActivitiesUpdate = ({pageID, userId}: {pageID: string; userId: number}) =>
             items={DropboxItems}
           />
         )}
-        {isPostResultModalOpen.isOpen && <AlertModal comment={isPostResultModalOpen.comment} isOpen={handleCloseAletModal} />}
+        {isPostResultModalOpen.isOpen && <Modal message={isPostResultModalOpen.message} onClose={handleCloseAletModal} />}
       </div>
     )
   );
@@ -110,80 +117,87 @@ const ActivitiesUpdate = ({pageID, userId}: {pageID: string; userId: number}) =>
 export default function Page() {
   const params = useParams();
   const router = useRouter();
-  const [device, setDevice] = useState<string>('mobile');
-  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({comment: '', isOpen: false});
+  const device = InitialDevice();
+  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
   const pageID = params?.id?.toString() || '';
 
   const {
     data: activitiesInfo,
-    isSuccess: activitiesSuccess,
+    isSuccess,
     error,
+    isError,
   } = useQuery<ActivitiesInfoType>({
     queryKey: ['activitiesInfo', pageID],
     queryFn: () => getActivitiesInfo(pageID),
     enabled: !!pageID,
   });
 
-  if (error) {
-    setIsPostResultModalOpen({comment: error.message, isOpen: true});
-    router.back();
-  }
-
   const handleCloseAletModal = () => {
-    setIsPostResultModalOpen({comment: '', isOpen: false});
+    setIsPostResultModalOpen({message: '', isOpen: false});
+    router.back();
   };
 
   useEffect(() => {
-    if (!params?.id) return notFound();
-    const getDeviceType = InitialDevice();
-    setDevice(getDeviceType);
-  }, [params.id]);
+    if (isError) {
+      setIsPostResultModalOpen({message: error.message, isOpen: true});
+    }
+  }, [error, isError]);
 
-  return activitiesSuccess && activitiesInfo ? (
-    <div className="container mx-auto tablet:min-w-[43rem] pc:max-w-[75rem]">
-      <div className="mx-auto w-full px-24pxr pb-133pxr pt-16pxr tablet:min-w-696pxr tablet:pb-145pxr tablet:pt-24pxr pc:px-0 pc:pb-128pxr pc:pt-78pxr">
-        <h4 className="mb-10pxr text-md font-normal text-nomad-black">{activitiesInfo.category}</h4>
-        <div className="relative mb-16pxr flex flex-row justify-between">
-          <div className="flex-row items-center gap-16pxr p-0 text-xl font-bold text-nomad-black tablet:text-3xl pc:text-3xl">
-            {activitiesInfo.title}
-          </div>
-          <ActivitiesUpdate pageID={pageID} userId={activitiesInfo.userId} />
-        </div>
-        <div className="flex flex-row gap-6pxr tablet:mb-25pxr pc:mb-25pxr">
-          <Image src={Star} alt="별점 이미지" width={16} height={16} priority />
-          {`${activitiesInfo.rating} (${activitiesInfo.reviewCount})`}
-          <div className="flex">
-            <Image className="m-0 mr-1" src={LocationIcon} alt="Location" width={18} height={18} />
-            <p className="text-sm font-normal text-nomad-black opacity-75">{activitiesInfo.address}</p>
-          </div>
-        </div>
-        <BannerFromDivceType device={device} bannerImg={activitiesInfo.bannerImageUrl} subImages={activitiesInfo.subImages} />
-        <div className={`relative flex ${device === 'mobile' ? 'flex-col' : 'flex-row'}`}>
-          <div className="mb-16pxr mr-24pxr min-w-327pxr tablet:min-w-428pxr pc:min-w-790pxr">
-            <hr />
-            <div>
-              <div className="w-full pb-16pxr pt-15pxr text-xl font-bold text-nomad-black tablet:pb-16pxr tablet:pt-41pxr pc:pb-34pxr pc:pt-40pxr">
-                체험 설명
+  useEffect(() => {
+    if (!params?.id) {
+      setIsPostResultModalOpen({message: '체험 ID가 없습니다.', isOpen: true});
+    }
+  }, [params, router]);
+
+  return (
+    <>
+      {isSuccess ? (
+        <div className="container mx-auto tablet:min-w-[43rem] pc:max-w-[75rem]">
+          <div className="mx-auto w-full px-24pxr pb-133pxr pt-16pxr tablet:min-w-696pxr tablet:pb-145pxr tablet:pt-24pxr pc:px-0 pc:pb-128pxr pc:pt-78pxr">
+            <h4 className="mb-10pxr text-md font-normal text-nomad-black">{activitiesInfo.category}</h4>
+            <div className="relative mb-16pxr flex flex-row justify-between">
+              <div className="flex-row items-center gap-16pxr p-0 text-xl font-bold text-nomad-black tablet:text-3xl pc:text-3xl">
+                {activitiesInfo.title}
               </div>
-              <div className="text-nomad mb-16pxr h-auto min-w-327pxr text-xl font-normal opacity-75 tablet:mb-57pxr tablet:min-w-428pxr pc:mb-34pxr pc:min-w-790pxr">
-                {activitiesInfo.description.split('\n').map((dt, idx) => {
-                  return <p key={`description-${idx}`}>{dt}</p>;
-                })}
+              <ActivitiesUpdate pageID={pageID} userId={activitiesInfo.userId} />
+            </div>
+            <div className="flex flex-row gap-6pxr tablet:mb-25pxr pc:mb-25pxr">
+              <Image src={Star} alt="별점 이미지" width={16} height={16} priority />
+              {`${activitiesInfo.rating} (${activitiesInfo.reviewCount})`}
+              <div className="flex">
+                <Image className="m-0 mr-1" src={LocationIcon} alt="Location" width={18} height={18} />
+                <p className="text-sm font-normal text-nomad-black opacity-75">{activitiesInfo.address}</p>
               </div>
             </div>
-            <hr />
-            <div className="w-full pb-40pxr pt-16pxr text-xl font-bold text-nomad-black tablet:pb-42pxr tablet:pt-40pxr pc:pb-34pxr">
-              <KakaoMap address={activitiesInfo.address} houseName={activitiesInfo.address} />
+            <BannerFromDivceType device={device} bannerImg={activitiesInfo.bannerImageUrl} subImages={activitiesInfo.subImages} />
+            <div className={`relative flex ${device === 'mobile' ? 'flex-col' : 'flex-row'}`}>
+              <div className="mb-16pxr mr-24pxr min-w-327pxr tablet:min-w-428pxr pc:min-w-790pxr">
+                <hr />
+                <div>
+                  <div className="w-full pb-16pxr pt-15pxr text-xl font-bold text-nomad-black tablet:pb-16pxr tablet:pt-41pxr pc:pb-34pxr pc:pt-40pxr">
+                    체험 설명
+                  </div>
+                  <div className="text-nomad mb-16pxr h-auto min-w-327pxr text-xl font-normal opacity-75 tablet:mb-57pxr tablet:min-w-428pxr pc:mb-34pxr pc:min-w-790pxr">
+                    {activitiesInfo.description.split('\n').map((dt, idx) => {
+                      return <p key={`description-${idx}`}>{dt}</p>;
+                    })}
+                  </div>
+                </div>
+                <hr />
+                <div className="w-full pb-40pxr pt-16pxr text-xl font-bold text-nomad-black tablet:pb-42pxr tablet:pt-40pxr pc:pb-34pxr">
+                  <KakaoMap address={activitiesInfo.address} houseName={activitiesInfo.address} />
+                </div>
+                <hr />
+                <Reviews />
+              </div>
+              <Reservation device={device} price={activitiesInfo.price} />
             </div>
-            <hr />
-            <Reviews />
           </div>
-          <Reservation device={device} price={activitiesInfo.price} />
         </div>
-      </div>
-      {isPostResultModalOpen.isOpen && <AlertModal comment={isPostResultModalOpen.comment} isOpen={handleCloseAletModal} />}
-    </div>
-  ) : (
-    <SkeletonLayout />
+      ) : (
+        <SkeletonLayout />
+      )}
+      {isPostResultModalOpen.isOpen && <Modal message={isPostResultModalOpen.message} onClose={handleCloseAletModal} />}
+    </>
   );
 }
