@@ -38,6 +38,7 @@ export default function Option({className, activeCategory, setActiveCategory}: O
   return (
     <div className={className}>
       <Swiper
+        style={{width: '100vw'}}
         ref={swiperRef} // Swiper 인스턴스를 참조
         slidesPerView="auto"
         spaceBetween={10}

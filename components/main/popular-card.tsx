@@ -43,6 +43,7 @@ export default function PopularCard({data, className = '', fetchNextpage, hasNex
   return (
     <div className={className}>
       <Swiper
+        style={{width: '100vw'}}
         onSwiper={onSwiper}
         onSlideChange={onSlideChange}
         spaceBetween={16}
