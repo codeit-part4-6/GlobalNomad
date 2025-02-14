@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, useEffect, JSX} from 'react';
+import {useState, JSX} from 'react';
 import Image from 'next/image';
 import Button from '@/components/common/button';
 import SearchIcon from '@/public/icon/ic_search.svg';
@@ -15,16 +15,16 @@ export default function Search({onClick}: SearchProps): JSX.Element {
     onClick(keyword);
   };
 
-  // Debounce 로직: 사용자가 입력을 멈춘 후 500ms 동안 지연
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setKeyword(keyword);
-    }, 500);
+  // // Debounce 로직: 사용자가 입력을 멈춘 후 500ms 동안 지연
+  // useEffect(() => {
+  //   const handler = setTimeout(() => {
+  //     setKeyword(keyword);
+  //   }, 500);
 
-    return () => {
-      clearTimeout(handler); // 이전 타이머 제거
-    };
-  }, [keyword]);
+  //   return () => {
+  //     clearTimeout(handler); // 이전 타이머 제거
+  //   };
+  // }, [keyword]);
 
   return (
     <div className="flex flex-col items-center justify-center">

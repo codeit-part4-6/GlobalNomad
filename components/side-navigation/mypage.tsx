@@ -80,7 +80,7 @@ export default function MyPage() {
 
   return (
     <>
-      {isModalOpen && <Modal type="big" message={modalMessage} onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && <Modal message={modalMessage} onClose={() => setIsModalOpen(false)} />}
       <form className="h-[472px] w-full gap-[32px]" onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4 flex items-center justify-between pc:mb-6">
           <p className="text-[32px] font-[700] leading-[42px] tablet:leading-[38.19px]">내 정보</p>

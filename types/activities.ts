@@ -1,6 +1,6 @@
 export interface ActivitiesBody {
   method: 'offset' | 'cursor';
-  cursorId?: number;
+  cursorId?: number | null;
   category?: string;
   keyword?: string;
   sort?: 'most_reviewed' | 'price_asc' | 'price_desc' | 'latest' | undefined;
@@ -18,7 +18,7 @@ export interface CardData {
 }
 
 export interface ActivitiesResponse {
-  cursorId: number;
+  cursorId?: number;
   totalCount: number;
   activities: Activities[];
 }
