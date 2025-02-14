@@ -31,6 +31,8 @@ export default function Option({activeCategory, setActiveCategory, selectedSort,
       swiperRef.current.swiper.slideNext(); // 클릭 시 오른쪽으로 이동
     }
   };
+  console.log(activeCategory);
+  console.log(categories.find(category => activeCategory === category.id));
 
   return (
     <div className="flex w-full items-center justify-between">
@@ -66,7 +68,7 @@ export default function Option({activeCategory, setActiveCategory, selectedSort,
           <SwiperSlide key={category.id}>
             <Button
               type="button"
-              className={`flex h-10 w-20 items-center justify-center gap-2 rounded-[0.938rem] border border-primary text-lg font-medium text-primary hover:bg-secondary tablet:h-[3.625rem] tablet:w-[120px] tablet:gap-[0.875rem] tablet:text-2lg pc:w-[7.938rem] pc:gap-6 ${activeCategory === category.id ? 'bg-primary text-white' : ''} `}
+              className={`flex h-10 w-20 items-center justify-center gap-2 rounded-[0.938rem] border border-primary text-lg font-medium text-primary hover:bg-secondary tablet:h-[3.625rem] tablet:w-[120px] tablet:gap-[0.875rem] tablet:text-2lg pc:w-[7.938rem] pc:gap-6 ${activeCategory === category.label ? 'bg-primary text-white' : ''} `}
               onClick={() => setActiveCategory(category.label)} // 버튼 클릭 시 상태 변경
             >
               {category.label}
