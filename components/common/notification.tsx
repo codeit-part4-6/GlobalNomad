@@ -22,7 +22,7 @@ type InitialDevice = 'mobile' | 'desktop' | 'tablet';
 type StatusType = '승인' | '거절' | '알 수 없음';
 
 export default function Notification({className = 'w-auto', onClose}: NotificationProps) {
-  const dropboxRef = useRef<HTMLDivElement>(null);
+  const notificationRef = useRef<HTMLDivElement>(null);
   const [notificationCount, setNotificationCount] = useState(0);
   const [device, setDevice] = useState<InitialDevice>('mobile');
   const queryClient = useQueryClient();
@@ -41,7 +41,7 @@ export default function Notification({className = 'w-auto', onClose}: Notificati
 
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
-      if (dropboxRef.current && !dropboxRef.current.contains(event.target as Node)) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         if (onClose) {
           onClose();
         }
@@ -56,7 +56,7 @@ export default function Notification({className = 'w-auto', onClose}: Notificati
   }
 
   const fetchNotifications = async (context: QueryFunctionContext) => {
-    const data = await getMynotifications({...context, meta: {size: 10}});
+    const data = await getMynotifications({...context, meta: {size: 4}});
     if (data && 'meta' in data && data.meta?.totalCount !== undefined) {
       setNotificationCount(data.meta.totalCount);
     }
@@ -93,7 +93,7 @@ export default function Notification({className = 'w-auto', onClose}: Notificati
     return (
       <div className="flex flex-col px-5 py-6">
         <div className="flex items-center justify-between pb-4">
-          <div className="text-xl font-bold">알림 {notificationCount}개</div>
+          <div className="text-xl font-bold">알림 {notificationCount}</div>
           <Image className="" src={CloseIcon} alt="닫기" width={24} height={24} onClick={onClose} />
         </div>
         <InfiniteScroll
@@ -102,8 +102,8 @@ export default function Notification({className = 'w-auto', onClose}: Notificati
           fetchData={fetchNotifications}
           render={(group: CustomInfiniteData<Notifications[], unknown>) => {
             const notifications = group.pages.flatMap(page => page);
-            if (group.pages.length === 0) {
-              return <div className="flex h-[280px] items-center justify-center">알림이 존재하지않습니다.</div>;
+            if (notifications.length === 0) {
+              return <div className="flex h-[280px] items-center justify-center text-xl text-gray-600">모든 알림을 확인하셨어요.</div>;
             }
             return (
               <div className="flex flex-col">
@@ -158,7 +158,7 @@ export default function Notification({className = 'w-auto', onClose}: Notificati
           </OverlayContainer>
         </>
       ) : (
-        <div ref={dropboxRef} className={`absolute w-400pxr cursor-pointer rounded-xl bg-green-50 ${className}`}>
+        <div ref={notificationRef} className={`absolute w-400pxr cursor-pointer rounded-xl bg-green-50 ${className}`}>
           {/* 렌더영역 */}
           {renderField()}
         </div>
