@@ -12,7 +12,6 @@ export default function TreatReservationPage() {
   useEffect(() => {
     if (!contentType) {
       const searchParams = new URLSearchParams(window.location.search);
-      searchParams.set('type', 'manage');
       router.push(`${window.location.pathname}?${searchParams.toString()}`);
     }
   }, [contentType, router]);

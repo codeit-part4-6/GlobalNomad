@@ -1,6 +1,6 @@
 'use client';
 import {useState, useRef, Fragment, useEffect} from 'react';
-import {useMutation} from '@tanstack/react-query';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import Image from 'next/image';
 import {Activity} from '@/types/myactivities';
 import {PostActivitiesBody} from '@/types/postActivities.types';
@@ -36,6 +36,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
   const [isValid, setIsValid] = useState(false);
   const [isValidModify, setIsValidModify] = useState(false);
   const [modifyId, setModifyId] = useState(0);
+  const queryClient = useQueryClient();
 
   const postActivitiesMutation = useMutation({
     mutationFn: async (body: PostActivitiesBody) => {
@@ -86,6 +87,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
 
     onSuccess: () => {
       // setLoading(false);
+      queryClient.invalidateQueries({queryKey: ['myactivities']});
       setIsOpen(true);
     },
     onError: error => {
@@ -182,37 +184,33 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
                       updateQueryParams({type: 'register'});
                       setContent('register');
                     }}
-                    className="h-48pxr w-100pxr gap-4pxr rounded-md bg-primary pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white"
+                    className="h-48pxr w-80pxr gap-4pxr rounded-md bg-primary pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr"
                   >
-                    등록하기
+                    <span className="hidden tablet:block">등록하기</span>
+                    <span className="block tablet:hidden">등록</span>
                   </Button>
                 </>
               ) : content === 'register' ? (
                 <Button
                   onClick={triggerSubmit} // 버튼 클릭 시 자식 컴포넌트의 폼 제출 트리거
-                  className={`h-48pxr w-120pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white ${
+                  className={`h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr ${
                     isValid ? 'bg-primary' : 'bg-gray-500'
                   }`}
                 >
-                  등록하기
+                  <span className="hidden tablet:block">등록하기</span>
+                  <span className="block tablet:hidden">등록</span>
                 </Button>
               ) : (
                 <Button
                   onClick={triggerSubmit}
-                  className={`${isValidModify ? 'bg-primary' : 'bg-gray-500'} h-48pxr w-120pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white`}
+                  className={`${isValidModify ? 'bg-primary' : 'bg-gray-500'} h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr`}
                 >
-                  수정하기
+                  <span className="hidden tablet:block">수정하기</span>
+                  <span className="block tablet:hidden">수정</span>
                 </Button>
               )}
               <div className="mb-2 flex justify-end tablet:hidden">
-                <Image
-                  onClick={() => router.push('/mypage')}
-                  src={closeButton}
-                  alt="모달 닫기 버튼"
-                  className="cursor-pointer"
-                  width={48}
-                  height={48}
-                />
+                <Image onClick={() => router.back()} src={closeButton} alt="모달 닫기 버튼" className="cursor-pointer" width={48} height={48} />
               </div>
             </div>
           </div>
@@ -264,7 +262,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
       {isOpen && (
         <Modal message={`체험 ${content === 'modify' ? '수정' : content === 'register' ? '등록' : '삭제'}이 완료되었습니다`} onClose={handleClose} />
       )}
-      {isOpenError && <Modal message={errorMessege} onClose={handleClose}></Modal>}
+      {isOpenError && <Modal message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>
   );
 }
