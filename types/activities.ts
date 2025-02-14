@@ -1,6 +1,6 @@
 export interface ActivitiesBody {
   method: 'offset' | 'cursor';
-  cursorId?: number;
+  cursorId?: number | null;
   category?: string;
   keyword?: string;
   sort?: 'most_reviewed' | 'price_asc' | 'price_desc' | 'latest' | undefined;

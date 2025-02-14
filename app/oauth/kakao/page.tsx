@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { postOAuth } from '@/service/api/oauth/postOAuth.api';
 import { postOAuthSignin } from '@/service/api/oauth/postOAuthSignin.api';
 import { useAuthStore } from '@/service/store/authStore';

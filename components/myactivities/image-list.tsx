@@ -202,7 +202,7 @@ export default function ImageList<T extends FieldValues>({maxImages = 5, name = 
         {/* 오류 메시지 */}
         {typeof errors[name]?.message === 'string' && <span className="error-message">{errors[name]?.message}</span>}
       </div>
-      {isOpenError && <Modal type="big" message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
+      {isOpenError && <Modal message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>
   );
 }

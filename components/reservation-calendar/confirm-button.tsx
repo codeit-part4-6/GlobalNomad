@@ -82,7 +82,7 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
           {declineLoading ? <ScaleLoader width={2} height={10} color="#112211" /> : '거절하기'}
         </div>
       </Button>
-      {isModalOpen && <Modal type="big" message={modalMessage} onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && <Modal message={modalMessage} onClose={() => setIsModalOpen(false)} />}
     </div>
   );
 }
