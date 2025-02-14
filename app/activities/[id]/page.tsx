@@ -19,6 +19,8 @@ import LocationIcon from '@/public/icon/icon_location.svg';
 import isAdmin from '@/utils/admin-auth';
 import deleteReservation from '@/service/api/activities/deleteActivities';
 import {ResultModalType} from '@/types/common/alert-modal.types';
+import activitiesStore from '@/service/store/activitiesstore';
+import dayjs from 'dayjs';
 
 const DropboxItems = [
   {id: 1, label: '수정하기', type: 'modify'},
@@ -119,7 +121,7 @@ export default function Page() {
   const router = useRouter();
   const device = InitialDevice();
   const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
-  const pageID = params?.id?.toString() || '';
+  const {pageID, setPageID, setPerson, setSelectedSchedule, setDailySchedule } = activitiesStore();
 
   const {
     data: activitiesInfo,
@@ -146,8 +148,13 @@ export default function Page() {
   useEffect(() => {
     if (!params?.id) {
       setIsPostResultModalOpen({message: '체험 ID가 없습니다.', isOpen: true});
+    }else{
+      setPageID(params?.id?.toString());
+      setPerson(1);
+      setSelectedSchedule({date: dayjs().format('YYYY-MM-DD'), startTime: '', endTime: '', id: 0});
+      setDailySchedule({date: dayjs().format('YYYY-MM-DD'), times: []});
     }
-  }, [params, router]);
+  }, [params, router, setDailySchedule, setPageID, setPerson, setSelectedSchedule]);
 
   return (
     <>

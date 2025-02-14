@@ -11,15 +11,11 @@ import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
 import Button from '@/components/common/button';
 import activitiesStore from '@/service/store/activitiesstore';
-import {useParams} from 'next/navigation';
+import InitialDevice from '@/utils/initial-device';
 
 interface CalendarHeaderType {
   value: Dayjs;
   onChange: (value: Dayjs) => void;
-}
-interface SmCalendarType {
-  pageID: string;
-  device?: string;
 }
 
 let defaultTime = {date: '', id: 0, startTime: '', endTime: ''};
@@ -56,14 +52,19 @@ const CalendarHeader = ({value, onChange}: CalendarHeaderType) => {
   );
 };
 
-const SmCalendar = ({device = 'order'}: SmCalendarType) => {
+const SmCalendar = () => {
   dayjs.extend(weekday);
   dayjs.extend(localeData);
   dayjs.extend(weekOfYear);
   dayjs.extend(weekYear);
-  const params = useParams();
-  const {selectedSchedule, dailySchedule, updateSelectedSchedule, updateDailySchedule} = activitiesStore();
-  const pageID = params?.id?.toString() || '';
+  const {
+    pageID,
+    selectedSchedule,
+    dailySchedule,
+    setSelectedSchedule: updateSelectedSchedule,
+    setDailySchedule: updateDailySchedule,
+  } = activitiesStore();
+  const device = InitialDevice();
 
   const {data: monthSchedules, refetch} = useQuery<SchedulesDateType[]>({
     queryKey: ['schedules', selectedSchedule.date],
@@ -144,7 +145,7 @@ const SmCalendar = ({device = 'order'}: SmCalendarType) => {
           </div>
         </div>
         <div
-          className={`mt-14pxr flex flex-row flex-wrap gap-12pxr overflow-y-scroll ${dailySchedule.times.length < 4 && 'no-scrollbar'} ${device === 'mobile' ? 'h-220pxr' : 'h-110pxr'}`}
+          className={`mt-14pxr flex h-220pxr flex-row flex-wrap gap-12pxr tablet:h-110pxr pc:h-110pxr ${dailySchedule.times.length < (device === 'windows' ? 4 : 6) ? 'no-scrollbar' : 'overflow-y-scroll'}`}
         >
           {dailySchedule.times.map(dt => {
             return (
