@@ -1,126 +1,30 @@
 'use client';
-import React, {useEffect, useState} from 'react';
-import {useMutation, useQueryClient, useQuery} from '@tanstack/react-query';
-import {StaticImport} from 'next/dist/shared/lib/get-img-props';
+import React, {useCallback, useEffect, useState} from 'react';
+import {useQuery} from '@tanstack/react-query';
 import {useParams, useRouter} from 'next/navigation';
 import {ActivitiesInfoType} from '@/types/activities-info';
 import {getActivitiesInfo} from '@/service/api/activities/getActivitiesInfo';
+import dayjs from 'dayjs';
 import Image from 'next/image';
+import {ResultModalType} from '@/types/common/alert-modal.types';
 import Modal from '@/components/common/modal/modal';
 import SkeletonLayout from '@/app/activities/[id]/skeleton';
 import Reservation from '@/components/activities/side-reservation';
 import KakaoMap from '@/components/activities/kakomap';
+import ActivitiesUpdate from '@/components/activities/activities-update';
 import Reviews from '@/components/activities/reviews';
-import Dropbox from '@/components/common/dropbox';
+import BannerFromDivceType from '@/components/activities/banner';
+import activitiesStore from '@/service/store/activitiesstore';
 import InitialDevice from '@/utils/initial-device';
 import Star from '@/public/icon/ic_star.svg';
-import IconMeatball from '@/public/icon/ic_meatball.svg';
 import LocationIcon from '@/public/icon/icon_location.svg';
-import isAdmin from '@/utils/admin-auth';
-import deleteReservation from '@/service/api/activities/deleteActivities';
-import {ResultModalType} from '@/types/common/alert-modal.types';
-
-const DropboxItems = [
-  {id: 1, label: '수정하기', type: 'modify'},
-  {id: 2, label: '삭제하기', type: 'delete'},
-];
-
-interface BannerType {
-  device: string;
-  bannerImg?: string | StaticImport;
-  subImages: {id: number; imageUrl: string}[];
-}
-
-const BannerFromDivceType = ({device, bannerImg, subImages}: BannerType) => {
-  switch (device) {
-    case 'mobile':
-      return <div className="relative h-310pxr w-full">{bannerImg && <Image src={bannerImg} fill alt="bannerImag" />}</div>;
-    default:
-      return (
-        <div className="my-32pxr mb-85pxr flex min-h-310pxr min-w-375pxr flex-row gap-8pxr tablet:min-h-310pxr tablet:min-w-696pxr pc:min-h-534pxr pc:min-w-[75rem]">
-          <div className="relative min-h-310pxr min-w-375pxr tablet:min-h-310pxr tablet:min-w-346pxr pc:min-h-534pxr pc:min-w-595pxr">
-            {bannerImg && <Image className="rounded-l-lg" src={bannerImg} fill alt="bannerImag" />}
-          </div>
-          <div className="flex min-h-310pxr w-full min-w-375pxr flex-row flex-wrap items-start p-0 tablet:h-310pxr tablet:w-346pxr tablet:gap-4pxr pc:h-534pxr pc:w-595pxr pc:gap-8pxr">
-            {subImages.map((dt, idx) => (
-              <div key={`${idx}-subImages`} className={`relative min-h-152pxr min-w-170pxr tablet:h-152pxr tablet:w-160pxr pc:h-263pxr pc:w-290pxr`}>
-                <Image className={`${idx === 1 && 'rounded-tr-lg'} ${idx === 3 && 'rounded-br-lg'}`} src={dt.imageUrl} fill alt="subImages" />
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-  }
-};
-
-const ActivitiesUpdate = ({pageID, userId}: {pageID: string; userId: number}) => {
-  const adminAuth = isAdmin(userId);
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const [isDropboxOpen, setIsDropboxOpen] = useState<boolean>(false);
-  const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
-
-  const mutation = useMutation({
-    mutationFn: async (pageID: string) => {
-      await deleteReservation(pageID);
-    },
-    onSuccess: () => {
-      setIsPostResultModalOpen({message: '등록하신 체험 정보를 삭제했습니다.', isOpen: true});
-      queryClient.setQueryData(['activitiesInfo', 'activitiesReviews', 'schedules'], null);
-    },
-    onError: error => {
-      setIsPostResultModalOpen({message: error.message, isOpen: true});
-    },
-  });
-
-  const moveMypage = ({type, movePageID}: {type: string; movePageID?: string}) => {
-    const device = InitialDevice();
-    const params = new URLSearchParams(`type=${type}`);
-    if (device === 'mobile') params.set('modal', 'true');
-    if (movePageID) params.set('id', movePageID);
-
-    router.push(`/mypage/treatReservation?${params.toString()}`);
-  };
-
-  const handleActivitiesUpdate = (type: string) => {
-    setIsDropboxOpen(false);
-    if (type === 'delete') {
-      mutation.mutate(pageID);
-    } else {
-      moveMypage({type: 'modify', movePageID: pageID});
-    }
-  };
-
-  const handleCloseAletModal = () => {
-    setIsPostResultModalOpen({message: '', isOpen: false});
-    moveMypage({type: 'manage'});
-  };
-
-  return (
-    adminAuth && (
-      <div>
-        <Image src={IconMeatball} onClick={() => setIsDropboxOpen(true)} width={40} height={40} alt="자세히보기" priority />;
-        {isDropboxOpen && (
-          <Dropbox
-            onClick={handleActivitiesUpdate}
-            onClose={() => setIsDropboxOpen(false)}
-            className="right-0 top-10 z-10 mb-4 mr-4 h-115pxr w-160pxr"
-            items={DropboxItems}
-          />
-        )}
-        {isPostResultModalOpen.isOpen && <Modal message={isPostResultModalOpen.message} onClose={handleCloseAletModal} />}
-      </div>
-    )
-  );
-};
 
 export default function Page() {
   const params = useParams();
   const router = useRouter();
   const device = InitialDevice();
   const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
-  const pageID = params?.id?.toString() || '';
-
+  const {pageID, setPageID, setPerson, setSelectedSchedule, setDailySchedule} = activitiesStore();
   const {
     data: activitiesInfo,
     isSuccess,
@@ -137,6 +41,17 @@ export default function Page() {
     router.back();
   };
 
+  const initializeState = useCallback(() => {
+    if (!params?.id) {
+      setIsPostResultModalOpen({message: '체험 ID가 없습니다.', isOpen: true});
+    } else {
+      setPageID(params?.id?.toString());
+      setPerson(1);
+      setSelectedSchedule({date: dayjs().format('YYYY-MM-DD'), startTime: '', endTime: '', id: 0});
+      setDailySchedule({date: dayjs().format('YYYY-MM-DD'), times: []});
+    }
+  }, [params?.id, setDailySchedule, setPageID, setPerson, setSelectedSchedule]);
+
   useEffect(() => {
     if (isError) {
       setIsPostResultModalOpen({message: error.message, isOpen: true});
@@ -144,10 +59,12 @@ export default function Page() {
   }, [error, isError]);
 
   useEffect(() => {
-    if (!params?.id) {
-      setIsPostResultModalOpen({message: '체험 ID가 없습니다.', isOpen: true});
-    }
-  }, [params, router]);
+    initializeState();
+  }, [initializeState]);
+
+  const renderDescription = (description: string) => {
+    return description.split('\n').map((dt, idx) => <p key={`description-${idx}`}>{dt}</p>);
+  };
 
   return (
     <>
@@ -178,9 +95,7 @@ export default function Page() {
                     체험 설명
                   </div>
                   <div className="text-nomad mb-16pxr h-auto min-w-327pxr text-xl font-normal opacity-75 tablet:mb-57pxr tablet:min-w-428pxr pc:mb-34pxr pc:min-w-790pxr">
-                    {activitiesInfo.description.split('\n').map((dt, idx) => {
-                      return <p key={`description-${idx}`}>{dt}</p>;
-                    })}
+                    {renderDescription(activitiesInfo.description)}
                   </div>
                 </div>
                 <hr />

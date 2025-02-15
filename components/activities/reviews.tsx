@@ -1,7 +1,6 @@
 'use client';
 import React, {useState} from 'react';
 import {useQuery} from 'react-query';
-import {useParams} from 'next/navigation';
 import {ActivitiesReviewsType} from '@/types/activities-info';
 import Image from 'next/image';
 import {getActivitiesReviews} from '@/service/api/activities/getActivitiesInfo';
@@ -9,11 +8,11 @@ import Pagenation from '@/components/common/pagenation';
 import FormatDate from '@/utils/format-date';
 import Star from '@/public/icon/ic_star.svg';
 import DefaultProfile from '@/public/img/img_default_profile.svg';
+import activitiesStore from '@/service/store/activitiesstore';
 
 const Reviews = () => {
-  const params = useParams();
   const [page, setPage] = useState<number>(1);
-  const pageID = params?.id?.toString() || '';
+  const {pageID} = activitiesStore();
 
   const {data, isSuccess} = useQuery<ActivitiesReviewsType>({
     queryKey: ['activitiesReviews', page],
