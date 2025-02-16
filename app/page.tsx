@@ -12,6 +12,11 @@ import {ActivitiesBody} from '@/types/activities';
 import {ActivitiesResponse} from '@/types/activities';
 import {ClipLoader} from 'react-spinners';
 
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import MainBanner from '@/components/main/main-banner';
+
 export default function Mainpage() {
   const [searchKeyword, setSearchKeyword] = useState<string | undefined>(undefined);
   const [isShown, setIsShown] = useState(false);
@@ -64,12 +69,10 @@ export default function Mainpage() {
 
   return (
     <div className="bg-[rgba(250, 251, 252, 1)] w-full overflow-hidden">
-      <section className="relative flex h-240pxr w-auto flex-col bg-[url('/img/img_banner1.jpg')] bg-cover bg-center bg-no-repeat tablet:h-550pxr">
-        <div className="ml-24pxr mt-74pxr flex h-auto w-184pxr flex-col gap-8pxr text-white tablet:mb-244pxr tablet:ml-32pxr tablet:mt-144pxr tablet:w-auto pc:mb-229pxr pc:ml-328pxr pc:mt-159pxr">
-          <h3 className="text-[1.5rem]/[1.75rem] font-bold tablet:text-[3.375rem]/[4rem] pc:text-[4.25rem]/[5.072rem]">부산 광안리 드론쇼</h3>
-          <h2 className="px:text-[1.5rem]/[1.75rem] text-[0.875rem]/[1.625rem] font-bold tablet:text-[1.25rem]/[1.625rem]">2월의 인기 경험 BEST</h2>
-        </div>
-        <div className="absolute -bottom-20 left-1/2 w-full max-w-[1200px] -translate-x-1/2 px-4 tablet:px-6 pc:px-0">
+      {/* ✅ Swiper 배너 */}
+      <section className="relative h-[240px] tablet:h-[550px]">
+        <MainBanner />
+        <div className="absolute -bottom-20 left-1/2 z-10 w-full max-w-[1200px] -translate-x-1/2 px-4 tablet:px-6 pc:px-0">
           <div>
             <Search onClick={handleClick} keyword={keyword} setKeyword={setKeyword} />
           </div>
@@ -96,7 +99,6 @@ export default function Mainpage() {
               selectedSort={selectedSort}
               onSelectedSort={setSelectedSort}
             />
-            {/* <SortSelect selectedSort={selectedSort} onSelectedSort={setSelectedSort} /> */}
           </div>
           <EntireList activeCategory={activeCategory} selectedSort={selectedSort} />
         </div>
