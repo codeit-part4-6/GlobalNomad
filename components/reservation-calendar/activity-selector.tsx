@@ -14,11 +14,12 @@ export default function ActivitySelector({
   onToggle: () => void;
   onSelect: (activity: {title: string; id: number}) => void;
 }) {
+  console.log(activities);
   return (
     <div className="relative mb-8">
       <button onClick={onToggle} className="relative h-14 min-h-14 w-full cursor-pointer rounded border border-gray-700 px-5 text-left">
         <p className="absolute -top-3 left-4 bg-black-400 px-1 text-md font-regular text-nomad-black">체험명</p>
-        <div className="mt-4 flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <span className="text-lg font-regular text-black-200">{selectedActivity?.title || '선택하세요'}</span>
           <Image className="relative h-6 w-6" src={selectDown} alt="메뉴 선택 토글" />
         </div>
