@@ -31,8 +31,6 @@ export default function Option({activeCategory, setActiveCategory, selectedSort,
       swiperRef.current.swiper.slideNext(); // 클릭 시 오른쪽으로 이동
     }
   };
-  console.log(activeCategory);
-  console.log(categories.find(category => activeCategory === category.id));
 
   return (
     <div className="flex w-full items-center justify-between">
