@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -26,12 +26,14 @@ export default function Page() {
   const {setLogin} = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [saveEmail, setSaveEmail] = useState(false);
   const router = useRouter();
 
   const {
     control,
     handleSubmit,
     formState: {errors, isValid},
+    setValue,
   } = useForm<IFormInput>({
     mode: 'onChange',
     defaultValues: {
@@ -46,24 +48,30 @@ export default function Page() {
 
   const onSubmit = (data: IFormInput) => {
     signinMutation.mutate(data, {
-      // 경고
       onError: () => {
         setModalMessage('비밀번호가 일치하지 않습니다.');
         setIsModalOpen(true);
       },
-      onSuccess: async data => {
+      onSuccess: async (data) => {
         try {
-          // Zustand에 로그인 상태 업데이트
           setLogin(data.accessToken, data.refreshToken, data.user);
-
           sessionStorage.setItem('accessToken', data.accessToken);
           sessionStorage.setItem('refreshToken', data.refreshToken);
 
-          const {id, email, nickname, profileImageUrl, createdAt, updatedAt} = data.user;
-          sessionStorage.setItem('userInfo', JSON.stringify({id, email, nickname, profileImageUrl, createdAt, updatedAt}));
+          const { id, email, nickname, profileImageUrl, createdAt, updatedAt } = data.user;
+          sessionStorage.setItem(
+            'userInfo',
+            JSON.stringify({ id, email, nickname, profileImageUrl, createdAt, updatedAt })
+          );
 
           const refreshedData = await postTokens(data.refreshToken);
           if (refreshedData) sessionStorage.setItem('accessToken', refreshedData.accessToken);
+
+          if (saveEmail) {
+            localStorage.setItem('savedEmail', data.user.email);
+          } else {
+            localStorage.removeItem('savedEmail');
+          }
 
           router.push('/');
         } catch (e) {
@@ -82,6 +90,14 @@ export default function Page() {
     console.log(kakaoAuthURL);
     window.location.href = kakaoAuthURL;
   };
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('savedEmail');
+    if (savedEmail) {
+      setValue('email', savedEmail);
+      setSaveEmail(true);
+    }
+  }, [setValue]);
 
   return (
     <>
@@ -140,6 +156,19 @@ export default function Page() {
                   />
                 )}
               />
+              {/* 이메일 저장 체크박스 */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="saveEmail"
+                  checked={saveEmail}
+                  onChange={() => setSaveEmail((prev) => !prev)}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <label htmlFor="saveEmail" className="text-sm cursor-pointer">
+                  이메일 저장
+                </label>
+              </div>
               <Button
                 className={`h-[3.375rem] w-[21.875rem] gap-[0.5rem] rounded-[0.375rem] text-white sm:px-4 tablet:h-[3rem] tablet:w-[40rem] ${
                   isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
@@ -164,6 +193,7 @@ export default function Page() {
                 </span>
                 <hr className="w-full border border-gray-300" />
               </div>
+              
               <div className="flex justify-center gap-[1rem]">
                 <button type="button" onClick={() => alert('Google 로그인 기능이 일시적으로 제한되어 있습니다')}>
                   <Image src={GoogleIcon} alt="google icon" />
