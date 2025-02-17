@@ -45,9 +45,9 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
 
   const handleAddRow = () => {
     if (type === 'register') {
-      append({date: '', startTime: '00:00', endTime: '00:00'});
+      append({date: '', startTime: '09:00', endTime: '18:00'});
     } else {
-      modifyAppend({date: '', startTime: '00:00', endTime: '00:00'});
+      modifyAppend({date: '', startTime: '09:00', endTime: '18:00'});
     }
   };
 
@@ -116,10 +116,33 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     });
   };
 
-  const renderField = (
+  const renderDateField = (label: string, name: string, index: number) => {
+    return (
+      <div>
+        {name.startsWith('schedules.') && index === 0 && <label className="text-xl font-medium text-gray-800">{label}</label>}
+        <Controller
+          name={name}
+          control={control}
+          rules={{required: '필수 값 입니다.'}}
+          render={({field}) => (
+            <Input
+              type="date"
+              min={new Date().toISOString().split('T')[0]}
+              required
+              value={field.value}
+              onChange={e => handleChange(field, e, index)}
+              onInput={(e: React.FormEvent<HTMLInputElement>) => handleInput(field, e)}
+              className="w-full"
+            />
+          )}
+        />
+      </div>
+    );
+  };
+
+  const renderSelectField = (
     label: string,
     name: string,
-    types: 'date' | 'select',
     index: number,
     selectProps: {options?: {value: string; label: string}[]; label?: string} = {},
   ) => {
@@ -130,32 +153,18 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
           name={name}
           control={control}
           rules={{required: '필수 값 입니다.'}}
-          render={({field}) => {
-            if (types === 'date') {
-              return (
-                <Input
-                  type="date"
-                  min={new Date().toISOString().split('T')[0]}
-                  required
-                  value={field.value}
-                  onChange={e => handleChange(field, e, index)}
-                  onInput={(e: React.FormEvent<HTMLInputElement>) => handleInput(field, e)}
-                  className="w-full"
-                />
-              );
-            } else {
-              return (
-                <SelectBox
-                  value={field.value}
-                  onChange={e => handleChange(field, e, index)}
-                  options={selectProps.options || generateTimeOptions()}
-                  selectButtonImage={arrowDown}
-                  className="w-full max-w-79pxr bg-white tablet:max-w-none"
-                  label={selectProps.label || '00:00'}
-                />
-              );
-            }
-          }}
+          render={({field}) => (
+            <>
+              <SelectBox
+                value={field.value}
+                onChange={e => handleChange(field, e, index)}
+                options={selectProps.options || generateTimeOptions()}
+                selectButtonImage={arrowDown}
+                className="w-full max-w-79pxr bg-white tablet:max-w-none"
+                label={selectProps.label || '00:00'}
+              />
+            </>
+          )}
         />
       </div>
     );
@@ -167,9 +176,14 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
       {fields.map((row, index) => (
         <div key={row.id} className="mb-4">
           <div className="grid grid-cols-[1fr,auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
-            {renderField('날짜', `schedules.${index}.date`, 'date', index)}
-            {renderField('시작 시간', `schedules.${index}.startTime`, 'select', index, {label: '00:00'})}
-            {renderField('종료 시간', `schedules.${index}.endTime`, 'select', index, {label: '00:00'})}
+            {/* 날짜 필드 */}
+            {renderDateField('날짜', `schedules.${index}.date`, index)}
+
+            {/* 시작 시간 필드 */}
+            {renderSelectField('시작 시간', `schedules.${index}.startTime`, index, {label: '09:00'})}
+
+            {/* 종료 시간 필드 */}
+            {renderSelectField('종료 시간', `schedules.${index}.endTime`, index, {label: '18:00'})}
 
             <div
               className={`relative h-16 w-16 cursor-pointer ${index === 0 ? 'mt-26pxr' : ''}`}
@@ -184,15 +198,22 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
           {index === 0 && <hr className="mt-4"></hr>}
         </div>
       ))}
+
       {/* 수정시 */}
       {type === 'modify' && modifyFields.length !== 0 && (
         <>
           {modifyFields.map((row, index) => (
             <div key={row.id} className="mb-4">
               <div className="grid grid-cols-[1fr,auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
-                {renderField('날짜', `schedulesToAdd.${index}.date`, 'date', index)}
-                {renderField('시작 시간', `schedulesToAdd.${index}.startTime`, 'select', index, {label: '00:00'})}
-                {renderField('종료 시간', `schedulesToAdd.${index}.endTime`, 'select', index, {label: '00:00'})}
+                {/* 날짜 필드 */}
+                {renderDateField('날짜', `schedulesToAdd.${index}.date`, index)}
+
+                {/* 시작 시간 필드 */}
+                {renderSelectField('시작 시간', `schedulesToAdd.${index}.startTime`, index, {label: '09:00'})}
+
+                {/* 종료 시간 필드 */}
+                {renderSelectField('종료 시간', `schedulesToAdd.${index}.endTime`, index, {label: '18:00'})}
+
                 <div className="relative h-16 w-16 cursor-pointer" onClick={() => handleMinusRow(index, 'modifyFields')}>
                   <Image src={minusBtn} alt="Remove row" fill />
                 </div>

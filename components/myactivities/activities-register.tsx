@@ -23,7 +23,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
       description: '',
       address: '',
       price: 0,
-      schedules: [{date: '', startTime: '00:00', endTime: '00:00'}],
+      schedules: [{date: '', startTime: '09:00', endTime: '18:00'}],
       bannerImageUrl: '',
       subImageUrls: [],
     },
