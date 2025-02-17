@@ -16,7 +16,6 @@ import Minus from '@/public/icon/icon_minus.png';
 import Cancle from '@/public/icon/icon_cancle.png';
 
 interface ReservationProps {
-  pageID: string;
   price: number;
   person: number;
   selectedSchedule: {date: string; startTime: string; endTime: string; id: number};
@@ -28,7 +27,7 @@ interface ReservationProps {
 
 const Reservation = ({device, price}: {device: string; price: number}) => {
   const params = useParams();
-  const {person, selectedSchedule, scheduleModal, personModal, updatePerson} = activitiesStore();
+  const {person, selectedSchedule, scheduleModal, personModal, setPerson} = activitiesStore();
   const [isPostResultModalOpen, setIsPostResultModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
   const [isNotiModalOpen, setIsNotiModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
   const router = useRouter();
@@ -59,7 +58,7 @@ const Reservation = ({device, price}: {device: string; price: number}) => {
   const handleUpdatePerson = (count: number) => {
     const total = person + count;
     if (total < 1) return setIsNotiModalOpen({message: '최소 예약 인원은 1명입니다.', isOpen: true});
-    updatePerson(count);
+    setPerson(total);
   };
 
   const handleSaveReservation = () => {
@@ -72,7 +71,6 @@ const Reservation = ({device, price}: {device: string; price: number}) => {
       case 'windows':
         return (
           <ReservationWindowsType
-            pageID={pageID}
             price={price}
             person={person}
             selectedSchedule={selectedSchedule}
@@ -83,7 +81,6 @@ const Reservation = ({device, price}: {device: string; price: number}) => {
       case 'tablet':
         return (
           <ReservationTabletType
-            pageID={pageID}
             price={price}
             person={person}
             selectedSchedule={selectedSchedule}
@@ -95,7 +92,6 @@ const Reservation = ({device, price}: {device: string; price: number}) => {
       default:
         return (
           <ReservationMobileType
-            pageID={pageID}
             price={price}
             person={person}
             selectedSchedule={selectedSchedule}
@@ -117,7 +113,7 @@ const Reservation = ({device, price}: {device: string; price: number}) => {
   );
 };
 
-const ReservationWindowsType = ({pageID, price, person, selectedSchedule, updatePerson, saveReservation}: ReservationProps) => {
+const ReservationWindowsType = ({price, person, selectedSchedule, updatePerson, saveReservation}: ReservationProps) => {
   return (
     <div className="rounded-xl border border-solid border-gray-200 bg-white px-24pxr pb-18pxr pt-24pxr shadow-sidenavi-box tablet:h-full pc:min-h-748pxr pc:min-w-384pxr">
       <div className="mb-16pxr">
@@ -131,7 +127,7 @@ const ReservationWindowsType = ({pageID, price, person, selectedSchedule, update
         <div className="flex w-auto flex-row gap-3">
           <p className="mb-16pxr text-xl font-bold text-nomad-black">날짜</p>
         </div>
-        <SmCalendar pageID={pageID} />
+        <SmCalendar />
       </div>
       <hr />
       <div className="mb-24pxr mt-12pxr">
@@ -168,8 +164,8 @@ const ReservationWindowsType = ({pageID, price, person, selectedSchedule, update
   );
 };
 
-const ReservationTabletType = ({pageID, price, person, selectedSchedule, scheduleModal, updatePerson, saveReservation}: ReservationProps) => {
-  const {updateScheduleModal} = activitiesStore();
+const ReservationTabletType = ({price, person, selectedSchedule, scheduleModal, updatePerson, saveReservation}: ReservationProps) => {
+  const {setScheduleModal: updateScheduleModal} = activitiesStore();
 
   const handleOpenModal = (status: boolean) => {
     updateScheduleModal(status);
@@ -239,7 +235,7 @@ const ReservationTabletType = ({pageID, price, person, selectedSchedule, schedul
               </Button>
             </div>
             <div className="mb-100pxr">
-              <SmCalendar pageID={pageID} />
+              <SmCalendar />
             </div>
             <Button
               className={`absolute bottom-32pxr left-24pxr flex h-56pxr min-w-432pxr items-center justify-center rounded-md ${!selectedSchedule.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
@@ -256,7 +252,6 @@ const ReservationTabletType = ({pageID, price, person, selectedSchedule, schedul
 };
 
 const ReservationMobileType = ({
-  pageID,
   price,
   person,
   selectedSchedule,
@@ -265,7 +260,7 @@ const ReservationMobileType = ({
   updatePerson,
   saveReservation,
 }: ReservationProps) => {
-  const {updateScheduleModal, updatePersonModal} = activitiesStore();
+  const {setScheduleModal: updateScheduleModal, setPersonModal: updatePersonModal} = activitiesStore();
 
   const handleOpenScheduleModal = (status: boolean) => {
     updateScheduleModal(status);
@@ -313,7 +308,7 @@ const ReservationMobileType = ({
                 <Image src={Cancle} width={40} height={40} alt="cancle" />
               </Button>
             </div>
-            <SmCalendar pageID={pageID} device={'mobile'} />
+            <SmCalendar />
             <Button
               className={`absolute bottom-40pxr left-24pxr flex h-56pxr min-w-327pxr flex-row items-center justify-center rounded-md ${!selectedSchedule?.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
               disabled={!selectedSchedule.id}
