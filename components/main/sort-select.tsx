@@ -25,19 +25,20 @@ export default function SortSelect({selectedSort, onSelectedSort}: CustomSelectP
   return (
     <div
       onClick={() => setIsOpen(prev => !prev)}
-      className="relative h-41pxr w-90pxr cursor-pointer rounded-2xl border border-nomad-black bg-white px-5 py-2 tablet:h-53pxr tablet:w-120pxr tablet:px-5 tablet:py-4 pc:w-127pxr"
+      className="relative h-41pxr w-90pxr cursor-pointer rounded-2xl border border-nomad-black bg-white px-2 py-2 tablet:h-53pxr tablet:w-120pxr tablet:px-5 tablet:py-4 pc:w-127pxr"
     >
       <div className="flex items-center justify-center gap-1 rounded-md tablet:justify-between">
-        <span className="text-md font-medium leading-none text-green-100 tablet:text-2lg">{selectedLabel}</span>
+        <span className="overflow-hidden text-ellipsis whitespace-nowrap text-md font-medium text-green-100 tablet:text-2lg">{selectedLabel}</span>
+
         <Image src={arrowDown} alt="Arrow Down" width={16} height={16} />
       </div>
 
       {isOpen && (
-        <ul className="no-scrollbar absolute -right-12 z-10 mt-6 w-40 rounded-md border border-gray-200 bg-white shadow-sidenavi-box tablet:right-1pxr">
+        <ul className="no-scrollbar absolute right-1pxr z-10 mt-4 w-[90px] rounded-md border border-gray-200 bg-white shadow-sidenavi-box tablet:w-[120px] pc:w-127pxr">
           {options.map(option => (
             <li
               key={option.value}
-              className="no-scrollbar border-collapse cursor-pointer border-t border-gray-200 px-40pxr py-18pxr text-2lg font-medium text-gray-800 hover:bg-green-50 hover:text-nomad-black"
+              className="no-scrollbar w-[90px] border-collapse cursor-pointer border-t border-gray-200 px-5pxr py-18pxr text-md font-medium text-gray-800 hover:bg-green-50 hover:text-nomad-black tablet:w-[120px] tablet:text-2lg pc:w-127pxr"
               onClick={() => handleSelect(option.value as 'price_asc' | 'price_desc' | 'most_reviewed' | 'latest')}
             >
               {option.label}
