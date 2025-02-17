@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Modal from '@/components/common/modal/modal';
 import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
 import { useAuthStore } from '@/service/store/authStore';
 import { AxiosError } from 'axios';
@@ -11,6 +12,8 @@ export default function SignUpPage() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const handleSignup = async (token: string) => {
     const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI2 || '';
@@ -31,9 +34,9 @@ export default function SignUpPage() {
     } catch (error) {
       const axiosError = error as AxiosError; 
       console.log('회원가입 실패:', axiosError?.response?.data);
-      alert('이미 가입된 사용자입니다.')
+      setModalMessage('이미 가입된 사용자입니다.');
       setError('이미 가입된 사용자입니다.');
-      router.push('/signin');
+      setIsModalOpen(true);
     } finally {
       setIsLoading(false);
     }
@@ -45,6 +48,10 @@ export default function SignUpPage() {
 
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -73,6 +80,7 @@ export default function SignUpPage() {
       ) : (
         <p className="text-gray-700 text-lg">회원가입 준비 완료</p>
       )}
+      {isModalOpen && <Modal message={modalMessage} onClose={handleCloseModal} />}
     </div>
   );
 }
