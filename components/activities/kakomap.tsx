@@ -63,7 +63,7 @@ export default function KakaoMap({address, houseName}: KakaoMapType) {
                 // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                 map.setCenter(coords);
               } else {
-                console.error('주소를 찾지 못했습니다.');
+                alert('주소를 찾지 못했습니다.');
               }
             });
 

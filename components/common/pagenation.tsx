@@ -1,10 +1,11 @@
 'use client';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Button from './button';
 import Image from 'next/image';
 
 interface PagenationType {
-  size: number;
+  page: number;
+  size: number | undefined;
   showItemCount: number;
   onChange: (page: number) => void;
 }
@@ -16,19 +17,17 @@ type PageType = {
 
 const defaultShowPageCount = 5;
 
-function Pagenation({size, showItemCount, onChange}: PagenationType) {
+function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
   const [defaultPageInfo, setDefaultPageInfo] = useState<Array<PageType>>([]);
   const [pageInfo, setPageInfo] = useState<Array<PageType>>([]);
-  const [selectedPage, setSelectedPage] = useState<number>(1);
 
   const pageSize = size ? size : 1;
 
-  const handlePrevPage = useCallback(() => {
+  const handlePrevPage = () => {
     // 첫 페이지에서 이전 페이지를 누른다면 1번으로 이동
     // ex) <12345> 에서 < 누른 경우
-    if (selectedPage <= defaultShowPageCount) {
+    if (page <= defaultShowPageCount) {
       setPageInfo(defaultPageInfo);
-      setSelectedPage(1);
       onChange(1);
     } else {
       setPageInfo(
@@ -38,12 +37,11 @@ function Pagenation({size, showItemCount, onChange}: PagenationType) {
         }),
       );
       const newPage = pageInfo[0].val - defaultShowPageCount;
-      setSelectedPage(newPage);
       onChange(newPage);
     }
-  }, [defaultPageInfo, onChange, pageInfo, selectedPage]);
+  };
 
-  const handleNextPage = useCallback(() => {
+  const handleNextPage = () => {
     // 다음 pageInfo의 첫번째 값
     const nextFirstPage = pageInfo[0].val + defaultShowPageCount;
     // 마지막 페이지 번호
@@ -57,26 +55,30 @@ function Pagenation({size, showItemCount, onChange}: PagenationType) {
         }
       }
       setPageInfo(prevPageArr);
-      setSelectedPage(nextFirstPage);
       onChange(nextFirstPage);
+    } else {
+      onChange(lastPageNum);
     }
-  }, [pageSize, showItemCount, pageInfo, onChange, defaultPageInfo]);
+  };
 
   const handleBtnClick = (page: number) => {
-    setSelectedPage(page);
     onChange(page);
   };
 
   useEffect(() => {
-    const lastPageNum = Math.ceil(pageSize / showItemCount);
-    const pageArr = Array.from({length: lastPageNum > defaultShowPageCount ? defaultShowPageCount : lastPageNum}, (_, i) => i + 1);
-    const basePageInfo = pageArr.map((dt, idx) => {
-      return {key: idx, val: dt};
-    });
+    if (pageInfo.length < 1) {
+      const lastPageNum = Math.ceil(pageSize / showItemCount);
+      const pageArr = Array.from({length: lastPageNum > defaultShowPageCount ? defaultShowPageCount : lastPageNum}, (_, i) => i + 1);
+      const basePageInfo = pageArr.map((dt, idx) => {
+        return {key: idx, val: dt};
+      });
 
-    setPageInfo(basePageInfo);
-    setDefaultPageInfo(basePageInfo);
-  }, [showItemCount, pageSize]);
+      setPageInfo(basePageInfo);
+      setDefaultPageInfo(basePageInfo);
+    }
+  }, [pageInfo, pageSize, showItemCount]);
+
+  console.log(page);
 
   return (
     <div className={'flex flex-row items-center justify-center gap-10pxr p-0'}>
@@ -99,7 +101,7 @@ function Pagenation({size, showItemCount, onChange}: PagenationType) {
         return (
           <Button
             key={`pagenation-${dt.key}-Btn`}
-            className={`h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 p-0 pc:h-55pxr pc:w-55pxr ${selectedPage === dt.val ? 'bg-primary text-white' : 'bg-white text-primary'}`}
+            className={`h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 p-0 pc:h-55pxr pc:w-55pxr ${page === dt.val ? 'bg-primary text-white' : 'bg-white text-primary'}`}
             onClick={() => handleBtnClick(dt.val)}
           >
             {dt.val}

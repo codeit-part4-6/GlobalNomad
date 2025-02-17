@@ -1,3 +1,4 @@
+'use client';
 import React, {useCallback, useEffect} from 'react';
 import {useQuery} from 'react-query';
 import {getActivitiesSchedule} from '@/service/api/activities/getActivitiesInfo';
@@ -11,23 +12,12 @@ import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
 import Button from '@/components/common/button';
 import activitiesStore from '@/service/store/activitiesstore';
-import {useParams} from 'next/navigation';
+import InitialDevice from '@/utils/initial-device';
 
 interface CalendarHeaderType {
   value: Dayjs;
   onChange: (value: Dayjs) => void;
 }
-interface SmCalendarType {
-  pageID: string;
-  device?: string;
-}
-
-let defaultTime = {date: '', id: 0, startTime: '', endTime: ''};
-
-const defaultSchedule = {
-  date: '',
-  times: [{startTime: '', endTime: '', id: 0}],
-};
 
 const CalendarHeader = ({value, onChange}: CalendarHeaderType) => {
   const year = value.year();
@@ -56,57 +46,59 @@ const CalendarHeader = ({value, onChange}: CalendarHeaderType) => {
   );
 };
 
-const SmCalendar = ({device = 'order'}: SmCalendarType) => {
+const SmCalendar = () => {
   dayjs.extend(weekday);
   dayjs.extend(localeData);
   dayjs.extend(weekOfYear);
   dayjs.extend(weekYear);
-  const params = useParams();
-  const {selectedSchedule, dailySchedule, updateSelectedSchedule, updateDailySchedule} = activitiesStore();
-  const pageID = params?.id?.toString() || '';
+  const {pageID, selectedSchedule, dailySchedule, setSelectedSchedule, setDailySchedule} = activitiesStore();
+  const device = InitialDevice();
 
   const {data: monthSchedules, refetch} = useQuery<SchedulesDateType[]>({
-    queryKey: ['schedules', selectedSchedule.date],
+    queryKey: ['schedules', selectedSchedule.date, pageID],
     queryFn: () => getActivitiesSchedule(pageID, selectedSchedule.date),
-    notifyOnChangeProps: ['data'],
     enabled: !!selectedSchedule.date,
   });
 
   const scheduleMatch = useCallback(
     (date: Dayjs) => {
       if (dayjs(date).isSame(dailySchedule.date)) {
-        const getTodaySchedule = monthSchedules?.reduce<SchedulesDateType>((acc, curr) => {
-          if (dayjs(curr.date).isSame(date, 'day')) {
-            acc = curr;
-          }
-          return acc;
-        }, defaultSchedule);
+        const getTodaySchedule = monthSchedules?.find(dt => dayjs(dt.date).isSame(date, 'day'));
 
         if (getTodaySchedule && getTodaySchedule.date.length > 0) {
-          updateDailySchedule(getTodaySchedule);
+          setDailySchedule(getTodaySchedule);
         }
       } else {
-        return updateDailySchedule({date: date.format('YYYY-MM-DD'), times: []});
+        return setDailySchedule({date: date.format('YYYY-MM-DD'), times: []});
       }
     },
-    [dailySchedule.date, monthSchedules, updateDailySchedule],
+    [dailySchedule.date, monthSchedules, setDailySchedule],
   );
 
-  const setSelectedSchedule = (time: SchedulesType) => {
-    updateSelectedSchedule(time);
-  };
+  const updateSelectedSchedule = useCallback(
+    (time: SchedulesType) => {
+      setSelectedSchedule(time);
+    },
+    [setSelectedSchedule],
+  );
 
-  const handleChangeDay = (date: Dayjs) => {
-    scheduleMatch(date);
-    defaultTime = {...defaultTime, date: date.format('YYYY-MM-DD')};
-    setSelectedSchedule(defaultTime);
-    refetch();
-  };
+  const handleChangeDay = useCallback(
+    (date: Dayjs) => {
+      scheduleMatch(date);
+      const defaultTime = {date: date.format('YYYY-MM-DD'), id: 0, startTime: '', endTime: ''};
+      updateSelectedSchedule(defaultTime);
+      refetch();
+    },
+    [refetch, scheduleMatch, updateSelectedSchedule],
+  );
 
-  const handleSelectTime = ({date, id, startTime, endTime}: SchedulesType) => {
-    const getData = {date, id, startTime, endTime};
-    setSelectedSchedule(getData);
-  };
+  const handleSelectTime = useCallback(
+    ({date, id, startTime, endTime}: SchedulesType) => {
+      const getData = {date, id, startTime, endTime};
+      setSelectedSchedule(getData);
+    },
+    [setSelectedSchedule],
+  );
 
   const checkTime = (date: string, hour: string) => {
     const getDate = dayjs(`${date} ${hour}:00:00`, 'YYYY-MM-DD HH-mm:ss');
@@ -117,7 +109,7 @@ const SmCalendar = ({device = 'order'}: SmCalendarType) => {
     if (monthSchedules && dailySchedule.times.length < 1) {
       scheduleMatch(dayjs(dailySchedule.date));
     }
-  }, [monthSchedules, scheduleMatch, dailySchedule]);
+  }, [monthSchedules, scheduleMatch, dailySchedule, refetch]);
 
   return (
     <>
@@ -144,7 +136,7 @@ const SmCalendar = ({device = 'order'}: SmCalendarType) => {
           </div>
         </div>
         <div
-          className={`mt-14pxr flex flex-row flex-wrap gap-12pxr overflow-y-scroll ${dailySchedule.times.length < 4 && 'no-scrollbar'} ${device === 'mobile' ? 'h-220pxr' : 'h-110pxr'}`}
+          className={`mt-14pxr flex h-220pxr flex-row flex-wrap gap-12pxr tablet:h-110pxr pc:h-110pxr ${dailySchedule.times.length < (device === 'windows' ? 4 : 6) ? 'no-scrollbar' : 'overflow-y-scroll'}`}
         >
           {dailySchedule.times.map(dt => {
             return (

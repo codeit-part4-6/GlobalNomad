@@ -1,7 +1,6 @@
 'use client';
 import React, {useState} from 'react';
 import {useQuery} from 'react-query';
-import {useParams} from 'next/navigation';
 import {ActivitiesReviewsType} from '@/types/activities-info';
 import Image from 'next/image';
 import {getActivitiesReviews} from '@/service/api/activities/getActivitiesInfo';
@@ -9,20 +8,20 @@ import Pagenation from '@/components/common/pagenation';
 import FormatDate from '@/utils/format-date';
 import Star from '@/public/icon/ic_star.svg';
 import DefaultProfile from '@/public/img/img_default_profile.svg';
+import activitiesStore from '@/service/store/activitiesstore';
 
 const Reviews = () => {
-  const params = useParams();
   const [page, setPage] = useState<number>(1);
-  const pageID = params?.id?.toString() || '';
+  const {pageID} = activitiesStore();
 
   const {data, isSuccess} = useQuery<ActivitiesReviewsType>({
-    queryKey: ['activitiesReviews', page],
-    queryFn: () => getActivitiesReviews(pageID, 1, 3),
+    queryKey: ['activitiesReviews', page, pageID],
+    queryFn: () => getActivitiesReviews(pageID, page, 3),
     enabled: !!page,
   });
 
-  const handlePageChange = (page: number) => {
-    setPage(page);
+  const handlePageChange = (pageNo: number) => {
+    setPage(pageNo);
   };
 
   return (
@@ -39,7 +38,7 @@ const Reviews = () => {
             </div>
           </div>
         </div>
-        <div className="table:72pxr mb-40pxr pc:mb-90pxr">
+        <div className="tablet:72pxr mb-40pxr h-430pxr pc:mb-90pxr">
           {data.reviews.map((dt, idx) => {
             return (
               <div className="flex flex-row" key={dt.id}>
@@ -61,7 +60,7 @@ const Reviews = () => {
             );
           })}
         </div>
-        <Pagenation size={data.totalCount} showItemCount={3} onChange={handlePageChange} />
+        <Pagenation size={data.totalCount} showItemCount={3} onChange={handlePageChange} page={page} />
       </>
     )
   );

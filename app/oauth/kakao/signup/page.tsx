@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Modal from '@/components/common/modal/modal';
+import Button from '@/components/common/button';
 import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
 import { useAuthStore } from '@/service/store/authStore';
 import { AxiosError } from 'axios';
@@ -11,6 +13,8 @@ export default function SignUpPage() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const handleSignup = async (token: string) => {
     const redirectUri = process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URI2 || '';
@@ -31,9 +35,9 @@ export default function SignUpPage() {
     } catch (error) {
       const axiosError = error as AxiosError; 
       console.log('회원가입 실패:', axiosError?.response?.data);
-      alert('이미 가입된 사용자입니다.')
+      setModalMessage('이미 가입된 사용자입니다.');
       setError('이미 가입된 사용자입니다.');
-      router.push('/signin');
+      setIsModalOpen(true);
     } finally {
       setIsLoading(false);
     }
@@ -45,6 +49,10 @@ export default function SignUpPage() {
 
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -66,13 +74,14 @@ export default function SignUpPage() {
       ) : error ? (
         <div className="text-red-500 text-lg text-center">
           <p>{error}</p>
-          <button onClick={() => router.push('/signin')} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+          <Button className="bg-primary h-[3.375rem] w-[21.875rem] gap-[0.5rem] rounded-[0.375rem] text-white sm:px-4 tablet:h-[3rem] tablet:w-[40rem]" type = 'button' onClick={() => router.push('/signin')}>
             다시 로그인하기
-          </button>
+          </Button>
         </div>
       ) : (
         <p className="text-gray-700 text-lg">회원가입 준비 완료</p>
       )}
+      {isModalOpen && <Modal message={modalMessage} onClose={handleCloseModal} />}
     </div>
   );
 }
