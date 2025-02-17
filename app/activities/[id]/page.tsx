@@ -1,5 +1,5 @@
 'use client';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {useParams, useRouter} from 'next/navigation';
 import {ActivitiesInfoType} from '@/types/activities-info';
@@ -41,16 +41,14 @@ export default function Page() {
     router.back();
   };
 
-  const initializeState = useCallback(() => {
-    if (!params?.id) {
-      setIsPostResultModalOpen({message: '체험 ID가 없습니다.', isOpen: true});
-    } else {
-      setPageID(params?.id?.toString());
+  useMemo(() => {
+    if (params?.id && pageID !== params?.id.toString()) {
+      setPageID(params.id.toString());
       setPerson(1);
       setSelectedSchedule({date: dayjs().format('YYYY-MM-DD'), startTime: '', endTime: '', id: 0});
       setDailySchedule({date: dayjs().format('YYYY-MM-DD'), times: []});
     }
-  }, [params?.id, setDailySchedule, setPageID, setPerson, setSelectedSchedule]);
+  }, [params?.id, pageID, setPageID, setPerson, setSelectedSchedule, setDailySchedule]);
 
   useEffect(() => {
     if (isError) {
@@ -59,8 +57,10 @@ export default function Page() {
   }, [error, isError]);
 
   useEffect(() => {
-    initializeState();
-  }, [initializeState]);
+    if (!params?.id) {
+      setIsPostResultModalOpen({message: '체험 ID가 없습니다.', isOpen: true});
+    }
+  }, [params?.id]);
 
   const renderDescription = (description: string) => {
     return description.split('\n').map((dt, idx) => <p key={`description-${idx}`}>{dt}</p>);
