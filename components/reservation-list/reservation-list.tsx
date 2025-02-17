@@ -135,13 +135,7 @@ export default function ReservationList() {
               className="flex h-32 w-full items-center rounded-3xl bg-white shadow-sidenavi-box tablet:h-156pxr pc:h-204pxr"
             >
               <div className="relative aspect-[1/1] h-32 w-32 flex-shrink tablet:h-156pxr tablet:w-156pxr pc:h-204pxr pc:w-204pxr">
-                <Image
-                  className="absolute rounded-bl-3xl rounded-tl-3xl"
-                  fill
-                  style={{objectFit: 'cover'}}
-                  src={reservation.activity.bannerImageUrl}
-                  alt="체험 배너 이미지"
-                />
+                <Image className="absolute rounded-bl-3xl rounded-tl-3xl" fill src={reservation.activity.bannerImageUrl} alt="체험 배너 이미지" />
               </div>
               <div className="flex-grow py-11pxr pl-2 pr-14pxr tablet:py-3 tablet:pl-3 tablet:pr-18pxr pc:px-6 pc:py-21pxr">
                 <p className={`${statusLabelsColor[reservation.status]} text-md font-bold tablet:text-lg pc:mb-2`}>

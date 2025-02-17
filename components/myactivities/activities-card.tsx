@@ -33,13 +33,7 @@ export default function ActivitiesCard({data, onClickModify, onClickDelete}: Act
           className="flex items-center gap-2 overflow-hidden rounded-3xl bg-white shadow-sidenavi-box tablet:gap-3 pc:h-204pxr pc:gap-6"
         >
           <div className="relative aspect-[1/1] h-128pxr w-128pxr tablet:h-156pxr tablet:w-156pxr pc:h-204pxr pc:w-204pxr">
-            <Image
-              className="absolute rounded-bl-3xl rounded-tl-3xl"
-              src={data.bannerImageUrl}
-              alt="체험관리사진"
-              fill
-              style={{objectFit: 'cover'}}
-            />
+            <Image className="absolute rounded-bl-3xl rounded-tl-3xl" src={data.bannerImageUrl} alt="체험관리사진" fill />
           </div>
           <div className="flex flex-grow flex-col items-start py-11pxr pl-2 pr-4 tablet:pl-3 tablet:pr-5 pc:w-548pxr pc:py-22pxr">
             <div className="flex gap-6pxr">
