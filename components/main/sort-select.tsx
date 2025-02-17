@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import {useState} from 'react';
-import arrowDown from '@/public/icon/icon_arrow_down.svg';
 import {ActivitiesBody} from '@/types/activities';
+import arrowDown from '@/public/icon/icon_arrow_down.svg';
 
 interface CustomSelectProps {
   selectedSort: ActivitiesBody['sort'] | undefined;

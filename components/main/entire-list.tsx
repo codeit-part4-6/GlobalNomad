@@ -1,10 +1,10 @@
-import {activitiesList} from '@/service/api/activities/getActivities';
-import EntireCard from './entire-card';
-import {ActivitiesBody, ActivitiesResponse} from '@/types/activities';
-import {useQuery} from '@tanstack/react-query';
-import {ScaleLoader} from 'react-spinners';
-import Pagenation from '../common/pagenation';
 import {useEffect, useState} from 'react';
+import {ActivitiesBody, ActivitiesResponse} from '@/types/activities';
+import EntireCard from '@/components/main/entire-card';
+import Pagenation from '@/components/common/pagenation';
+import {activitiesList} from '@/service/api/activities/getActivities';
+import {ScaleLoader} from 'react-spinners';
+import {useQuery} from '@tanstack/react-query';
 import {getPageSize} from '@/utils/entire-page-size';
 
 interface EntireListProps {
@@ -26,7 +26,7 @@ export default function EntireList({activeCategory, selectedSort}: EntireListPro
         page,
       }),
   });
-  console.log(selectedSort);
+
   const handlePageChange = (page: number) => {
     setPage(page);
   };

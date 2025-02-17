@@ -1,10 +1,10 @@
-import Image from 'next/image';
 import React, {useEffect, useMemo, useState} from 'react';
-import closeButton from '@/public/icon/ic_close_button.svg';
-import ReservationInfo from '@/components/reservation-calendar/reservation-info';
-import {useQuery} from '@tanstack/react-query';
-import {getReservedSchedule} from '@/service/api/reservation-calendar/getReservedSchedule.api';
+import Image from 'next/image';
 import {Schedules} from '@/types/reserved-schedule';
+import ReservationInfo from '@/components/reservation-calendar/reservation-info';
+import {getReservedSchedule} from '@/service/api/reservation-calendar/getReservedSchedule.api';
+import {useQuery} from '@tanstack/react-query';
+import closeButton from '@/public/icon/ic_close_button.svg';
 
 interface ReservationModalProps {
   onClose: () => void;

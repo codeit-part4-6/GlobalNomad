@@ -1,14 +1,14 @@
+import {useEffect, useState} from 'react';
 import Image from 'next/image';
-import Star from '@/public/icon/ic_yellowStar.svg';
+import {useRouter} from 'next/navigation';
+import {Activities} from '@/types/activities';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import SwiperType from 'swiper';
-import {Activities} from '@/types/activities';
-import useLocalStorage from 'use-local-storage';
-import {useEffect, useState} from 'react';
 import {Navigation} from 'swiper/modules';
 import 'swiper/css/navigation';
 import 'swiper/css';
-import {useRouter} from 'next/navigation';
+import useLocalStorage from 'use-local-storage';
+import Star from '@/public/icon/ic_yellowStar.svg';
 import leftButton from '@/public/icon/ic_left.svg';
 import rightButton from '@/public/icon/ic_right.svg';
 

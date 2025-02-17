@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
+import Image from 'next/image';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
 import sortIcon from '@/public/icon/ic_sortIcon.svg';
-import Image from 'next/image';
 
 interface CustomSelectProps {
   orderBy: string;

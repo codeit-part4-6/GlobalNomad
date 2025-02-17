@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import Button from '../common/button';
-import {useMutation, useQueryClient} from '@tanstack/react-query';
+import Button from '@/components/common/button';
+import Modal from '@/components/common/modal/modal';
 import {patchReservations} from '@/service/api/reservation-calendar/patchReservations.api';
 import {ScaleLoader} from 'react-spinners';
-import Modal from '../common/modal/modal';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 
 interface patchReservationsProps {
   reservationId: number | null;

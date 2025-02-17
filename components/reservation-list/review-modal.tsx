@@ -1,16 +1,16 @@
-import Image from 'next/image';
-import Button from '../common/button';
-import OverlayContainer from '../common/modal/overlay-container';
-import {ReviewModalProps} from '@/types/review-modal-props';
-import closeButton from '@/public/icon/ic_close_button.svg';
-import StarRating from '@/components/reservation-list/star-rating';
 import {useState} from 'react';
+import Image from 'next/image';
+import {ReviewModalProps} from '@/types/review-modal-props';
+import Button from '../common/button';
+import OverlayContainer from '@/components/common/modal/overlay-container';
+import Modal from '@/components/common/modal/modal';
+import StarRating from '@/components/reservation-list/star-rating';
 import {postReview} from '@/service/api/reservation-list/postReview.api';
 import {useMutation} from '@tanstack/react-query';
 import {ScaleLoader} from 'react-spinners';
 import FormattedPrice from '@/utils/formatted-price';
 import FormatDate from '@/utils/format-date';
-import Modal from '../common/modal/modal';
+import closeButton from '@/public/icon/ic_close_button.svg';
 
 export default function ReviewModal({data, message, onClose}: ReviewModalProps) {
   const [starRating, setStarRating] = useState<number>(0);
