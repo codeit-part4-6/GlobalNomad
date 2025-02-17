@@ -15,7 +15,7 @@ interface InfiniteScrollProps<T> {
 
 const InfiniteScroll = <T,>({queryKey, fetchData, render, className}: InfiniteScrollProps<T>) => {
   const {ref, inView} = useInView({
-    threshold: 0.1, // 10%가 화면에 보일 때 트리거
+    threshold: 0.9, //  트리거
   });
 
   const {data, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery<InfiniteData<T>>({
@@ -29,7 +29,7 @@ const InfiniteScroll = <T,>({queryKey, fetchData, render, className}: InfiniteSc
     .flatMap(group => group.pages)
     .flat()
     .filter(Boolean);
-  const hasData = getPage.length > 0;
+  const hasData = getPage.length > 2;
 
   useEffect(() => {
     if (inView && hasNextPage) {
