@@ -61,7 +61,7 @@ export default function EntireList({activeCategory, selectedSort}: EntireListPro
       <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-3xl">🥽 모든 체험</h2>
       <EntireCard data={entireActivities} />
       <div className="mx-auto">
-        <Pagenation size={entireActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />
+        <Pagenation page={page} size={entireActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />
       </div>
     </section>
   );
