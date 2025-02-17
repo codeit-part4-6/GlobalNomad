@@ -71,7 +71,8 @@ export default function PopularCard({data, fetchNextpage, hasNextPage}: PopularC
           onSlideChange={onSlideChange}
           onReachEnd={handleReachEnd}
           breakpoints={{
-            375: {slidesPerView: 2, spaceBetween: 8},
+            375: {slidesPerView: 1.5, spaceBetween: 8},
+            390: {slidesPerView: 2, spaceBetween: 8},
             420: {slidesPerView: 2.5, spaceBetween: 8},
             580: {slidesPerView: 3, spaceBetween: 8},
             630: {slidesPerView: 3.5, spaceBetween: 8},
