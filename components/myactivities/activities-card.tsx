@@ -14,22 +14,16 @@ interface ActivitiesCardProps {
 
 export default function ActivitiesCard({data, onClickModify, onClickDelete}: ActivitiesCardProps) {
   const [isOpenDropbox, setIsOpenDropbox] = useState(false);
-  const [modalType, setModalType] = useState<string | null>(null);
 
   const handleClick = (type: string) => {
     setIsOpenDropbox(false);
-    setModalType(type);
-  };
 
-  useEffect(() => {
-    if (modalType === 'modify') {
+    if (type === 'modify') {
       onClickModify();
-    }
-
-    if (modalType === 'delete') {
+    } else if (type === 'delete') {
       onClickDelete();
     }
-  }, [modalType, onClickModify, onClickDelete]);
+  };
 
   return (
     <>
