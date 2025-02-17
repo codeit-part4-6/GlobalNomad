@@ -48,13 +48,8 @@ export default function ReservationList() {
     initialPageParam: null,
     getNextPageParam: (lastPage, allPages) => {
       const totalLoadedReservations = allPages.flatMap(page => page.reservations).length;
-
-      if (totalLoadedReservations >= lastPage.totalCount) {
-        return null;
-      }
-      if (lastPage.cursorId === null) {
-        return null;
-      }
+      if (totalLoadedReservations >= lastPage.totalCount) return null;
+      if (lastPage.cursorId === null) return null;
       return lastPage.reservations[lastPage.reservations.length - 1].id;
     },
   });
