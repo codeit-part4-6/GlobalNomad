@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import arrowDown from '@/public/icon/icon_arrow_down.svg';
 import Image from 'next/image';
-import ConfirmButton from './confirm-button';
-import ConfirmChip from './confirm-chip';
 import {Schedules} from '@/types/reserved-schedule';
-import {useInfiniteQuery} from '@tanstack/react-query';
 import {ReservationsResponse} from '@/types/my-reservations';
+import ConfirmButton from '@/components/reservation-calendar/confirm-button';
+import ConfirmChip from '@/components/reservation-calendar/confirm-chip';
+import NonDataPage from '@/components/common/non-data';
 import {getReservations} from '@/service/api/reservation-calendar/getReservations.api';
-import NonDataPage from '../common/non-data';
 import {ScaleLoader} from 'react-spinners';
 import {useInView} from 'react-intersection-observer';
+import {useInfiniteQuery} from '@tanstack/react-query';
+import arrowDown from '@/public/icon/icon_arrow_down.svg';
 
 interface ReservationProps {
   reservationStatus: string;

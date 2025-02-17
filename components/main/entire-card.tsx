@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import Star from '@/public/icon/ic_yellowStar.svg';
-import Pagenation from '../common/pagenation';
 import {ActivitiesResponse} from '@/types/activities';
+import Pagenation from '../common/pagenation';
+import Star from '@/public/icon/ic_yellowStar.svg';
 
 interface EntireCardProps {
   data?: ActivitiesResponse;

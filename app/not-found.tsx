@@ -1,12 +1,11 @@
 'use client';
 
 import React, {useState} from 'react';
-
-import Error from '@/public/img/img_404.svg';
 import {useRouter} from 'next/navigation';
 import Image from 'next/image';
 import Button from '@/components/common/button';
 import {ScaleLoader} from 'react-spinners';
+import Error from '@/public/img/img_404.svg';
 
 export default function NotFound() {
   const [isLoading, setIsLoading] = useState(false);

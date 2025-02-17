@@ -1,7 +1,7 @@
 'use client';
 
-import {usePathname, useRouter} from 'next/navigation';
 import {useEffect, useState} from 'react';
+import {usePathname, useRouter} from 'next/navigation';
 import SideNavi from '@/components/side-navigation/side-navi';
 
 export default function SideNaviDefault() {

@@ -1,15 +1,16 @@
 'use client';
-import Image from 'next/image';
+
 import React, {useEffect, useMemo, useState} from 'react';
-import selectDown from '@/public/icon/ic_chevron_down.svg';
-import BigCalendar from '@/components/reservation-calendar/big-calendar';
-import NonDataPage from '../common/non-data';
-import closeButton from '@/public/icon/ic_close_button.svg';
-import {useQuery} from '@tanstack/react-query';
-import {MyActivitiesResponse} from '@/types/activities';
-import {getActivities} from '@/service/api/reservation-calendar/getActivities.api';
-import {ScaleLoader} from 'react-spinners';
+import Image from 'next/image';
 import {useRouter} from 'next/navigation';
+import {MyActivitiesResponse} from '@/types/activities';
+import BigCalendar from '@/components/reservation-calendar/big-calendar';
+import NonDataPage from '@/components/common/non-data';
+import {getActivities} from '@/service/api/reservation-calendar/getActivities.api';
+import {useQuery} from '@tanstack/react-query';
+import {ScaleLoader} from 'react-spinners';
+import closeButton from '@/public/icon/ic_close_button.svg';
+import selectDown from '@/public/icon/ic_chevron_down.svg';
 
 export default function ReservationCalendar() {
   const router = useRouter();

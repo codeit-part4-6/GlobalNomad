@@ -2,14 +2,14 @@
 'use client';
 
 import {useState, useRef} from 'react';
+import Image from 'next/image';
+import Button from '@/components/common/button';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation} from 'swiper/modules'; // Navigation, Pagination 모듈 추가
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import Button from '@/components/common/button';
 import arrow from '@/public/icon/ic_arrow_next.svg';
-import Image from 'next/image';
 
 interface OptionType {
   className: string;

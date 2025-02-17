@@ -1,11 +1,11 @@
+import {useState} from 'react';
 import Image from 'next/image';
-import checkConfirm from '@/public/icon/icon_confirm.svg';
-import OverlayContainer from './overlay-container';
-import Button from '../button';
+import OverlayContainer from '@/components/common/modal/overlay-container';
+import Button from '@/components/common/button';
 import {patchReservationList} from '@/service/api/reservation-list/patchReservation.api';
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {ScaleLoader} from 'react-spinners';
-import {useState} from 'react';
+import checkConfirm from '@/public/icon/icon_confirm.svg';
 
 interface ModalProps {
   type: 'small' | 'big';

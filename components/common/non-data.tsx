@@ -1,6 +1,6 @@
 import React from 'react';
-import nonData from '@/public/img/img_non_data.svg';
 import Image from 'next/image';
+import nonData from '@/public/img/img_non_data.svg';
 
 interface NonDataPageProps {
   type?: 'modal' | '';
