@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Modal from '@/components/common/modal/modal';
+import Button from '@/components/common/button';
 import { postOAuthSignup } from '@/service/api/oauth/postOAuthSignup.api';
 import { useAuthStore } from '@/service/store/authStore';
 import { AxiosError } from 'axios';
@@ -73,9 +74,9 @@ export default function SignUpPage() {
       ) : error ? (
         <div className="text-red-500 text-lg text-center">
           <p>{error}</p>
-          <button onClick={() => router.push('/signin')} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+          <Button className="bg-primary h-[3.375rem] w-[21.875rem] gap-[0.5rem] rounded-[0.375rem] text-white sm:px-4 tablet:h-[3rem] tablet:w-[40rem]" type = 'button' onClick={() => router.push('/signin')}>
             다시 로그인하기
-          </button>
+          </Button>
         </div>
       ) : (
         <p className="text-gray-700 text-lg">회원가입 준비 완료</p>
