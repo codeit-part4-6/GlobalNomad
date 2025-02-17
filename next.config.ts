@@ -1,4 +1,10 @@
 import type {NextConfig} from 'next';
+import withBundleAnalyzer from '@next/bundle-analyzer';
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: false,
+  openAnalyzer: false,
+});
 
 const nextConfig: NextConfig = {
   images: {
@@ -41,6 +47,13 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true, // TypeScript 오류를 무시하고 빌드 진행
   },
+  optimization: {
+    minimize: true, // 빌드 시 최소화
+    splitChunks: {
+      chunks: 'all', // 모든 chunk를 분할하여 번들 크기를 최적화
+    },
+    runtimeChunk: true, // 런타임 코드 분리
+  },
 };
 
-export default nextConfig;
+export default bundleAnalyzer(nextConfig);

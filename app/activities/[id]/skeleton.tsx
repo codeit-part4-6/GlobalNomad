@@ -4,7 +4,7 @@ import IconMeatball from '@/public/icon/ic_meatball.svg';
 
 export default function SkeletonLayout() {
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto tablet:min-w-[43rem] pc:max-w-[75rem]">
       <div className="mx-auto w-full px-24pxr pb-133pxr pt-16pxr tablet:min-w-696pxr tablet:pb-145pxr tablet:pt-24pxr pc:px-0 pc:pb-128pxr pc:pt-78pxr">
         <Skeleton className="mb-10pxr h-24pxr w-100pxr text-md font-normal text-nomad-black" />
         <div className="relative mb-16pxr flex flex-row justify-between">
