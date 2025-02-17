@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import Image from 'next/image';
 import {Activity} from '@/types/myactivities';
 import Dropbox from '@/components/common/dropbox';
