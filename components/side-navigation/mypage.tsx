@@ -74,9 +74,8 @@ export default function MyPage() {
 
   const onSubmit = async (data: IFormInput) => {
     mypageMutation.mutate(data, {
-      onError: (error) => {
-        console.error('마이페이지 저장 오류:', error);
-        setModalMessage('마이페이지 저장 중 오류가 발생했습니다.');
+      onError: () => {
+        setModalMessage('프로필사진을 변경해주세요.');
         setIsModalOpen(true);
       },
       onSuccess: data => {
