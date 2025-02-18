@@ -1,18 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
+import {useEffect, useState} from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {useMutation} from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { SigninBody } from '@/types/postSignin.types';
+import {useRouter} from 'next/navigation';
+import {SigninBody} from '@/types/postSignin.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
-import { postSignin } from '@/service/api/auth/postSignin.api';
-import { postTokens } from '@/service/api/auth/postTokens.api';
-import { useAuthStore } from '@/service/store/authStore';
+import {postSignin} from '@/service/api/auth/postSignin.api';
+import {postTokens} from '@/service/api/auth/postTokens.api';
+import {useAuthStore} from '@/service/store/authStore';
 import signLogo from '@/public/img/img_signlogo.svg';
 import GoogleIcon from '@/public/icon/ic_google.svg';
 import KakaoIcon from '@/public/icon/ic_kakao.svg';
@@ -52,17 +52,14 @@ export default function Page() {
         setModalMessage('비밀번호가 일치하지 않습니다.');
         setIsModalOpen(true);
       },
-      onSuccess: async (data) => {
+      onSuccess: async data => {
         try {
           setLogin(data.accessToken, data.refreshToken, data.user);
           sessionStorage.setItem('accessToken', data.accessToken);
           sessionStorage.setItem('refreshToken', data.refreshToken);
 
-          const { id, email, nickname, profileImageUrl, createdAt, updatedAt } = data.user;
-          sessionStorage.setItem(
-            'userInfo',
-            JSON.stringify({ id, email, nickname, profileImageUrl, createdAt, updatedAt })
-          );
+          const {id, email, nickname, profileImageUrl, createdAt, updatedAt} = data.user;
+          sessionStorage.setItem('userInfo', JSON.stringify({id, email, nickname, profileImageUrl, createdAt, updatedAt}));
 
           const refreshedData = await postTokens(data.refreshToken);
           if (refreshedData) sessionStorage.setItem('accessToken', refreshedData.accessToken);
@@ -162,10 +159,10 @@ export default function Page() {
                   type="checkbox"
                   id="saveEmail"
                   checked={saveEmail}
-                  onChange={() => setSaveEmail((prev) => !prev)}
-                  className="w-4 h-4 cursor-pointer"
+                  onChange={() => setSaveEmail(prev => !prev)}
+                  className="h-4 w-4 cursor-pointer"
                 />
-                <label htmlFor="saveEmail" className="text-sm cursor-pointer">
+                <label htmlFor="saveEmail" className="cursor-pointer text-sm">
                   이메일 저장
                 </label>
               </div>
@@ -193,7 +190,7 @@ export default function Page() {
                 </span>
                 <hr className="w-full border border-gray-300" />
               </div>
-              
+
               <div className="flex justify-center gap-[1rem]">
                 <button type="button" onClick={() => alert('Google 로그인 기능이 일시적으로 제한되어 있습니다')}>
                   <Image src={GoogleIcon} alt="google icon" />
