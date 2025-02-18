@@ -89,7 +89,14 @@ export default function PopularCard({data, fetchNextpage, hasNextPage}: PopularC
               >
                 {/* 배경 이미지 */}
                 <div className="absolute inset-0">
-                  <Image src={bannerImageUrl} alt={title} layout="fill" objectFit="cover" className="rounded-3xl" />
+                  <Image
+                    src={bannerImageUrl}
+                    alt={title}
+                    fill
+                    style={{objectFit: 'cover'}}
+                    className="rounded-3xl"
+                    sizes="(max-width: 744px) 186px, (max-width: 1199px) 384px, 50vw"
+                  />
                 </div>
                 {/* 어두운 오버레이 추가 */}
                 <div className="absolute inset-0 rounded-3xl bg-black-50 opacity-20"></div> {/* 어두운 오버레이 */}

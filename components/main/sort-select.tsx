@@ -30,7 +30,7 @@ export default function SortSelect({selectedSort, onSelectedSort}: CustomSelectP
       <div className="flex items-center justify-center gap-1 rounded-md tablet:justify-between">
         <span className="overflow-hidden text-ellipsis whitespace-nowrap text-md font-medium text-green-100 tablet:text-2lg">{selectedLabel}</span>
 
-        <Image src={arrowDown} alt="Arrow Down" width={16} height={16} />
+        <Image src={arrowDown} alt="Arrow Down" width={16} height={16} style={{width: 'auto', height: 'auto'}} />
       </div>
 
       {isOpen && (

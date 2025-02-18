@@ -17,7 +17,13 @@ export default function EntireCard({data}: EntireCardProps) {
             <Link href={`/activities/${id}`}>
               {/* 배경 이미지 */}
               <div className="relative flex h-[186px] w-full overflow-hidden rounded-3xl bg-gray-300 tablet:h-[221px] pc:h-[283px] pc:min-w-[283px]">
-                <Image src={bannerImageUrl} alt={title} layout="fill" objectFit="cover" />
+                <Image
+                  src={bannerImageUrl}
+                  alt={title}
+                  fill
+                  style={{objectFit: 'cover'}}
+                  sizes="(max-width: 745px) 100vw, (max-width: 1200px) 80vw, 50vw"
+                />
               </div>
 
               {/* 카드 내용 */}
