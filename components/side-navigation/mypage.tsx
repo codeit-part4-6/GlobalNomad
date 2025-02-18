@@ -63,7 +63,8 @@ export default function MyPage() {
 
   const onSubmit = async (data: IFormInput) => {
     mypageMutation.mutate(data, {
-      onError: () => {
+      onError: (error) => {
+        console.error('마이페이지 저장 오류:', error);
         setModalMessage('마이페이지 저장 중 오류가 발생했습니다.');
         setIsModalOpen(true);
       },
@@ -85,7 +86,6 @@ export default function MyPage() {
         <div className="mb-4 flex items-center justify-between pc:mb-6">
           <p className="text-[32px] font-[700] leading-[42px] tablet:leading-[38.19px]">내 정보</p>
           <div className="flex items-center gap-1">
-            {/* 저장하기 버튼 */}
             <Button
               className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white ${
                 isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
@@ -95,14 +95,12 @@ export default function MyPage() {
             >
               저장하기
             </Button>
-            {/* 모달 닫기 - 모바일 */}
             <div className="relative h-12 w-12 tablet:hidden" onClick={() => router.back()}>
               <Image src={closeButton} alt="모달 닫기 버튼" className="absolute cursor-pointer" fill />
             </div>
           </div>
         </div>
         <div className="flex w-full flex-col gap-[16px]">
-          {/* 닉네임 입력란 */}
           <Controller
             name="nickname"
             control={control}
@@ -125,7 +123,6 @@ export default function MyPage() {
               />
             )}
           />
-          {/* 이메일 입력란 */}
           <Controller
             name="email"
             control={control}
@@ -140,7 +137,6 @@ export default function MyPage() {
               />
             )}
           />
-          {/* Password Input */}
           <Controller
             name="password"
             control={control}
@@ -165,7 +161,6 @@ export default function MyPage() {
               />
             )}
           />
-          {/* Confirm Password Input */}
           <Controller
             name="newPassword"
             control={control}
