@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import '@/styles/globals.css';
 import Script from 'next/script';
 import ClientSideLayout from './ClientSideLayout';
+import {ThemeProvider} from '@/components/common/theme-provider';
 
 export const metadata: Metadata = {
   title: {
@@ -27,9 +28,11 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
         />
       </head>
       <body className="max-w-full">
-        <ClientSideLayout>
-          <main className="flex-grow">{children}</main>
-        </ClientSideLayout>
+        <ThemeProvider>
+          <ClientSideLayout>
+            <main className="flex-grow">{children}</main>
+          </ClientSideLayout>
+        </ThemeProvider>
       </body>
     </html>
   );
