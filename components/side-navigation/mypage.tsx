@@ -79,7 +79,7 @@ export default function MyPage() {
     };
     mypageMutation.mutate(updatedData, {
       onError: () => {
-        setModalMessage('프로필사진을 변경해주세요.');
+        setModalMessage('마이페이지 정보가 수정이 실패했습니다.');
         setIsModalOpen(true);
       },
       onSuccess: data => {
