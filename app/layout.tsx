@@ -4,8 +4,12 @@ import Script from 'next/script';
 import ClientSideLayout from './ClientSideLayout';
 
 export const metadata: Metadata = {
-  title: 'Global Nomad',
+  title: {
+    default: 'Global Nomad',
+    template: '%s',
+  },
   description: '나에게 꼭 맞는 체험상품 찾기',
+  keywords: '이색체험, 인기체험, 체험상품, 체험후기, 체험상품예약, 체험상품추천',
   metadataBase: new URL('https://codeit-global-nomad.vercel.app'),
   icons: {
     icon: '/logo.svg',
