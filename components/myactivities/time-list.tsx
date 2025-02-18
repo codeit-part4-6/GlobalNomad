@@ -1,9 +1,11 @@
+'use client';
+import {useEffect, useState} from 'react';
 import {useFieldArray, Controller, useFormContext, FieldError} from 'react-hook-form';
 import Image from 'next/image';
 import {Schedule} from '@/types/postActivities.types';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';
-import {findOverlappingSchedules, generateTimeOptions} from '@/utils/fotmatted-hour-time';
+import {findOverlappingSchedules, generateDatesForWeeks, generateDayCount, generateTimeOptions} from '@/utils/fotmatted-hour-time';
 import minusBtn from '@/public/icon/ic_minus_btn.svg';
 import plusBtn from '@/public/icon/ic_plus_btn.svg';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
@@ -42,6 +44,9 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     control,
     name: 'schedulesToAdd',
   });
+
+  const [isWeeklyRepeat, setIsWeeklyRepeat] = useState(false);
+  const [weekCount, setWeekCount] = useState(2); // 기본2주
 
   const handleAddRow = () => {
     if (type === 'register') {
@@ -116,6 +121,22 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     });
   };
 
+  const handleWeeklyRepeatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const data = e.target.value;
+    if (!data) {
+      return;
+    }
+    const newValue = data === 'weekly';
+    setIsWeeklyRepeat(newValue);
+  };
+
+  const handleWeekly = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const data = e.target.value;
+    if (data) {
+      setWeekCount(Number(data));
+    }
+  };
+
   const renderDateField = (label: string, name: string, index: number) => {
     return (
       <div>
@@ -170,34 +191,79 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     );
   };
 
+  useEffect(() => {
+    if (isWeeklyRepeat && weekCount > 0) {
+      const dates = generateDatesForWeeks(weekCount);
+      setValue('schedules', dates);
+    } else {
+      setValue('schedules', [{date: '', startTime: '09:00', endTime: '18:00'}]);
+    }
+  }, [isWeeklyRepeat, weekCount, setValue]);
+
   return (
     <div className="mb-4">
-      <label className="mb-3 block text-xl font-bold tablet:text-2xl">예약 가능한 시간대</label>
-      {fields.map((row, index) => (
-        <div key={row.id} className="mb-4">
-          <div className="grid grid-cols-[1fr,auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
-            {/* 날짜 필드 */}
-            {renderDateField('날짜', `schedules.${index}.date`, index)}
-
-            {/* 시작 시간 필드 */}
-            {renderSelectField('시작 시간', `schedules.${index}.startTime`, index, {label: '09:00'})}
-
-            {/* 종료 시간 필드 */}
-            {renderSelectField('종료 시간', `schedules.${index}.endTime`, index, {label: '18:00'})}
-
-            <div
-              className={`relative h-16 w-16 cursor-pointer ${index === 0 ? 'mt-26pxr' : ''}`}
-              onClick={() => (index === 0 ? handleAddRow() : handleMinusRow(index, 'fields'))}
-            >
-              <Image src={index === 0 ? plusBtn : minusBtn} alt={index === 0 ? 'Add row' : 'Remove row'} fill />
+      <div className="flex-col items-center justify-between tablet:flex tablet:flex-row">
+        <label className="mb-3 block text-xl font-bold tablet:text-2xl">예약 가능한 시간대</label>
+        {type === 'register' && (
+          <div className="flex gap-2">
+            <div className="mb-4">
+              <SelectBox
+                value={isWeeklyRepeat ? 'weekly' : 'daily'}
+                onChange={handleWeeklyRepeatChange}
+                options={[
+                  {value: 'daily', label: '반복 안함'},
+                  {value: 'weekly', label: '주간 생성'},
+                ]}
+                selectButtonImage={arrowDown}
+                className="w-full max-w-130pxr bg-white tablet:max-w-none"
+                label="반복 설정"
+              />
             </div>
+            {isWeeklyRepeat && (
+              <div className="mb-4">
+                <SelectBox
+                  value={weekCount.toString()}
+                  onChange={handleWeekly}
+                  options={generateDayCount(5)}
+                  selectButtonImage={arrowDown}
+                  className="w-full max-w-120pxr bg-white tablet:max-w-none"
+                  label="기간"
+                />
+              </div>
+            )}
           </div>
-          {Array.isArray(errors.schedules) && errors.schedules[index]?.date?.message && (
-            <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[index]?.date?.message}</span>
-          )}
-          {index === 0 && <hr className="mt-4"></hr>}
+        )}
+      </div>
+      <>
+        <div className={` ${isWeeklyRepeat ? 'max-h-[500px] overflow-y-auto' : ''}`}>
+          {fields.map((row, index) => (
+            <div key={row.id} className="mb-4">
+              <div className="grid max-w-full grid-cols-[minmax(150px,1fr),auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
+                {/* 날짜 필드 */}
+                {renderDateField('날짜', `schedules.${index}.date`, index)}
+
+                {/* 시작 시간 필드 */}
+                {renderSelectField('시작 시간', `schedules.${index}.startTime`, index, {label: '09:00'})}
+
+                {/* 종료 시간 필드 */}
+                {renderSelectField('종료 시간', `schedules.${index}.endTime`, index, {label: '18:00'})}
+
+                <div
+                  className={`relative h-16 w-16 cursor-pointer ${index === 0 ? 'mt-26pxr' : ''}`}
+                  onClick={() => (index === 0 ? handleAddRow() : handleMinusRow(index, 'fields'))}
+                >
+                  <Image src={index === 0 ? plusBtn : minusBtn} alt={index === 0 ? 'Add row' : 'Remove row'} fill />
+                </div>
+              </div>
+
+              {Array.isArray(errors.schedules) && errors.schedules[index]?.date?.message && (
+                <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[index]?.date?.message}</span>
+              )}
+              {index === 0 && <hr className="mt-4"></hr>}
+            </div>
+          ))}
         </div>
-      ))}
+      </>
 
       {/* 수정시 */}
       {type === 'modify' && modifyFields.length !== 0 && (

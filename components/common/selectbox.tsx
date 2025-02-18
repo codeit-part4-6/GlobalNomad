@@ -58,8 +58,8 @@ export default function SelectBox({className = '', options, value, onChange, sel
   useEffect(() => {
     if (isOpen && value && optionRefs.current[value]) {
       optionRefs.current[value]?.scrollIntoView({
-        behavior: 'instant',
-        block: 'end',
+        behavior: 'auto',
+        block: 'center',
       });
     }
   }, [isOpen, value]);
