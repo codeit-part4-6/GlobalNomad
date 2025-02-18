@@ -77,7 +77,6 @@ export default function Page() {
         <form className="flex w-full flex-col items-center justify-center gap-[2.5rem] tablet:gap-[3rem]" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-[1.625rem] tablet:gap-[2rem]">
             <div className="flex flex-col gap-[1.75rem]">
-              {/* 이메일 입력란 */}
               <Controller
                 name="email"
                 control={control}
@@ -100,7 +99,6 @@ export default function Page() {
                   />
                 )}
               />
-              {/* 닉네임 입력란 */}
               <Controller
                 name="nickname"
                 control={control}
@@ -123,7 +121,6 @@ export default function Page() {
                   />
                 )}
               />
-              {/* 비밀번호 입력란 */}
               <Controller
                 name="password"
                 control={control}
@@ -148,7 +145,6 @@ export default function Page() {
                   />
                 )}
               />
-              {/* 비밀번호 확인 입력란 */}
               <Controller
                 name="confirmPassword"
                 control={control}
@@ -172,7 +168,6 @@ export default function Page() {
                   </div>
                 )}
               />
-              {/* 회원가입 버튼 */}
               <Button
                 className={`h-[3.375rem] w-[21.875rem] gap-[0.5rem] rounded-[0.375rem] text-white sm:px-4 tablet:h-[3rem] tablet:w-[40rem] ${
                   isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
@@ -183,7 +178,6 @@ export default function Page() {
                 회원가입 하기
               </Button>
             </div>
-            {/* 로그인 링크 */}
             <span className="text-center text-[1rem] font-regular leading-[1.19rem] text-gray-800">
               회원이신가요?
               <Link href="/signin" className="ml-[0.3125rem] underline">
