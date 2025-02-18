@@ -47,12 +47,16 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true, // TypeScript 오류를 무시하고 빌드 진행
   },
-  optimization: {
-    minimize: true, // 빌드 시 최소화
-    splitChunks: {
-      chunks: 'all', // 모든 chunk를 분할하여 번들 크기를 최적화
-    },
-    runtimeChunk: true, // 런타임 코드 분리
+  webpack: config => {
+    config.optimization = {
+      ...config.optimization,
+      splitChunks: {
+        chunks: 'all',
+      },
+      runtimeChunk: true,
+      minimize: true,
+    };
+    return config;
   },
 };
 
