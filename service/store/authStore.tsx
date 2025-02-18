@@ -17,7 +17,6 @@ interface AuthState {
   updateProfileImageUrl: (profileImageUrl: string | null) => void;
 }
 
-// 상태가 페이지 새로고침 후에도 유지되도록 sessionStorage에서 상태를 로드
 export const useAuthStore = create<AuthState>(set => {
   let storedUser = null;
   let storedAccessToken = null;

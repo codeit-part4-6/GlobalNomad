@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { EditMypageBody } from '@/types/patchMypage.types';
@@ -13,6 +14,16 @@ import { patchMypage } from '@/service/api/users/patchMypage.api';
 import { useAuthStore } from '@/service/store/authStore';
 import { useImageUrlStore } from '@/service/store/imageURLStore';
 import closeButton from '@/public/icon/ic_close_button.svg';
+
+const LoadingSpinner = () => {
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-8 rounded-lg flex flex-col items-center gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    </div>
+  );
+};
 
 interface IFormInput {
   email: string;
@@ -62,14 +73,18 @@ export default function MyPage() {
   });
 
   const onSubmit = async (data: IFormInput) => {
-    mypageMutation.mutate(data, {
+    const updatedData = {
+      ...data,
+      profileImageUrl: data.profileImageUrl || user?.profileImageUrl,
+    };
+    mypageMutation.mutate(updatedData, {
       onError: () => {
-        setModalMessage('마이페이지 저장 중 오류가 발생했습니다.');
+        setModalMessage('마이페이지 정보가 수정이 실패했습니다.');
         setIsModalOpen(true);
       },
       onSuccess: data => {
         updateNickname(data.nickname);
-        updateProfileImageUrl(data.profileImageUrl);
+        updateProfileImageUrl(data.profileImageUrl );
         setModalMessage('마이페이지 정보가 성공적으로 저장되었습니다.');
         setIsModalOpen(true);
       },
@@ -80,12 +95,12 @@ export default function MyPage() {
 
   return (
     <>
+      {mypageMutation.isPending && <LoadingSpinner />}
       {isModalOpen && <Modal message={modalMessage} onClose={() => setIsModalOpen(false)} />}
       <form className="h-[472px] w-full gap-[32px]" onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4 flex items-center justify-between pc:mb-6">
           <p className="text-[32px] font-[700] leading-[42px] tablet:leading-[38.19px]">내 정보</p>
           <div className="flex items-center gap-1">
-            {/* 저장하기 버튼 */}
             <Button
               className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white ${
                 isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
@@ -95,14 +110,12 @@ export default function MyPage() {
             >
               저장하기
             </Button>
-            {/* 모달 닫기 - 모바일 */}
             <div className="relative h-12 w-12 tablet:hidden" onClick={() => router.back()}>
               <Image src={closeButton} alt="모달 닫기 버튼" className="absolute cursor-pointer" fill />
             </div>
           </div>
         </div>
         <div className="flex w-full flex-col gap-[16px]">
-          {/* 닉네임 입력란 */}
           <Controller
             name="nickname"
             control={control}
@@ -125,7 +138,6 @@ export default function MyPage() {
               />
             )}
           />
-          {/* 이메일 입력란 */}
           <Controller
             name="email"
             control={control}
@@ -140,15 +152,14 @@ export default function MyPage() {
               />
             )}
           />
-          {/* Password Input */}
           <Controller
             name="password"
             control={control}
             rules={{
               required: '필수값입니다.',
-              minLength: {
-                value: 8,
-                message: '8자 이상으로 작성해 주세요.',
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+                message: '비밀번호는 특수문자, 영어 소문자, 숫자를 포함한 8자 이상이어야 합니다.',
               },
             }}
             render={({field}) => (
@@ -165,7 +176,6 @@ export default function MyPage() {
               />
             )}
           />
-          {/* Confirm Password Input */}
           <Controller
             name="newPassword"
             control={control}
