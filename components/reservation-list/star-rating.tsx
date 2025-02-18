@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import React, {useState, useRef} from 'react';
+import Image from 'next/image';
 import star from '@/public/icon/ic_star.svg';
 import unStar from '@/public/icon/ic_unstar.svg';
 

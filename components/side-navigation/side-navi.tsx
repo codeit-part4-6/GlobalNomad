@@ -1,5 +1,10 @@
 'use client';
+import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
+import {usePathname, useRouter, useSearchParams} from 'next/navigation';
+import {postProfileImageUrl} from '@/service/api/users/postProfileImageUrl.api';
+import {useAuthStore} from '@/service/store/authStore';
+import {useImageUrlStore} from '@/service/store/imageURLStore';
 import defaultProfile from '@/public/img/img_default_profile.svg';
 import profileButton from '@/public/icon/icon_profile-button.svg';
 import accountCheck from '@/public/icon/icon_accoutn_check.svg';
@@ -10,11 +15,6 @@ import treatReservation from '@/public/icon/icon_cog.svg';
 import unTreatReservation from '@/public/icon/icon_cog_un.svg';
 import reserveCalendar from '@/public/icon/icon_calendar_check.svg';
 import unReserveCalendar from '@/public/icon/icon_calendar_uncheck.svg';
-import {useAuthStore} from '@/service/store/authStore';
-import React, {useEffect, useState} from 'react';
-import {postProfileImageUrl} from '@/service/api/users/postProfileImageUrl.api';
-import {useImageUrlStore} from '@/service/store/imageURLStore';
-import {usePathname, useRouter, useSearchParams} from 'next/navigation';
 
 interface SideNaviProps {
   selectedMenu: string | null;
@@ -69,7 +69,14 @@ export default function SideNavi({selectedMenu, onSelectMenu, isMobile}: SideNav
   return (
     <div className="mb-240pxr min-w-full rounded-xl border border-gray-200 bg-white p-6 tablet:w-[15.6875rem] tablet:min-w-[15.6875rem] pc:w-[24rem] pc:min-w-[24rem] pc:p-6">
       <div className="relative mx-auto mb-2 h-40 w-40">
-        <Image src={preview || defaultProfile} alt="최초 프로필" className="absolute rounded-full object-cover shadow-sidenavi-box" fill priority />
+        <Image
+          src={preview || defaultProfile}
+          alt="최초 프로필"
+          className="absolute rounded-full object-cover shadow-sidenavi-box"
+          fill
+          priority
+          sizes="160px"
+        />
         <label
           htmlFor="profile-upload"
           className={`absolute bottom-2 right-2 h-11 w-11 cursor-pointer hover:opacity-80 ${!isPossible ? 'hidden' : ''}`}

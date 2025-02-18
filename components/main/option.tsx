@@ -2,17 +2,17 @@
 'use client';
 
 import {useRef} from 'react';
+import Image from 'next/image';
+import {ActivitiesBody} from '@/types/activities';
+import Button from '@/components/common/button';
+import SortSelect from '@/components/main/sort-select';
+import {categories} from '@/constant/categories';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Navigation} from 'swiper/modules'; // Navigation, Pagination 모듈 추가
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import Button from '@/components/common/button';
 import arrow from '@/public/icon/ic_arrow_next.svg';
-import Image from 'next/image';
-import {categories} from '@/constant/categories';
-import SortSelect from './sort-select';
-import {ActivitiesBody} from '@/types/activities';
 
 interface OptionType {
   setActiveCategory: (category: string) => void;
