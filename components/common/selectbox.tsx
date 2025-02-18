@@ -22,6 +22,8 @@ export default function SelectBox({className = '', options, value, onChange, sel
   const [selectedLabel, setSelectedLabel] = useState(label);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const optionRefs = useRef<{[key: string]: HTMLLIElement | null}>({});
+
   useEffect(() => {
     const selectedOption = options.find(option => option.value === value);
     if (selectedOption) {
@@ -53,9 +55,17 @@ export default function SelectBox({className = '', options, value, onChange, sel
     if (onDelete) onDelete();
   };
 
+  useEffect(() => {
+    if (isOpen && value && optionRefs.current[value]) {
+      optionRefs.current[value]?.scrollIntoView({
+        behavior: 'auto',
+        block: 'center',
+      });
+    }
+  }, [isOpen, value]);
+
   return (
     <div className={`relative ${className}`}>
-      {/* 선택된 값 표시 및 드롭다운 토글 버튼 */}
       <div onClick={handleToggleDropdown} className="flex cursor-pointer items-center justify-between rounded-e rounded-s border border-gray-700 p-4">
         <span>{selectedLabel || '선택하세요'}</span>
         <button type="button" onClick={handleDelete} className="ml-2">
@@ -74,10 +84,13 @@ export default function SelectBox({className = '', options, value, onChange, sel
             {options.map(option => (
               <li
                 key={option.value}
-                className={`m-2 cursor-pointer rounded-md p-2 hover:bg-nomad-black hover:text-white`}
+                ref={el => {
+                  optionRefs.current[option.value] = el;
+                }}
+                className={`m-2 cursor-pointer rounded-md p-2 ${option.value === value ? 'bg-nomad-black text-white' : 'hover:bg-nomad-black hover:text-white'}`}
                 onClick={() => handleOptionSelect(option.value)}
               >
-                <div className={`text-lg font-normal`}>{option.label}</div>
+                <div className={`text-lg font-normal ${option.value === value && 'bg-nomad-black text-white'}`}>{option.label}</div>
               </li>
             ))}
           </ul>
