@@ -129,9 +129,9 @@ export default function Page() {
                 control={control}
                 rules={{
                   required: '필수값입니다.',
-                  minLength: {
-                    value: 8,
-                    message: '8자 이상으로 작성해 주세요.',
+                  pattern: {
+                    value: /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/,
+                    message: '비밀번호는 특수문자, 영어 소문자, 숫자를 포함한 8자 이상이어야 합니다.',
                   },
                 }}
                 render={({field}) => (
