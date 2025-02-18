@@ -73,14 +73,18 @@ export default function MyPage() {
   });
 
   const onSubmit = async (data: IFormInput) => {
-    mypageMutation.mutate(data, {
+    const updatedData = {
+      ...data,
+      profileImageUrl: data.profileImageUrl || user?.profileImageUrl,
+    };
+    mypageMutation.mutate(updatedData, {
       onError: () => {
         setModalMessage('프로필사진을 변경해주세요.');
         setIsModalOpen(true);
       },
       onSuccess: data => {
         updateNickname(data.nickname);
-        updateProfileImageUrl(data.profileImageUrl);
+        updateProfileImageUrl(data.profileImageUrl );
         setModalMessage('마이페이지 정보가 성공적으로 저장되었습니다.');
         setIsModalOpen(true);
       },
