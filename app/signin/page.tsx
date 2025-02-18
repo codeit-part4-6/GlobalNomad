@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {useForm, Controller} from 'react-hook-form';
+import {Loader2} from 'lucide-react';
 import {useMutation} from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -16,6 +17,16 @@ import {useAuthStore} from '@/service/store/authStore';
 import signLogo from '@/public/img/img_signlogo.svg';
 import GoogleIcon from '@/public/icon/ic_google.svg';
 import KakaoIcon from '@/public/icon/ic_kakao.svg';
+
+const LoadingSpinner = () => {
+  return (
+    <div className="bg-black/50 fixed inset-0 z-50 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4 rounded-lg bg-white p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    </div>
+  );
+};
 
 interface IFormInput {
   email: string;
@@ -98,6 +109,7 @@ export default function Page() {
 
   return (
     <>
+      {signinMutation.isPending && <LoadingSpinner />}
       <div className="desktop:pt-[7.375rem] desktop:gap-[3.5rem] desktop:w-[640px] desktop:h-[779px] desktop:top-[118px] desktop:left-[640px] m-auto flex max-w-[40rem] flex-col items-center gap-[1.5rem] pt-[6.875rem] tablet:left-[52px] tablet:top-[118px] tablet:h-[779px] tablet:w-[640px] tablet:gap-[2.5rem] tablet:pt-[7.875rem]">
         <Link href="/">
           <Image src={signLogo} alt="로고" />
@@ -105,7 +117,6 @@ export default function Page() {
         <form className="flex w-full flex-col items-center justify-center gap-[2.5rem] tablet:gap-[3rem]" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-[1.625rem] tablet:gap-[2rem]">
             <div className="flex flex-col gap-[1.75rem]">
-              {/* 이메일 입력란 */}
               <Controller
                 name="email"
                 control={control}
@@ -128,7 +139,6 @@ export default function Page() {
                   />
                 )}
               />
-              {/* 비밀번호 입력란 */}
               <Controller
                 name="password"
                 control={control}
@@ -153,7 +163,6 @@ export default function Page() {
                   />
                 )}
               />
-              {/* 이메일 저장 체크박스 */}
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"

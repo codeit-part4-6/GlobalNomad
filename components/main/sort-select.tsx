@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import {useState} from 'react';
-import arrowDown from '@/public/icon/icon_arrow_down.svg';
 import {ActivitiesBody} from '@/types/activities';
+import arrowDown from '@/public/icon/icon_arrow_down.svg';
 
 interface CustomSelectProps {
   selectedSort: ActivitiesBody['sort'] | undefined;
@@ -25,12 +25,13 @@ export default function SortSelect({selectedSort, onSelectedSort}: CustomSelectP
   return (
     <div
       onClick={() => setIsOpen(prev => !prev)}
-      className="relative h-41pxr w-90pxr cursor-pointer rounded-2xl border border-nomad-black bg-white px-2 py-2 tablet:h-53pxr tablet:w-120pxr tablet:px-5 tablet:py-4 pc:w-127pxr"
+      className="relative h-41pxr w-90pxr min-w-[90px] cursor-pointer rounded-2xl border border-nomad-black bg-white px-2 py-2 tablet:h-53pxr tablet:w-120pxr tablet:px-5 tablet:py-4 pc:w-127pxr"
     >
       <div className="flex items-center justify-center gap-1 rounded-md tablet:justify-between">
         <span className="overflow-hidden text-ellipsis whitespace-nowrap text-md font-medium text-green-100 tablet:text-2lg">{selectedLabel}</span>
-
-        <Image src={arrowDown} alt="Arrow Down" width={16} height={16} />
+        <div className="relative h-4 w-4 flex-shrink-0">
+          <Image src={arrowDown} alt="Arrow Down" className="absolute" fill />
+        </div>
       </div>
 
       {isOpen && (

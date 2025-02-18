@@ -1,3 +1,5 @@
+import {Schedules} from '@/types/reserved-schedule';
+
 export interface ReservationListResponse {
   totalCount: number;
   cursorId: string;
@@ -25,4 +27,21 @@ export interface Activity {
   id: number;
   title: string;
   bannerImageUrl: string;
+}
+
+export interface ReservationProps {
+  reservationStatus: string;
+  reservedScheduleData: Schedules;
+  activityId: number | null;
+  selectedDate: string;
+  setSelectedTime: (time: string) => void;
+  selectedTime: string | null;
+}
+
+export interface TimeDropdownProps {
+  times: string[];
+  selectedTime: string | null;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  onSelectTime: (time: string) => void;
 }

@@ -1,13 +1,13 @@
 import {JSX, useEffect, useState} from 'react';
 import Image from 'next/image';
-import Star from '@/public/icon/ic_yellowStar.svg';
-import Pagenation from '@/components/common/pagenation';
-import {useQuery} from '@tanstack/react-query';
-import {activitiesList} from '@/service/api/activities/getActivities';
 import {ActivitiesResponse} from '@/types/activities';
+import Pagenation from '@/components/common/pagenation';
+import {activitiesList} from '@/service/api/activities/getActivities';
+import {useQuery} from '@tanstack/react-query';
 import FormattedPrice from '@/utils/formatted-price';
-import {ScaleLoader} from 'react-spinners';
 import {getSearchPageSize} from '@/utils/search-page-size';
+import {ScaleLoader} from 'react-spinners';
+import Star from '@/public/icon/ic_yellowStar.svg';
 interface SearchListProps {
   keyword: string | undefined;
 }
@@ -88,7 +88,7 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
           <ScaleLoader />
         </div>
       )}
-      <Pagenation size={searchActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />
+      <Pagenation page={page} size={searchActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />
     </div>
   );
 }

@@ -61,7 +61,7 @@ const ActivitiesUpdate = ({pageID, userId}: {pageID: string; userId: number}) =>
   return (
     adminAuth && (
       <div>
-        <Image src={IconMeatball} onClick={() => setIsDropboxOpen(true)} width={40} height={40} alt="자세히보기" priority />;
+        <Image src={IconMeatball} onClick={() => setIsDropboxOpen(true)} width={40} height={40} alt="자세히보기" priority />
         {isDropboxOpen && (
           <Dropbox
             onClick={handleActivitiesUpdate}

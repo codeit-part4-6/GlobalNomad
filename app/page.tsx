@@ -11,7 +11,6 @@ import Option from '@/components/main/option';
 import {ActivitiesBody} from '@/types/activities';
 import {ActivitiesResponse} from '@/types/activities';
 import {ScaleLoader} from 'react-spinners';
-
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -86,7 +85,7 @@ export default function Mainpage() {
           <section className="relative mb-40pxr mt-101pxr flex w-full flex-col gap-4 tablet:mt-110pxr tablet:gap-8 pc:mt-126pxr">
             <PopularCard data={popularList} fetchNextpage={fetchNextPage} hasNextPage={hasNextPage} />
             {IsPopularFetching && (
-              <div className="flex min-h-28 justify-center items-center">
+              <div className="flex min-h-28 items-center justify-center">
                 <ScaleLoader />
               </div>
             )}
