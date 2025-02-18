@@ -1,5 +1,5 @@
 'use client';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Button from './button';
 import Image from 'next/image';
 
@@ -23,7 +23,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
 
   const pageSize = size ? size : 1;
 
-  const handlePrevPage = () => {
+  const handlePrevPage = useCallback(() => {
     // 첫 페이지에서 이전 페이지를 누른다면 1번으로 이동
     // ex) <12345> 에서 < 누른 경우
     if (page <= defaultShowPageCount) {
@@ -39,9 +39,9 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       const newPage = pageInfo[0].val - defaultShowPageCount;
       onChange(newPage);
     }
-  };
+  },[defaultPageInfo, onChange, page, pageInfo]);
 
-  const handleNextPage = () => {
+  const handleNextPage = useCallback(() => {
     // 다음 pageInfo의 첫번째 값
     const nextFirstPage = pageInfo[0].val + defaultShowPageCount;
     // 마지막 페이지 번호
@@ -59,7 +59,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
     } else {
       onChange(lastPageNum);
     }
-  };
+  },[defaultPageInfo, onChange, pageInfo, pageSize, showItemCount]);
 
   const handleBtnClick = (page: number) => {
     onChange(page);
@@ -77,8 +77,6 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       setDefaultPageInfo(basePageInfo);
     }
   }, [pageInfo, pageSize, showItemCount]);
-
-  console.log(page);
 
   return (
     <div className={'flex flex-row items-center justify-center gap-10pxr p-0'}>
