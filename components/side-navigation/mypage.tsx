@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { EditMypageBody } from '@/types/patchMypage.types';
@@ -13,6 +14,16 @@ import { patchMypage } from '@/service/api/users/patchMypage.api';
 import { useAuthStore } from '@/service/store/authStore';
 import { useImageUrlStore } from '@/service/store/imageURLStore';
 import closeButton from '@/public/icon/ic_close_button.svg';
+
+const LoadingSpinner = () => {
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-8 rounded-lg flex flex-col items-center gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    </div>
+  );
+};
 
 interface IFormInput {
   email: string;
@@ -81,6 +92,7 @@ export default function MyPage() {
 
   return (
     <>
+      {mypageMutation.isPending && <LoadingSpinner />}
       {isModalOpen && <Modal message={modalMessage} onClose={() => setIsModalOpen(false)} />}
       <form className="h-[472px] w-full gap-[32px]" onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4 flex items-center justify-between pc:mb-6">
