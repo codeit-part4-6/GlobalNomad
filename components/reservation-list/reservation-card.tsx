@@ -36,7 +36,6 @@ export default function ReservationCard({reservation, onButtonClick}: Reservatio
           src={reservation.activity.bannerImageUrl}
           alt="체험 배너 이미지"
           sizes="(max-width: 745px) 128px, (max-width: 1200px) 156px, 204px"
-          priority
         />
       </div>
       <div className="flex-grow py-11pxr pl-2 pr-14pxr tablet:py-3 tablet:pl-3 tablet:pr-18pxr pc:px-6 pc:py-21pxr">
