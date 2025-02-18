@@ -48,7 +48,6 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
     },
 
     onSuccess: () => {
-      // setLoading(false);
       setIsOpen(true);
     },
     onError: error => {
