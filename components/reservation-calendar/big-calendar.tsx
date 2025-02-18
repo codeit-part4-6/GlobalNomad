@@ -1,16 +1,16 @@
 import React, {useState, useEffect, useRef} from 'react';
+import {ReservationDashboardData} from '@/types/reservation-dashboard';
+import CalendarHeader from '@/components/reservation-calendar/calendar-header';
+import ReservationContainer from '@/components/reservation-calendar/reservation-container';
+import ReservationModal from '@/components/reservation-calendar/reservation-modal';
+import DateCell from '@/components/reservation-calendar/date-cell';
+import {getReservationDashboard} from '@/service/api/reservation-calendar/getReservationDashboard.api';
+import {useQuery} from '@tanstack/react-query';
 import {Calendar} from 'antd';
 import type {Dayjs} from 'dayjs';
-import CalendarHeader from './calendar-header';
-import ReservationContainer from './reservation-container';
-import ReservationModal from './reservation-modal';
-import {calendarStatusLabels} from '@/constant/reservation-list-constant';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import enUS from 'antd/es/calendar/locale/en_US';
-import {useQuery} from '@tanstack/react-query';
-import {getReservationDashboard} from '@/service/api/reservation-calendar/getReservationDashboard.api';
-import {ReservationDashboardData} from '@/types/reservation-dashboard';
 
 dayjs.extend(updateLocale);
 
@@ -39,10 +39,6 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
     }
   };
 
-  const handleDateClick = () => {
-    setIsModalOpen(prev => !prev);
-  };
-
   useEffect(() => {
     if (isModalOpen) {
       document.addEventListener('mousedown', handleClickOutside); // 외부 클릭 감지
@@ -51,58 +47,6 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
       };
     }
   }, [isModalOpen]);
-
-  const DateCell = (date: Dayjs) => {
-    const reservationData = reservationsData.find(reservation => reservation.date === date.format('YYYY-MM-DD'));
-
-    return (
-      <div>
-        <div
-          onClick={() => {
-            handleDateClick();
-          }}
-          className="relative h-154pxr border-collapse border border-gray-900 hover:bg-green-50"
-        >
-          <div className="absolute right-1 top-1 flex gap-1pxr">
-            {reservationData &&
-              reservationData.reservations &&
-              Object.entries(reservationData.reservations)
-                .filter(([, count]) => count > 0)
-                .map(([status]) => (
-                  <div key={status} className="flex">
-                    <div
-                      className={`${status === 'completed' ? 'bg-gray-800' : status === 'pending' ? 'bg-blue-200' : 'bg-orange-100'} h-2 w-2 rounded-full`}
-                    ></div>
-                  </div>
-                ))}
-          </div>
-          <span className="absolute left-1 top-1 px-1 text-xl font-medium text-black-300">{date.date()}</span>
-          <div className="flex h-full w-full flex-col justify-end pb-2pxr">
-            {reservationData &&
-              reservationData.reservations &&
-              Object.entries(reservationData.reservations)
-                .filter(([, count]) => count > 0)
-                .map(([status, count]) => (
-                  <div
-                    key={status}
-                    className={`${
-                      status === 'completed'
-                        ? 'bg-gray-200 text-gray-800'
-                        : status === 'pending'
-                          ? 'bg-blue-200 text-white'
-                          : 'bg-orange-50 text-orange-100'
-                    } mx-2pxr text-ellipsis whitespace-nowrap rounded px-2 py-1 text-left text-xs font-medium tablet:text-md`}
-                  >
-                    <span>
-                      {calendarStatusLabels[status]} {count}
-                    </span>
-                  </div>
-                ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   const customLocale = {
     ...enUS,
@@ -127,7 +71,7 @@ export default function BigCalendar({activityId}: {activityId: number | null}) {
             <CalendarHeader {...props} setYear={setYear} setMonth={setMonth} />
           </>
         )}
-        fullCellRender={DateCell}
+        fullCellRender={date => <DateCell date={date} reservationsData={reservationsData} onClick={() => setIsModalOpen(prev => !prev)} />}
       />
       {isModalOpen && (
         <ReservationContainer onClose={() => setIsModalOpen(false)}>

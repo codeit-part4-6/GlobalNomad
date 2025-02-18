@@ -27,7 +27,9 @@ export default function Search({onClick, keyword, setKeyword}: SearchProps): JSX
       <h2 className="text-lg font-bold text-nomad-black tablet:text-xl">무엇을 체험하고 싶으신가요?</h2>
       <div className="relative flex justify-between gap-10pxr">
         <div className="relative flex w-full items-center rounded border border-solid border-gray-700 pl-2.5">
-          <Image src={SearchIcon} alt="검색" width={24} height={24} className="absolute" />
+          <div className="relative h-6 w-6">
+            <Image src={SearchIcon} alt="검색" className="absolute" fill />
+          </div>
           <label htmlFor="search" className="w-full pl-30pxr pr-15pxr">
             <input
               id="search"

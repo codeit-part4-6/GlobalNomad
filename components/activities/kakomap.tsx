@@ -2,6 +2,8 @@
 import React, {useEffect, useState} from 'react';
 import Image from 'next/image';
 import Button from '@/components/common/button';
+import Modal from '@/components/common/modal/modal';
+import {ResultModalType} from '@/types/common/alert-modal.types';
 import LocationIcon from '@/public/icon/icon_location.svg';
 
 interface KakaoMapType {
@@ -11,9 +13,14 @@ interface KakaoMapType {
 
 export default function KakaoMap({address, houseName}: KakaoMapType) {
   const [mapType, setMapType] = useState<string>('roadmap');
+  const [isModalOpen, setIsModalOpen] = useState<ResultModalType>({message: '', isOpen: false});
 
   const handleMapTypeChange = (type: string) => {
     setMapType(type);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen({message: '', isOpen: false});
   };
 
   useEffect(() => {
@@ -63,7 +70,7 @@ export default function KakaoMap({address, houseName}: KakaoMapType) {
                 // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
                 map.setCenter(coords);
               } else {
-                alert('주소를 찾지 못했습니다.');
+                setIsModalOpen({message: '주소를 찾지 못했습니다.', isOpen: true});
               }
             });
 
@@ -113,6 +120,7 @@ export default function KakaoMap({address, houseName}: KakaoMapType) {
         <Image className="m-0 mr-1" src={LocationIcon} alt="Location" width={18} height={18} />
         <div className="text-md font-normal text-nomad-black opacity-75">{address}</div>
       </div>
+      {isModalOpen.isOpen && <Modal message={isModalOpen.message} onClose={handleCloseModal} />}
       <style>
         {`
           .info-title {

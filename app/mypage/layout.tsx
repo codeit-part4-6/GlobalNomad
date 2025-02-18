@@ -1,7 +1,7 @@
 'use client';
-import OverlayContainer from '@/components/common/modal/overlay-container';
-import {useSearchParams} from 'next/navigation';
 import React from 'react';
+import {useSearchParams} from 'next/navigation';
+import OverlayContainer from '@/components/common/modal/overlay-container';
 
 export default function MyPageLayout({side, menu}: {side: React.ReactNode; menu: React.ReactNode}) {
   const searchParams = useSearchParams();

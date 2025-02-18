@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
+import Image from 'next/image';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
 import sortIcon from '@/public/icon/ic_sortIcon.svg';
-import Image from 'next/image';
 
 interface CustomSelectProps {
   orderBy: string;
@@ -32,7 +32,7 @@ export default function CustomSelect({orderBy, handleOrderBy}: CustomSelectProps
     >
       <div className="flex items-center justify-between rounded-md">
         <span className="hidden text-2lg font-medium leading-none text-green-100 tablet:block">{selectedLabel}</span>
-        <Image className="hidden tablet:block" src={arrowDown} alt="Arrow Down" width={16} height={16} />
+        <Image className="hidden tablet:block" src={arrowDown} alt="Arrow Down" width={16} height={16} style={{width: 'auto', height: 'auto'}} />
         <Image className="tablet:hidden" src={sortIcon} alt="Arrow Down" width={28} height={28} />
       </div>
 

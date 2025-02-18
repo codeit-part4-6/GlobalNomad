@@ -1,14 +1,14 @@
+import {useEffect, useState} from 'react';
 import Image from 'next/image';
-import Star from '@/public/icon/ic_yellowStar.svg';
+import {useRouter} from 'next/navigation';
+import {Activities} from '@/types/activities';
 import {Swiper, SwiperSlide} from 'swiper/react';
 import SwiperType from 'swiper';
-import {Activities} from '@/types/activities';
-import useLocalStorage from 'use-local-storage';
-import {useEffect, useState} from 'react';
 import {Navigation} from 'swiper/modules';
 import 'swiper/css/navigation';
 import 'swiper/css';
-import {useRouter} from 'next/navigation';
+import useLocalStorage from 'use-local-storage';
+import Star from '@/public/icon/ic_yellowStar.svg';
 import leftButton from '@/public/icon/ic_left.svg';
 import rightButton from '@/public/icon/ic_right.svg';
 
@@ -89,7 +89,14 @@ export default function PopularCard({data, fetchNextpage, hasNextPage}: PopularC
               >
                 {/* 배경 이미지 */}
                 <div className="absolute inset-0">
-                  <Image src={bannerImageUrl} alt={title} layout="fill" objectFit="cover" className="rounded-3xl" />
+                  <Image
+                    src={bannerImageUrl}
+                    alt={title}
+                    fill
+                    style={{objectFit: 'cover'}}
+                    className="rounded-3xl"
+                    sizes="(max-width: 744px) 186px, (max-width: 1199px) 384px, 50vw"
+                  />
                 </div>
                 {/* 어두운 오버레이 추가 */}
                 <div className="absolute inset-0 rounded-3xl bg-black-50 opacity-20"></div> {/* 어두운 오버레이 */}
