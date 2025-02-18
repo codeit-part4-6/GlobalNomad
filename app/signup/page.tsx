@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useMutation } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -14,6 +15,16 @@ import { postSignup } from '@/service/api/users/postSignup.api';
 import signLogo from '@/public/img/img_signlogo.svg';
 import GoogleIcon from '@/public/icon/ic_google.svg';
 import KakaoIcon from '@/public/icon/ic_kakao.svg';
+
+const LoadingSpinner = () => {
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-8 rounded-lg flex flex-col items-center gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    </div>
+  );
+};
 
 interface IFormInput {
   email: string;
@@ -48,7 +59,6 @@ export default function Page() {
 
   const onSubmit = (data: IFormInput) => {
     signupMutation.mutate(data, {
-      // 경고
       onError: () => {
         setModalMessage('이미 사용중인 이메일입니다.');
         setIsModalOpen(true);
@@ -70,6 +80,7 @@ export default function Page() {
 
   return (
     <>
+      {signupMutation.isPending && <LoadingSpinner />}
       <div className="desktop:pt-[7.375rem] desktop:gap-[3.5rem] desktop:w-[640px] desktop:h-[1019px] desktop:top-[118px] desktop:left-[640px] m-auto flex max-w-[40rem] flex-col items-center gap-[1.5rem] pt-[6.875rem] tablet:left-[52px] tablet:top-[118px] tablet:h-[1003px] tablet:w-[640px] tablet:gap-[2.5rem] tablet:pt-[7.875rem]">
         <Link href="/">
           <Image src={signLogo} alt="로고" />
