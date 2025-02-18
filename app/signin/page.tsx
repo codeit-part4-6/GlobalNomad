@@ -108,7 +108,6 @@ export default function Page() {
         <form className="flex w-full flex-col items-center justify-center gap-[2.5rem] tablet:gap-[3rem]" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-[1.625rem] tablet:gap-[2rem]">
             <div className="flex flex-col gap-[1.75rem]">
-              {/* 이메일 입력란 */}
               <Controller
                 name="email"
                 control={control}
@@ -131,7 +130,6 @@ export default function Page() {
                   />
                 )}
               />
-              {/* 비밀번호 입력란 */}
               <Controller
                 name="password"
                 control={control}
@@ -156,7 +154,6 @@ export default function Page() {
                   />
                 )}
               />
-              {/* 이메일 저장 체크박스 */}
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
