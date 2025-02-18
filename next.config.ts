@@ -53,6 +53,7 @@ const nextConfig: NextConfig = {
       splitChunks: {
         chunks: 'all',
       },
+      runtimeChunk: true,
       minimize: true,
     };
     return config;
