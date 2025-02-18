@@ -1,17 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {useMutation} from '@tanstack/react-query';
+import {useRouter} from 'next/navigation';
 import Image from 'next/image';
-import { EditMypageBody } from '@/types/patchMypage.types';
+import {EditMypageBody} from '@/types/patchMypage.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
-import { patchMypage } from '@/service/api/users/patchMypage.api';
-import { useAuthStore } from '@/service/store/authStore';
-import { useImageUrlStore } from '@/service/store/imageURLStore';
+import {patchMypage} from '@/service/api/users/patchMypage.api';
+import {useAuthStore} from '@/service/store/authStore';
+import {useImageUrlStore} from '@/service/store/imageURLStore';
 import closeButton from '@/public/icon/ic_close_button.svg';
 
 interface IFormInput {
@@ -88,7 +88,7 @@ export default function MyPage() {
             {/* 저장하기 버튼 */}
             <Button
               className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white ${
-                isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
+                isValid ? 'dark:bg-dark-primary bg-primary' : 'bg-[#A4A1AA] dark:bg-gray-600/30'
               }`}
               type="submit"
               disabled={!isValid}

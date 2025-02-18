@@ -51,7 +51,7 @@ export default function ReservationCalendar() {
   return (
     <div className="mb-16 h-full w-full">
       <div className="flex items-start justify-between">
-        <p className="mb-8 text-3xl font-bold text-black-50">예약 현황</p>
+        <p className="mb-8 text-3xl font-bold text-black-50 dark:text-gray-500">예약 현황</p>
 
         <div className="relative h-12 w-12 tablet:hidden" onClick={() => router.back()}>
           <Image src={closeButton} alt="모달 닫기 버튼" className="absolute cursor-pointer" fill />
@@ -65,7 +65,9 @@ export default function ReservationCalendar() {
             onClick={() => setIsOptionOpen(prev => !prev)}
             className="relative mb-8 h-14 min-h-14 w-full cursor-pointer rounded border border-gray-700 px-5"
           >
-            <p className="absolute -top-3 left-4 bg-black-400 px-1 text-md font-regular text-nomad-black">체험명</p>
+            <p className="absolute -top-3 left-4 bg-black-400 px-1 text-md font-regular text-nomad-black dark:bg-slate-800 dark:text-gray-500">
+              체험명
+            </p>
             <div className="mt-4 flex items-center justify-between">
               <span className="text-balck-200 text-lg font-regular">{selectedTitle}</span>
               <div className="relative h-6 w-6">
@@ -73,7 +75,7 @@ export default function ReservationCalendar() {
               </div>
             </div>
             {isOptionOpen && (
-              <ul className="absolute left-0 z-10 mt-5 w-full rounded border border-gray-300 bg-white shadow-sidenavi-box">
+              <ul className="absolute left-0 z-10 mt-5 w-full rounded border border-gray-300 bg-white shadow-sidenavi-box dark:border-slate-500 dark:bg-slate-400">
                 {myActivities.map(activity => (
                   <li
                     key={activity.id}
@@ -81,7 +83,7 @@ export default function ReservationCalendar() {
                       e.stopPropagation();
                       handleSelect(activity.title, activity.id);
                     }}
-                    className="cursor-pointer px-5 py-18pxr text-lg font-regular text-gray-800 hover:bg-green-50 hover:text-nomad-black"
+                    className="cursor-pointer px-5 py-18pxr text-lg font-regular text-gray-800 hover:bg-green-50 hover:text-nomad-black dark:border-slate-500/30 dark:bg-slate-400 dark:hover:bg-slate-600 dark:hover:dark:text-gray-500"
                   >
                     {activity.title}
                   </li>

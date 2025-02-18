@@ -43,7 +43,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="border:bg-gray-100 sticky top-0 z-[50] border-b-[1px] bg-white dark:border-none dark:bg-slate-400">
+      <header className="border:bg-gray-100 sticky top-0 z-[50] border-b-[1px] bg-white dark:border-none dark:bg-slate-500">
         <nav className="sticky mx-auto flex h-[4.375rem] max-w-[1200px] px-[1.25rem] py-[1.25rem] md:gap-[1.3125rem] md:px-[0.625rem] md:py-[0.625rem]">
           <div className="flex w-full items-center justify-between">
             <div>
@@ -68,7 +68,7 @@ export default function Navbar() {
                         height={32}
                         className="rounded-full"
                       />
-                      <div>{user.nickname}</div>
+                      <div className="dark:text-dark-primary">{user.nickname}</div>
                     </div>
                     {isDropdown && (
                       <Dropbox

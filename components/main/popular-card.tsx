@@ -48,7 +48,7 @@ export default function PopularCard({data, fetchNextpage, hasNextPage}: PopularC
   return (
     <>
       <div className="relative flex w-full items-center justify-between px-4 tablet:px-6 pc:px-0">
-        <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-[2.25rem]/[2.625rem]">🔥 인기 체험</h2>
+        <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-[2.25rem]/[2.625rem] dark:text-gray-500">🔥 인기 체험</h2>
         <div className="absolute right-9 hidden pc:flex pc:items-center pc:gap-3">
           <button className="font-medium !text-gray-800" onClick={() => swiperInstance?.slidePrev()}>
             <div className="relative h-9 w-9">

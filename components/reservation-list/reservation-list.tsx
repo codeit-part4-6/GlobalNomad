@@ -27,7 +27,7 @@ export const statusLabelsColor: Record<string, string> = {
 
 export const buttonStyleByStatus: Record<string, string> = {
   pending:
-    'w-80pxr h-8 py-1 px-2 font-bold text-md text-nomad-black tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-white border border-nomad-black rounded-md',
+    'w-80pxr h-8 py-1 px-2 font-bold text-md text-nomad-black tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-white border border-nomad-black rounded-md dark:bg-gray-50 dark:border-gray-200',
   completed:
     'w-80pxr h-8 py-1 px-2 font-bold text-md text-white tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-nomad-black rounded-md',
 };
@@ -114,7 +114,7 @@ export default function ReservationList() {
   return (
     <div className="mb-16 h-full w-full">
       <div className="mb-3 flex w-full items-center justify-between tablet:mb-6 tablet:items-start">
-        <p className="text-3xl font-bold text-black-100">예약 내역</p>
+        <p className="text-3xl font-bold text-black-100 dark:text-gray-500">예약 내역</p>
         <div className="flex items-center gap-1">
           <div className="m-0">
             <CustomSelect orderBy={orderBy} handleOrderBy={(value: string) => setOrderBy(value)} />
@@ -132,7 +132,7 @@ export default function ReservationList() {
           {filteredReservation.map(reservation => (
             <div
               key={`list_${reservation.id}`}
-              className="flex h-32 w-full items-center rounded-3xl bg-white shadow-sidenavi-box tablet:h-156pxr pc:h-204pxr"
+              className="flex h-32 w-full items-center rounded-3xl bg-white shadow-sidenavi-box tablet:h-156pxr pc:h-204pxr dark:bg-secondary"
             >
               <div className="relative h-32 w-32 flex-shrink tablet:h-156pxr tablet:w-156pxr pc:h-204pxr pc:w-204pxr">
                 <Image className="absolute rounded-bl-3xl rounded-tl-3xl" fill src={reservation.activity.bannerImageUrl} alt="체험 배너 이미지" />

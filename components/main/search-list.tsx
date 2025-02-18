@@ -50,7 +50,7 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
     <div className="mb-[12.688rem] tablet:mb-[41.063rem] pc:mb-[20.375rem]">
       <div className="tablet:mb-18 mx-auto mb-16 flex flex-col items-center justify-center">
         <section className="mb-40pxr mt-101pxr flex w-full max-w-[1200px] flex-col items-start gap-3 px-4 tablet:mt-110pxr tablet:px-6 pc:mt-126pxr pc:px-0">
-          <h2 className="text-[1.5rem]/[1.75rem] font-regular text-black-100 tablet:text-[2rem]/[2.375rem]">
+          <h2 className="text-[1.5rem]/[1.75rem] font-regular text-black-100 tablet:text-[2rem]/[2.375rem] dark:text-gray-500">
             <span className="font-bold">{keyword}</span>(으)로 검색한 결과입니다.
           </h2>
           <div className="text-lg font-regular">총 {searchActivities?.totalCount}개의 결과</div>
@@ -67,11 +67,17 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
                     <div className="flex gap-3pxr">
                       <Image src={Star} alt="별" width={18} height={18} />
                       <div className="flex gap-5pxr">
-                        <span className="text-lg font-medium text-black-100 tablet:text-[1rem]/[1.188rem] pc:text-lg">{activity.rating}</span>
-                        <span className="text-lg font-medium text-gray-500 tablet:text-[1rem]/[1.188rem] pc:text-lg">({activity.reviewCount})</span>
+                        <span className="text-lg font-medium text-black-100 tablet:text-[1rem]/[1.188rem] pc:text-lg dark:text-white">
+                          {activity.rating}
+                        </span>
+                        <span className="text-lg font-medium text-gray-500 tablet:text-[1rem]/[1.188rem] pc:text-lg dark:text-white">
+                          ({activity.reviewCount})
+                        </span>
                       </div>
                     </div>
-                    <h3 className="text-2lg font-semibold text-black-100 tablet:text-[1.5rem]/[1.75rem] pc:text-2xl">{activity.title}</h3>
+                    <h3 className="text-2lg font-semibold text-black-100 tablet:text-[1.5rem]/[1.75rem] pc:text-2xl dark:text-gray-500">
+                      {activity.title}
+                    </h3>
                   </div>
                   <div className="flex items-center gap-5pxr">
                     <span className="text-xl font-bold tablet:text-[1.75rem]/[2.063rem] pc:text-2xl">₩ {FormattedPrice(activity.price)}</span>

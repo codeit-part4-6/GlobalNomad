@@ -27,8 +27,10 @@ export default function NotFound() {
         </section>
         <section>
           <div className="text-center">
-            <h1 className="pb-4 text-2xl font-bold text-nomad-black tablet:pb-2 tablet:text-3xl">페이지가 없거나 접근할 수 없어요</h1>
-            <h2 className="text-lg font-medium text-gray-800 tablet:text-2lg">입력하신 주소가 맞는지 다시 확인해주세요!</h2>
+            <h1 className="dark:text-dark-primary pb-4 text-2xl font-bold text-nomad-black tablet:pb-2 tablet:text-3xl">
+              페이지가 없거나 접근할 수 없어요
+            </h1>
+            <h2 className="text-lg font-medium text-gray-800 tablet:text-2lg dark:text-gray-50">입력하신 주소가 맞는지 다시 확인해주세요!</h2>
           </div>
         </section>
         <section>
