@@ -2,7 +2,7 @@
 import React, {useEffect} from 'react';
 import {useInfiniteQuery, InfiniteData, QueryFunctionContext} from '@tanstack/react-query';
 import {useInView} from 'react-intersection-observer';
-import {PulseLoader} from 'react-spinners';
+import {PulseLoader, ScaleLoader} from 'react-spinners';
 
 type FetchData<T> = (context: QueryFunctionContext) => Promise<InfiniteData<T, unknown>>;
 
@@ -18,7 +18,7 @@ const InfiniteScroll = <T,>({queryKey, fetchData, render, className}: InfiniteSc
     threshold: 0.9, //  트리거
   });
 
-  const {data, fetchNextPage, hasNextPage, isFetchingNextPage} = useInfiniteQuery<InfiniteData<T>>({
+  const {data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading} = useInfiniteQuery<InfiniteData<T>>({
     queryKey: [queryKey],
     queryFn: fetchData,
     getNextPageParam: lastPage => lastPage.pageParams?.[0] ?? null,
@@ -49,8 +49,14 @@ const InfiniteScroll = <T,>({queryKey, fetchData, render, className}: InfiniteSc
               <div ref={ref} className="m-1 h-3"></div>
             </div>
           ))}
+          {/* 로딩 */}
+          {isLoading && (
+            <div className="no-scrollbar flex h-full w-full items-center justify-center">
+              <ScaleLoader color="#0b3b2d" />
+            </div>
+          )}
         </div>
-        {/* 로딩 아이콘: 하단에 위치 */}
+        {/* 하단 트리거로딩 */}
         {isFetchingNextPage && (
           <div className="absolute bottom-0 left-0 right-0 z-30 flex items-center justify-center bg-gray-100 py-2 opacity-20">
             <PulseLoader size={15} color="#1C1B1F" />

@@ -1,25 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import {useEffect, useState} from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {useMutation} from '@tanstack/react-query';
+import {Loader2} from 'lucide-react';
+import {useRouter} from 'next/navigation';
 import Image from 'next/image';
-import { EditMypageBody } from '@/types/patchMypage.types';
+import {EditMypageBody} from '@/types/patchMypage.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
-import { patchMypage } from '@/service/api/users/patchMypage.api';
-import { useAuthStore } from '@/service/store/authStore';
-import { useImageUrlStore } from '@/service/store/imageURLStore';
+import {patchMypage} from '@/service/api/users/patchMypage.api';
+import {useAuthStore} from '@/service/store/authStore';
+import {useImageUrlStore} from '@/service/store/imageURLStore';
 import closeButton from '@/public/icon/ic_close_button.svg';
 
 const LoadingSpinner = () => {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg flex flex-col items-center gap-4">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+    <div className="bg-black/50 fixed inset-0 z-50 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4 rounded-lg bg-white p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     </div>
   );
@@ -84,7 +84,7 @@ export default function MyPage() {
       },
       onSuccess: data => {
         updateNickname(data.nickname);
-        updateProfileImageUrl(data.profileImageUrl );
+        updateProfileImageUrl(data.profileImageUrl);
         setModalMessage('마이페이지 정보가 성공적으로 저장되었습니다.');
         setIsModalOpen(true);
       },
