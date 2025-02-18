@@ -39,7 +39,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       const newPage = pageInfo[0].val - defaultShowPageCount;
       onChange(newPage);
     }
-  },[defaultPageInfo, onChange, page, pageInfo]);
+  }, [defaultPageInfo, onChange, page, pageInfo]);
 
   const handleNextPage = useCallback(() => {
     // 다음 pageInfo의 첫번째 값
@@ -59,7 +59,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
     } else {
       onChange(lastPageNum);
     }
-  },[defaultPageInfo, onChange, pageInfo, pageSize, showItemCount]);
+  }, [defaultPageInfo, onChange, pageInfo, pageSize, showItemCount]);
 
   const handleBtnClick = (page: number) => {
     onChange(page);

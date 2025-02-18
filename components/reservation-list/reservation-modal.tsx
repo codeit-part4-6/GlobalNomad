@@ -62,7 +62,7 @@ export default function ReservationModal({message, onClose, reservationId}: Moda
           <Button
             onClick={onClose}
             className={
-              'h-38pxr w-80pxr rounded-md border border-nomad-black px-20pxr py-10pxr text-center text-md font-bold leading-none text-nomad-black'
+              'white-button-hover h-38pxr w-80pxr rounded-md border border-nomad-black px-20pxr py-10pxr text-center text-md font-bold leading-none text-nomad-black'
             }
           >
             아니오
@@ -70,7 +70,9 @@ export default function ReservationModal({message, onClose, reservationId}: Moda
           <Button
             disabled={loading}
             onClick={handleCancelClick}
-            className={'h-38pxr w-80pxr rounded-md bg-nomad-black px-14pxr py-10pxr text-center text-md font-bold leading-none text-white'}
+            className={
+              'nomad-button-hover h-38pxr w-80pxr rounded-md bg-nomad-black px-14pxr py-10pxr text-center text-md font-bold leading-none text-white'
+            }
           >
             {loading ? <ScaleLoader width={3} height={20} color="#ffffff" /> : '취소하기'}
           </Button>

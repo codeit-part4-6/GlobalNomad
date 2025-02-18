@@ -81,10 +81,10 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
-                  <div>
+                  <div className="decoration-2 underline-offset-4 transition duration-200 hover:text-primary hover:underline">
                     <Link href="/signin">로그인</Link>
                   </div>
-                  <div>
+                  <div className="decoration-2 underline-offset-4 transition duration-200 hover:text-primary hover:underline">
                     <Link href="/signup">회원가입</Link>
                   </div>
                 </>

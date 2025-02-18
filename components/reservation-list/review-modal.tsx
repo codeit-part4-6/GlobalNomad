@@ -81,7 +81,7 @@ export default function ReviewModal({data, message, onClose}: ReviewModalProps) 
         />
         <Button
           className={
-            'h-54pxr min-h-54pxr w-full rounded-md bg-nomad-black px-8pxr text-center text-lg font-bold text-white disabled:cursor-not-allowed tablet:h-56pxr tablet:min-h-56pxr tablet:rounded'
+            'nomad-button-hover h-54pxr min-h-54pxr w-full rounded-md bg-nomad-black px-8pxr text-center text-lg font-bold text-white disabled:cursor-not-allowed tablet:h-56pxr tablet:min-h-56pxr tablet:rounded'
           }
           onClick={handlePostReview}
           disabled={loading}

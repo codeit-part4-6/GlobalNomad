@@ -103,7 +103,7 @@ export default function MyPage() {
           <div className="flex items-center gap-1">
             <Button
               className={`h-[48px] w-[120px] gap-[4px] rounded-[4px] pb-[8px] pl-[16px] pr-[16px] pt-[8px] text-white ${
-                isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
+                isValid ? 'nomad-button-hover bg-nomad-black' : 'bg-[#A4A1AA]'
               }`}
               type="submit"
               disabled={!isValid}

@@ -8,6 +8,7 @@ import FormattedPrice from '@/utils/formatted-price';
 import {getSearchPageSize} from '@/utils/search-page-size';
 import {ScaleLoader} from 'react-spinners';
 import Star from '@/public/icon/ic_yellowStar.svg';
+import Link from 'next/link';
 interface SearchListProps {
   keyword: string | undefined;
 }
@@ -58,27 +59,29 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
         <section className="w-full max-w-[1200px] px-4 tablet:px-6 pc:px-0">
           <div className="grid grid-cols-2 gap-x-2 gap-y-6 tablet:grid-cols-3 tablet:gap-x-4 tablet:gap-y-[3.75rem] pc:grid-cols-4 pc:gap-x-6 pc:gap-y-[4.313rem]">
             {searchActivities?.activities.map(activity => (
-              <div className="flex flex-col gap-16pxr" key={activity.id}>
-                <div className="relative flex h-168pxr w-full flex-col gap-16pxr object-contain tablet:h-221pxr tablet:min-w-221pxr pc:h-283pxr pc:min-w-283pxr">
-                  <Image src={activity.bannerImageUrl} alt="체험 배너 이미지" fill className="rounded-3xl" />
-                </div>
-                <div className="flex w-full flex-col gap-15pxr tablet:min-w-220pxr pc:min-w-283pxr">
-                  <div className="flex flex-col gap-10pxr">
-                    <div className="flex gap-3pxr">
-                      <Image src={Star} alt="별" width={18} height={18} />
-                      <div className="flex gap-5pxr">
-                        <span className="text-lg font-medium text-black-100 tablet:text-[1rem]/[1.188rem] pc:text-lg">{activity.rating}</span>
-                        <span className="text-lg font-medium text-gray-500 tablet:text-[1rem]/[1.188rem] pc:text-lg">({activity.reviewCount})</span>
+              <Link href={`/activities/${activity.id}`} key={activity.id}>
+                <div className="flex flex-col gap-16pxr">
+                  <div className="relative flex h-168pxr w-full flex-col gap-16pxr object-contain tablet:h-221pxr tablet:min-w-221pxr pc:h-283pxr pc:min-w-283pxr">
+                    <Image src={activity.bannerImageUrl} alt="체험 배너 이미지" fill className="rounded-3xl" />
+                  </div>
+                  <div className="flex w-full flex-col gap-15pxr tablet:min-w-220pxr pc:min-w-283pxr">
+                    <div className="flex flex-col gap-10pxr">
+                      <div className="flex gap-3pxr">
+                        <Image src={Star} alt="별" width={18} height={18} />
+                        <div className="flex gap-5pxr">
+                          <span className="text-lg font-medium text-black-100 tablet:text-[1rem]/[1.188rem] pc:text-lg">{activity.rating}</span>
+                          <span className="text-lg font-medium text-gray-500 tablet:text-[1rem]/[1.188rem] pc:text-lg">({activity.reviewCount})</span>
+                        </div>
                       </div>
+                      <h3 className="text-2lg font-semibold text-black-100 tablet:text-[1.5rem]/[1.75rem] pc:text-2xl">{activity.title}</h3>
                     </div>
-                    <h3 className="text-2lg font-semibold text-black-100 tablet:text-[1.5rem]/[1.75rem] pc:text-2xl">{activity.title}</h3>
-                  </div>
-                  <div className="flex items-center gap-5pxr">
-                    <span className="text-xl font-bold tablet:text-[1.75rem]/[2.063rem] pc:text-2xl">₩ {FormattedPrice(activity.price)}</span>
-                    <span className="text-lg font-regular text-gray-800 tablet:text-[1.25rem]/[1.438rem] pc:text-xl">/ 인</span>
+                    <div className="flex items-center gap-5pxr">
+                      <span className="text-xl font-bold tablet:text-[1.75rem]/[2.063rem] pc:text-2xl">₩ {FormattedPrice(activity.price)}</span>
+                      <span className="text-lg font-regular text-gray-800 tablet:text-[1.25rem]/[1.438rem] pc:text-xl">/ 인</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>

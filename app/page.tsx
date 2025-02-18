@@ -54,6 +54,7 @@ export default function Mainpage() {
 
   // ✅ 검색어 입력 시 검색 실행
   const handleClick = (keyword: string | undefined) => {
+    if (!keyword) return;
     setSearchKeyword(keyword);
     setIsShown(true);
   };
