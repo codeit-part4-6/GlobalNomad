@@ -10,7 +10,7 @@ import EntireList from '@/components/main/entire-list';
 import Option from '@/components/main/option';
 import {ActivitiesBody} from '@/types/activities';
 import {ActivitiesResponse} from '@/types/activities';
-import {ClipLoader} from 'react-spinners';
+import {ScaleLoader} from 'react-spinners';
 
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -86,8 +86,8 @@ export default function Mainpage() {
           <section className="relative mb-40pxr mt-101pxr flex w-full flex-col gap-4 tablet:mt-110pxr tablet:gap-8 pc:mt-126pxr">
             <PopularCard data={popularList} fetchNextpage={fetchNextPage} hasNextPage={hasNextPage} />
             {IsPopularFetching && (
-              <div className="absolute inset-0 z-30 flex items-center justify-center bg-gray-100 bg-opacity-20">
-                <ClipLoader size={50} color="#112211" />
+              <div className="flex min-h-28 justify-center items-center">
+                <ScaleLoader />
               </div>
             )}
           </section>

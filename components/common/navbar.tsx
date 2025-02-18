@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import {useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import Dropbox from '@/components/common/dropbox';
 import Notification from '@/components/common/notification';
-import { useAuthStore } from '@/service/store/authStore';
+import {useAuthStore} from '@/service/store/authStore';
 import navlogo from '@/public/img/img_navlogo.svg';
 import notification from '@/public/icon/ic_notification.svg';
 import defaultProfileImage from '@/public/icon/ic_defaultProfileImage.svg';
@@ -53,7 +53,7 @@ export default function Navbar() {
             <div className={`relative flex items-center justify-center ${user ? 'gap-12pxr' : 'gap-25pxr'} text-md font-medium text-black-100`}>
               {user ? (
                 <>
-                  <div className="flex">
+                  <div className="flex cursor-pointer">
                     <Image src={notification} alt="알림 아이콘" onClick={() => setIsOpenNotification(true)} />
                   </div>
 

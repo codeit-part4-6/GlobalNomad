@@ -1,23 +1,24 @@
 'use client';
-import Button from '@/components/common/button';
 import {useState, useRef, Fragment, useEffect} from 'react';
-import ActivitiesRegister from './activities-register';
-import Modal from '@/components/common/modal/modal';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import Image from 'next/image';
-import closeButton from '@/public/icon/ic_close_button.svg';
-import InfiniteScroll from '@/components/common/lnfiniteScroll';
-import {getActivitiesList} from '@/service/api/myactivities/getActivities';
 import {Activity} from '@/types/myactivities';
-import ActivitiesCard from './activities-card';
-import {postActivities} from '@/service/api/myactivities/postActivities';
 import {PostActivitiesBody} from '@/types/postActivities.types';
-import {useMutation} from '@tanstack/react-query';
-import ActivitiesModify from './activities-modify';
 import {PatchActivitiesBody} from '@/types/patchActivities.types';
+import Button from '@/components/common/button';
+import Modal from '@/components/common/modal/modal';
+import InfiniteScroll from '@/components/common/lnfiniteScroll';
+import ActivitiesRegister from './activities-register';
+import ActivitiesModify from './activities-modify';
+import ActivitiesCard from './activities-card';
+import {getActivitiesList} from '@/service/api/myactivities/getActivities';
 import {patchActivities} from '@/service/api/myactivities/patchActivities.api';
 import {deleteActivities} from '@/service/api/myactivities/deleteActivities.api';
+import {postActivities} from '@/service/api/myactivities/postActivities';
+
 import {useRouter} from 'next/navigation';
 import NonDataPage from './non-data';
+import closeButton from '@/public/icon/ic_close_button.svg';
 
 type ContentType = 'manage' | 'register' | 'modify' | 'delete';
 
@@ -35,6 +36,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
   const [isValid, setIsValid] = useState(false);
   const [isValidModify, setIsValidModify] = useState(false);
   const [modifyId, setModifyId] = useState(0);
+  const queryClient = useQueryClient();
 
   const postActivitiesMutation = useMutation({
     mutationFn: async (body: PostActivitiesBody) => {
@@ -85,6 +87,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
 
     onSuccess: () => {
       // setLoading(false);
+      queryClient.invalidateQueries({queryKey: ['myactivities']});
       setIsOpen(true);
     },
     onError: error => {
@@ -181,46 +184,42 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
                       updateQueryParams({type: 'register'});
                       setContent('register');
                     }}
-                    className="h-48pxr w-100pxr gap-4pxr rounded-md bg-primary pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white"
+                    className="h-48pxr w-80pxr gap-4pxr rounded-md bg-primary pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr"
                   >
-                    등록하기
+                    <span className="hidden tablet:block">등록하기</span>
+                    <span className="block tablet:hidden">등록</span>
                   </Button>
                 </>
               ) : content === 'register' ? (
                 <Button
                   onClick={triggerSubmit} // 버튼 클릭 시 자식 컴포넌트의 폼 제출 트리거
-                  className={`h-48pxr w-120pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white ${
+                  className={`h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr ${
                     isValid ? 'bg-primary' : 'bg-gray-500'
                   }`}
                 >
-                  등록하기
+                  <span className="hidden tablet:block">등록하기</span>
+                  <span className="block tablet:hidden">등록</span>
                 </Button>
               ) : (
                 <Button
                   onClick={triggerSubmit}
-                  className={`${isValidModify ? 'bg-primary' : 'bg-gray-500'} h-48pxr w-120pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white`}
+                  className={`${isValidModify ? 'bg-primary' : 'bg-gray-500'} h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr`}
                 >
-                  수정하기
+                  <span className="hidden tablet:block">수정하기</span>
+                  <span className="block tablet:hidden">수정</span>
                 </Button>
               )}
               <div className="mb-2 flex justify-end tablet:hidden">
-                <Image
-                  onClick={() => router.push('/mypage')}
-                  src={closeButton}
-                  alt="모달 닫기 버튼"
-                  className="cursor-pointer"
-                  width={48}
-                  height={48}
-                />
+                <Image onClick={() => router.back()} src={closeButton} alt="모달 닫기 버튼" className="cursor-pointer" width={48} height={48} />
               </div>
             </div>
           </div>
 
           {content === 'manage' && (
             <InfiniteScroll
-              className="h-550pxr w-full pc:h-700pxr"
-              queryKey="key"
-              fetchData={context => getActivitiesList({...context, meta: {size: 20}})}
+              className="h-700pxr w-full pc:h-700pxr"
+              queryKey="myactivities"
+              fetchData={context => getActivitiesList({...context, meta: {size: 8}})}
               render={group => {
                 if (!group.pages || group.pages.length === 0) {
                   return <NonDataPage />;
@@ -263,7 +262,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
       {isOpen && (
         <Modal message={`체험 ${content === 'modify' ? '수정' : content === 'register' ? '등록' : '삭제'}이 완료되었습니다`} onClose={handleClose} />
       )}
-      {isOpenError && <Modal message={errorMessege} onClose={handleClose}></Modal>}
+      {isOpenError && <Modal message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>
   );
 }

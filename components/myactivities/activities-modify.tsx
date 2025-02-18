@@ -1,17 +1,18 @@
 import {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import {Controller, FormProvider, SubmitHandler, useForm} from 'react-hook-form';
-import arrowDown from '@/public/icon/icon_arrow_down.svg';
+import {useMutation} from '@tanstack/react-query';
+import {useSearchParams} from 'next/navigation';
+import {PatchActivitiesBody} from '@/types/patchActivities.types';
+import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';
+import Modal from '@/components/common/modal/modal';
 import AddressModal from './address-modal';
 import TimeList from './time-list';
 import ImageList from './image-list';
-import {useMutation} from '@tanstack/react-query';
 import {getActivitiesId} from '@/service/api/myactivities/getActivitiesId.api';
-import {PatchActivitiesBody} from '@/types/patchActivities.types';
-import {GetActivitiesResponse, SubImage} from '@/types/getActivitiesId.types';
-import Modal from '@/components/common/modal/modal';
-import {useSearchParams} from 'next/navigation';
+import {catagoryOptions} from '@/constant/myactivities-constant';
+import arrowDown from '@/public/icon/icon_arrow_down.svg';
 
 interface ActivitiesModifyProps {
   onSubmitParent?: (data: PatchActivitiesBody & GetActivitiesResponse, queryId: number) => void;
@@ -96,7 +97,6 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
   };
 
   const onSubmit: SubmitHandler<PatchActivitiesBody & GetActivitiesResponse> = data => {
-    console.log('Form Data:', data, queryId); // 여기가 왜 0이뜨지?
     if (onSubmitParent) {
       if (queryId !== null) {
         onSubmitParent(data, queryId);
@@ -145,15 +145,6 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
     setBannerImageUrl(bannerImageUrlData);
   }, [getValues]);
 
-  const options = [
-    {value: '문화 · 예술', label: '문화 · 예술'},
-    {value: '식음료', label: '식음료'},
-    {value: '스포츠', label: '스포츠'},
-    {value: '투어', label: '투어'},
-    {value: '관광', label: '관광'},
-    {value: '웰빙', label: '웰빙'},
-  ];
-
   return (
     <>
       <FormProvider {...methods}>
@@ -193,7 +184,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
                   value={value}
                   className="w-full bg-white"
                   onChange={onChange}
-                  options={options}
+                  options={catagoryOptions}
                 />
               )}
             />

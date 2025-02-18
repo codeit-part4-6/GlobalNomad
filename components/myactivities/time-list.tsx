@@ -1,12 +1,12 @@
 import {useFieldArray, Controller, useFormContext, FieldError} from 'react-hook-form';
+import Image from 'next/image';
+import {Schedule} from '@/types/postActivities.types';
 import Input from '@/components/common/Input';
 import SelectBox from '@/components/common/selectbox';
 import {findOverlappingSchedules, generateTimeOptions} from '@/utils/fotmatted-hour-time';
-import Image from 'next/image';
 import minusBtn from '@/public/icon/ic_minus_btn.svg';
 import plusBtn from '@/public/icon/ic_plus_btn.svg';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
-import {Schedule} from '@/types/postActivities.types';
 
 interface Field {
   name: string;

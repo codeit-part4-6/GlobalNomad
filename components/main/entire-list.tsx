@@ -50,9 +50,12 @@ export default function EntireList({activeCategory, selectedSort}: EntireListPro
 
   if (isEntireLoading) {
     return (
-      <div className="min-h-28">
-        <ScaleLoader />
-      </div>
+      <section className="mb-24pxr mt-24pxr flex w-full max-w-[75rem] flex-col justify-center gap-24pxr tablet:mt-35pxr tablet:gap-32pxr">
+        <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-3xl">🥽 모든 체험</h2>
+        <div className="flex min-h-28 items-center justify-center">
+          <ScaleLoader />
+        </div>
+      </section>
     );
   }
 
