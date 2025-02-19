@@ -259,7 +259,10 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
         </div>
       </div>
       {isOpen && (
-        <Modal message={`체험 ${content === 'modify' ? '수정' : content === 'register' ? '등록' : '삭제'}이 완료되었습니다`} onClose={handleClose} />
+        <Modal
+          message={`체험 ${content === 'modify' ? '수정이' : content === 'register' ? '등록이' : '삭제가'} 완료되었습니다`}
+          onClose={handleClose}
+        />
       )}
       {isOpenError && <Modal message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>

@@ -19,6 +19,8 @@ export const buttonStyleByStatus: Record<string, string> = {
     'white-button-hover w-80pxr h-8 py-1 px-2 font-bold text-md text-nomad-black tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-white border border-nomad-black rounded-md',
   completed:
     'w-80pxr h-8 py-1 px-2 font-bold text-md text-white tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-nomad-black rounded-md nomad-button-hover',
+  submitted:
+    'w-80pxr h-8 py-1 px-2 font-bold text-md text-white tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-gray-700 rounded-md pointer-events-none ',
 };
 
 interface ReservationCardProps {
@@ -27,6 +29,7 @@ interface ReservationCardProps {
 }
 
 export default function ReservationCard({reservation, onButtonClick}: ReservationCardProps) {
+  console.log(reservation.reviewSubmitted);
   return (
     <div className="flex h-32 w-full items-center rounded-3xl bg-white shadow-sidenavi-box tablet:h-156pxr pc:h-204pxr">
       <div className="relative aspect-[1/1] h-32 w-32 flex-shrink tablet:h-156pxr tablet:w-156pxr pc:h-204pxr pc:w-204pxr">
@@ -48,8 +51,12 @@ export default function ReservationCard({reservation, onButtonClick}: Reservatio
         </div>
         <div className="flex items-center justify-between">
           <p className="text-lg font-medium text-black-100 tablet:text-xl">￦{FormattedPrice(reservation.totalPrice)}</p>
-          <Button onClick={() => onButtonClick(`${reservation.status}`, reservation.id)} className={`${buttonStyleByStatus[reservation.status]}`}>
-            {buttonByStatus[reservation.status]}
+          <Button
+            disabled={reservation.reviewSubmitted}
+            onClick={() => onButtonClick(`${reservation.status}`, reservation.id)}
+            className={`${reservation.reviewSubmitted ? buttonStyleByStatus['submitted'] : buttonStyleByStatus[reservation.status]}`}
+          >
+            {reservation.reviewSubmitted ? '작성 완료' : buttonByStatus[reservation.status]}
           </Button>
         </div>
       </div>
