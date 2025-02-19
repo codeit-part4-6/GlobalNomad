@@ -71,14 +71,18 @@ export default function PopularCard({data, fetchNextpage, hasNextPage}: PopularC
           onSlideChange={onSlideChange}
           onReachEnd={handleReachEnd}
           breakpoints={{
-            375: {slidesPerView: 1.5, spaceBetween: 8},
-            390: {slidesPerView: 2, spaceBetween: 8},
-            420: {slidesPerView: 2.5, spaceBetween: 8},
-            580: {slidesPerView: 3, spaceBetween: 8},
-            630: {slidesPerView: 3.5, spaceBetween: 8},
-            745: {slidesPerView: 2, spaceBetween: 16},
-            970: {slidesPerView: 2.5, spaceBetween: 16},
-            1200: {slidesPerView: 3, spaceBetween: 24},
+            374: {slidesPerView: 1.5, spaceBetween: 8},
+            400: {slidesPerView: 2, spaceBetween: 8},
+            420: {slidesPerView: 2, spaceBetween: 8},
+            500: {slidesPerView: 2.5, spaceBetween: 8},
+            600: {slidesPerView: 3, spaceBetween: 8},
+            630: {slidesPerView: 3, spaceBetween: 8},
+            690: {slidesPerView: 3.5, spaceBetween: 8},
+            745: {slidesPerView: 1.5, spaceBetween: 16},
+            820: {slidesPerView: 2, spaceBetween: 16},
+            970: {slidesPerView: 2, spaceBetween: 16},
+            1010: {slidesPerView: 2.5, spaceBetween: 16},
+            1190: {slidesPerView: 3, spaceBetween: 24},
           }}
         >
           {data?.map(({title, price, bannerImageUrl, rating, reviewCount, id}, index) => (

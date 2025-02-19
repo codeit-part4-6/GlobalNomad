@@ -183,17 +183,17 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
                       updateQueryParams({type: 'register'});
                       setContent('register');
                     }}
-                    className="h-48pxr w-80pxr gap-4pxr rounded-md bg-primary pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr"
+                    className="green-unrounded-button-hover h-48pxr w-80pxr gap-4pxr rounded-md bg-primary px-15pxr py-8pxr font-bold text-white tablet:w-120pxr"
                   >
-                    <span className="hidden tablet:block">등록하기</span>
+                    <span className="hidden tablet:block">체험 등록하기</span>
                     <span className="block tablet:hidden">등록</span>
                   </Button>
                 </>
               ) : content === 'register' ? (
                 <Button
                   onClick={triggerSubmit} // 버튼 클릭 시 자식 컴포넌트의 폼 제출 트리거
-                  className={`h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr ${
-                    isValid ? 'bg-primary' : 'bg-gray-500'
+                  className={`h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr font-bold text-white tablet:w-120pxr ${
+                    isValid ? 'green-unrounded-button-hover bg-primary' : 'bg-gray-500'
                   }`}
                 >
                   <span className="hidden tablet:block">등록하기</span>
@@ -202,7 +202,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
               ) : (
                 <Button
                   onClick={triggerSubmit}
-                  className={`${isValidModify ? 'bg-primary' : 'bg-gray-500'} h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr`}
+                  className={`${isValidModify ? 'green-unrounded-button-hover bg-primary' : 'bg-gray-500'} h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr font-bold text-white tablet:w-120pxr`}
                 >
                   <span className="hidden tablet:block">수정하기</span>
                   <span className="block tablet:hidden">수정</span>

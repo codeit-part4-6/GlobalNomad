@@ -9,6 +9,7 @@ import FormattedPrice from '@/utils/formatted-price';
 import {getSearchPageSize} from '@/utils/search-page-size';
 import {ScaleLoader} from 'react-spinners';
 import Star from '@/public/icon/ic_yellowStar.svg';
+
 interface SearchListProps {
   keyword: string | undefined;
 }
@@ -97,7 +98,7 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
           <ScaleLoader />
         </div>
       )}
-      <Pagenation page={page} size={searchActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />
+      {searchActivities && <Pagenation page={page} size={searchActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />}
     </div>
   );
 }

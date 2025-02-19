@@ -82,10 +82,10 @@ export default function Navbar() {
                 </>
               ) : (
                 <>
-                  <div className="dark:text-teal-900">
+                  <div className="decoration-2 underline-offset-4 transition duration-200 hover:text-primary hover:underline dark:text-teal-900">
                     <Link href="/signin">로그인</Link>
                   </div>
-                  <div className="dark:text-teal-900">
+                  <div className="decoration-2 underline-offset-4 transition duration-200 hover:text-primary hover:underline dark:text-teal-900">
                     <Link href="/signup">회원가입</Link>
                   </div>
                 </>

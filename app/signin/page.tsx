@@ -1,28 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Loader2 } from 'lucide-react';
-import { useMutation } from '@tanstack/react-query';
+import {useEffect, useState} from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {Loader2} from 'lucide-react';
+import {useMutation} from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { SigninBody } from '@/types/postSignin.types';
+import {useRouter} from 'next/navigation';
+import {SigninBody} from '@/types/postSignin.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
-import { postSignin } from '@/service/api/auth/postSignin.api';
-import { postTokens } from '@/service/api/auth/postTokens.api';
-import { useAuthStore } from '@/service/store/authStore';
+import {postSignin} from '@/service/api/auth/postSignin.api';
+import {postTokens} from '@/service/api/auth/postTokens.api';
+import {useAuthStore} from '@/service/store/authStore';
 import signLogo from '@/public/img/img_signlogo.svg';
 import GoogleIcon from '@/public/icon/ic_google.svg';
 import KakaoIcon from '@/public/icon/ic_kakao.svg';
 
 const LoadingSpinner = () => {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg flex flex-col items-center gap-4">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+    <div className="bg-black/50 fixed inset-0 z-50 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4 rounded-lg bg-white p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     </div>
   );
@@ -34,7 +34,7 @@ interface IFormInput {
 }
 
 export default function Page() {
-  const { setLogin } = useAuthStore();
+  const {setLogin} = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [saveEmail, setSaveEmail] = useState(false);
@@ -63,17 +63,14 @@ export default function Page() {
         setModalMessage('비밀번호가 일치하지 않습니다.');
         setIsModalOpen(true);
       },
-      onSuccess: async (data) => {
+      onSuccess: async data => {
         try {
           setLogin(data.accessToken, data.refreshToken, data.user);
           sessionStorage.setItem('accessToken', data.accessToken);
           sessionStorage.setItem('refreshToken', data.refreshToken);
 
-          const { id, email, nickname, profileImageUrl, createdAt, updatedAt } = data.user;
-          sessionStorage.setItem(
-            'userInfo',
-            JSON.stringify({ id, email, nickname, profileImageUrl, createdAt, updatedAt })
-          );
+          const {id, email, nickname, profileImageUrl, createdAt, updatedAt} = data.user;
+          sessionStorage.setItem('userInfo', JSON.stringify({id, email, nickname, profileImageUrl, createdAt, updatedAt}));
 
           const refreshedData = await postTokens(data.refreshToken);
           if (refreshedData) sessionStorage.setItem('accessToken', refreshedData.accessToken);
@@ -171,16 +168,16 @@ export default function Page() {
                   type="checkbox"
                   id="saveEmail"
                   checked={saveEmail}
-                  onChange={() => setSaveEmail((prev) => !prev)}
-                  className="w-4 h-4 cursor-pointer"
+                  onChange={() => setSaveEmail(prev => !prev)}
+                  className="h-4 w-4 cursor-pointer"
                 />
-                <label htmlFor="saveEmail" className="text-sm cursor-pointer">
+                <label htmlFor="saveEmail" className="cursor-pointer text-sm">
                   이메일 저장
                 </label>
               </div>
               <Button
                 className={`h-[3.375rem] w-[21.875rem] gap-[0.5rem] rounded-[0.375rem] text-white sm:px-4 tablet:h-[3rem] tablet:w-[40rem] ${
-                  isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
+                  isValid ? 'green-unrounded-button-hover bg-primary' : 'bg-[#A4A1AA]'
                 }`}
                 type="submit"
                 disabled={!isValid}
@@ -202,7 +199,7 @@ export default function Page() {
                 </span>
                 <hr className="w-full border border-gray-300" />
               </div>
-              
+
               <div className="flex justify-center gap-[1rem]">
                 <button type="button" onClick={() => alert('Google 로그인 기능이 일시적으로 제한되어 있습니다')}>
                   <Image src={GoogleIcon} alt="google icon" />

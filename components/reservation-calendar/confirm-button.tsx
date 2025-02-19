@@ -66,7 +66,7 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
     <div className="flex justify-end gap-6pxr">
       <Button
         onClick={handleConfirmedClick}
-        className="h-38pxr w-82pxr rounded-md bg-nomad-black px-10pxr align-middle text-md font-bold leading-none text-white"
+        className="nomad-button-hover h-38pxr w-82pxr rounded-md bg-nomad-black px-10pxr align-middle text-md font-bold leading-none text-white"
         type="button"
       >
         <div className="flex items-center justify-center gap-3">
@@ -75,7 +75,7 @@ export default function ConfirmButton({reservationId, activityId}: patchReservat
       </Button>
       <Button
         onClick={handleDeclinedClick}
-        className="h-38pxr w-82pxr rounded-md border border-nomad-black px-10pxr text-md font-bold leading-none text-nomad-black"
+        className="white-button-hover h-38pxr w-82pxr rounded-md border border-nomad-black px-10pxr text-md font-bold leading-none text-nomad-black"
         type="button"
       >
         <div className="flex items-center justify-center gap-3">

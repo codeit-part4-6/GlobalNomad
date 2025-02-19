@@ -30,7 +30,7 @@ export default function Search({onClick, keyword, setKeyword}: SearchProps): JSX
           <div className="relative h-6 w-6">
             <Image src={SearchIcon} alt="검색" className="absolute" fill />
           </div>
-          <label htmlFor="search" className="w-full pl-30pxr pr-15pxr">
+          <label htmlFor="search" className="w-full pl-15pxr pr-15pxr tablet:pl-30pxr">
             <input
               id="search"
               type="search"
@@ -49,7 +49,7 @@ export default function Search({onClick, keyword, setKeyword}: SearchProps): JSX
         )}
         <Button
           type="button"
-          className="h-56pxr w-auto whitespace-nowrap rounded bg-nomad-black px-5 text-lg font-bold text-white tablet:px-10 tablet:py-2"
+          className="nomad-button-hover h-56pxr w-auto whitespace-nowrap rounded bg-nomad-black px-5 text-lg font-bold text-white tablet:px-10 tablet:py-2"
           onClick={handleClick} // 즉시 검색 실행
         >
           검색하기

@@ -181,7 +181,7 @@ export default function Page() {
               />
               <Button
                 className={`h-[3.375rem] w-[21.875rem] gap-[0.5rem] rounded-[0.375rem] text-white sm:px-4 tablet:h-[3rem] tablet:w-[40rem] ${
-                  isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
+                  isValid ? 'green-unrounded-button-hover bg-primary' : 'bg-[#A4A1AA]'
                 }`}
                 type="submit"
                 disabled={!isValid}

@@ -19,7 +19,7 @@ import MainBanner from '@/components/main/main-banner';
 export default function Mainpage() {
   const [searchKeyword, setSearchKeyword] = useState<string | undefined>(undefined);
   const [isShown, setIsShown] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined); // 현재 선택된 카테고리
+  const [activeCategory, setActiveCategory] = useState<string | undefined>('전체'); // 현재 선택된 카테고리
   const [selectedSort, setSelectedSort] = useState<ActivitiesBody['sort']>('latest');
   const [keyword, setKeyword] = useState<string>(''); // 입력 값을 관리
 
@@ -54,6 +54,7 @@ export default function Mainpage() {
 
   // ✅ 검색어 입력 시 검색 실행
   const handleClick = (keyword: string | undefined) => {
+    if (!keyword) return;
     setSearchKeyword(keyword);
     setIsShown(true);
   };
@@ -85,7 +86,7 @@ export default function Mainpage() {
           <section className="relative mb-40pxr mt-101pxr flex w-full flex-col gap-4 tablet:mt-110pxr tablet:gap-8 pc:mt-126pxr">
             <PopularCard data={popularList} fetchNextpage={fetchNextPage} hasNextPage={hasNextPage} />
             {IsPopularFetching && (
-              <div className="flex min-h-28 items-center justify-center">
+              <div className="absolute inset-0 z-10 flex min-h-28 min-w-28 items-center justify-center">
                 <ScaleLoader />
               </div>
             )}

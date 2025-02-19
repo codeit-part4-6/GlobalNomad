@@ -18,7 +18,7 @@ export default function Modal({message, onClose}: ModalProps) {
       >
         <p className="mb-43pxr text-lg font-medium text-black-100 tablet:mb-0 tablet:text-2lg pc:mb-0 pc:text-2lg">{message}</p>
         <div className="absolute bottom-7 tablet:bottom-7 tablet:right-7 pc:bottom-7 pc:right-7">
-          <Button onClick={onClose} className="big-button">
+          <Button onClick={onClose} className="big-button nomad-button-hover">
             확인
           </Button>
         </div>
