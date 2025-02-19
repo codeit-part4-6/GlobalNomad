@@ -31,7 +31,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       onChange(1);
     } else {
       setPageInfo(
-        // 현재 페이지의 첫번째 번호에서 defaultShowPageCount 만큼 뺀 번호를 순차 누적적
+        // 현재 페이지의 첫번째 번호에서 defaultShowPageCount 만큼 뺀 번호를 순차 누적
         defaultPageInfo.map((_, idx) => {
           return {key: idx, val: pageInfo[0].val + idx - defaultShowPageCount};
         }),
@@ -47,7 +47,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
     // 마지막 페이지 번호
     const lastPageNum = Math.ceil(pageSize / showItemCount);
     if (nextFirstPage <= lastPageNum) {
-      // 계산된 페이지 정보보
+      // 계산된 페이지 정보
       const prevPageArr = [];
       for (let i = 0; i < defaultPageInfo.length; i++) {
         if (nextFirstPage + i <= lastPageNum) {
@@ -65,25 +65,38 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
     onChange(page);
   };
 
-  useEffect(() => {
-    if (pageInfo.length < 1) {
-      const lastPageNum = Math.ceil(pageSize / showItemCount);
-      const pageArr = Array.from({length: lastPageNum > defaultShowPageCount ? defaultShowPageCount : lastPageNum}, (_, i) => i + 1);
-      const basePageInfo = pageArr.map((dt, idx) => {
-        return {key: idx, val: dt};
-      });
+  const initialPageInfo = useCallback(() => {
+    // 마지막 페이지 번호
+    const lastPageNo = Math.ceil(pageSize / showItemCount);
+    // 현재 몇번째 페이지인지
+    const pagenationCount = Math.ceil(page / defaultShowPageCount);
+    // pagenationCount에서 첫번째 값
+    const pagenationFirstNo = (pagenationCount - 1) * defaultShowPageCount + 1;
+    // 그려질 페이지 개수
+    const pageCount = defaultShowPageCount < lastPageNo - pagenationFirstNo + 1 ? defaultShowPageCount : lastPageNo - pagenationFirstNo + 1;
+    // 페이지 정보
+    const getPageArr = Array.from({length: pageCount}, (_, i) => i + 1).map((_, idx) => {
+      return {key: idx, val: pagenationFirstNo + idx};
+    });
 
-      setPageInfo(basePageInfo);
-      setDefaultPageInfo(basePageInfo);
+    if (pageInfo.length !== getPageArr.length) {
+      setPageInfo(getPageArr);
+      setDefaultPageInfo(getPageArr);
     }
-  }, [pageInfo, pageSize, showItemCount]);
+  }, [page, pageInfo.length, pageSize, showItemCount]);
+
+  useEffect(() => {
+    initialPageInfo();
+  }, [initialPageInfo, pageInfo, pageSize, showItemCount]);
+
+  console.log('pageInfo', pageInfo, 'pageSize', pageSize, 'showItemCount', showItemCount);
 
   return (
     <div className={'flex flex-row items-center justify-center gap-10pxr p-0'}>
       <Button
         key={'prevBtn'}
         className={
-          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 pc:h-55pxr pc:w-55pxr dark:bg-slate-200/80'
+          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 dark:bg-slate-200/80 pc:h-55pxr pc:w-55pxr'
         }
         onClick={handlePrevPage}
       >
@@ -109,7 +122,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       <Button
         key={'nextBtn'}
         className={
-          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 pc:h-55pxr pc:w-55pxr dark:bg-slate-200/80'
+          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 dark:bg-slate-200/80 pc:h-55pxr pc:w-55pxr'
         }
         onClick={handleNextPage}
       >
