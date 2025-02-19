@@ -40,7 +40,10 @@ export default function Option({activeCategory, setActiveCategory, selectedSort,
         slidesPerView="auto"
         breakpoints={{
           340: {
-            slidesPerView: 3, // 모바일: 3개
+            slidesPerView: 3,
+          },
+          405: {
+            slidesPerView: 3.5, // 모바일: 3개
           },
           500: {
             slidesPerView: 4.5, // 태블릿: 4개
