@@ -112,7 +112,7 @@ export default function Notification({className = 'w-auto', onClose}: Notificati
                     const status = getStatus(data.content);
                     return (
                       <Fragment key={data.id}>
-                        <div className="w-full bg-white px-3 py-4 tablet:w-335pxr">
+                        <div className="w-full bg-white px-3 py-4">
                           <div className="flex items-center justify-between">
                             <Image
                               src={status === '승인' ? NotiBlueIcon : NotiRedIcon}
