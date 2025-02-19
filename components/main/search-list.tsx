@@ -9,7 +9,7 @@ import FormattedPrice from '@/utils/formatted-price';
 import {getSearchPageSize} from '@/utils/search-page-size';
 import {ScaleLoader} from 'react-spinners';
 import Star from '@/public/icon/ic_yellowStar.svg';
-import Link from 'next/link';
+
 interface SearchListProps {
   keyword: string | undefined;
 }
