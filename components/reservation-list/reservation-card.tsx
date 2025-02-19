@@ -29,7 +29,6 @@ interface ReservationCardProps {
 }
 
 export default function ReservationCard({reservation, onButtonClick}: ReservationCardProps) {
-  console.log(reservation.reviewSubmitted);
   return (
     <div className="flex h-32 w-full items-center rounded-3xl bg-white shadow-sidenavi-box tablet:h-156pxr pc:h-204pxr">
       <div className="relative aspect-[1/1] h-32 w-32 flex-shrink tablet:h-156pxr tablet:w-156pxr pc:h-204pxr pc:w-204pxr">
