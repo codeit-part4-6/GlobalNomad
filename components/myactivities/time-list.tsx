@@ -137,6 +137,15 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     }
   };
 
+  useEffect(() => {
+    if (isWeeklyRepeat && weekCount > 0) {
+      const dates = generateDatesForWeeks(weekCount);
+      setValue('schedules', dates);
+    } else {
+      setValue('schedules', [{date: '', startTime: '09:00', endTime: '18:00'}]);
+    }
+  }, [isWeeklyRepeat, weekCount, setValue]);
+
   const renderDateField = (label: string, name: string, index: number) => {
     return (
       <div>
@@ -191,15 +200,6 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
     );
   };
 
-  useEffect(() => {
-    if (isWeeklyRepeat && weekCount > 0) {
-      const dates = generateDatesForWeeks(weekCount);
-      setValue('schedules', dates);
-    } else {
-      setValue('schedules', [{date: '', startTime: '09:00', endTime: '18:00'}]);
-    }
-  }, [isWeeklyRepeat, weekCount, setValue]);
-
   return (
     <div className="mb-4">
       <div className="flex-col items-center justify-between tablet:flex tablet:flex-row">
@@ -234,52 +234,73 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
           </div>
         )}
       </div>
-      <>
-        <div className={` ${isWeeklyRepeat ? 'max-h-[500px] overflow-y-auto' : ''}`}>
-          {fields.map((row, index) => (
-            <div key={row.id} className="mb-4">
-              <div className="grid max-w-full grid-cols-[minmax(150px,1fr),auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
-                {/* 날짜 필드 */}
-                {renderDateField('날짜', `schedules.${index}.date`, index)}
+      <div className="mb-4">
+        {fields[0] && (
+          <div key={fields[0].id} className="mb-4">
+            <div className="grid max-w-full grid-cols-[minmax(150px,1fr),auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
+              {/* 날짜 필드 */}
+              {renderDateField('날짜', `schedules.0.date`, 0)}
 
-                {/* 시작 시간 필드 */}
-                {renderSelectField('시작 시간', `schedules.${index}.startTime`, index, {label: '09:00'})}
+              {/* 시작 시간 필드 */}
+              {renderSelectField('시작 시간', `schedules.0.startTime`, 0, {label: '09:00'})}
 
-                {/* 종료 시간 필드 */}
-                {renderSelectField('종료 시간', `schedules.${index}.endTime`, index, {label: '18:00'})}
+              {/* 종료 시간 필드 */}
+              {renderSelectField('종료 시간', `schedules.0.endTime`, 0, {label: '18:00'})}
 
-                <div
-                  className={`relative h-16 w-16 cursor-pointer ${index === 0 ? 'green-button-hover mt-26pxr' : ''}`}
-                  onClick={() => (index === 0 ? handleAddRow() : handleMinusRow(index, 'fields'))}
-                >
-                  <Image src={index === 0 ? plusBtn : minusBtn} alt={index === 0 ? 'Add row' : 'Remove row'} fill />
-                </div>
+              <div className="relative mt-26pxr h-16 w-16 cursor-pointer" onClick={handleAddRow}>
+                <Image src={plusBtn} alt="Add row" fill />
               </div>
-
-              {Array.isArray(errors.schedules) && errors.schedules[index]?.date?.message && (
-                <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[index]?.date?.message}</span>
-              )}
-              {index === 0 && <hr className="mt-4"></hr>}
             </div>
-          ))}
-        </div>
-      </>
+
+            {Array.isArray(errors.schedules) && errors.schedules[0]?.date?.message && (
+              <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[0]?.date?.message}</span>
+            )}
+            <hr className="mt-4" />
+          </div>
+        )}
+
+        {fields.length > 1 && (
+          <div className="max-h-[500px] overflow-y-auto">
+            {fields.slice(1).map((row, index) => (
+              <div key={row.id} className="mb-4">
+                <div className="grid max-w-full grid-cols-[minmax(150px,1fr),auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
+                  {/* 날짜 필드 */}
+                  {renderDateField('날짜', `schedules.${index + 1}.date`, index + 1)}
+
+                  {/* 시작 시간 필드 */}
+                  {renderSelectField('시작 시간', `schedules.${index + 1}.startTime`, index + 1, {label: '09:00'})}
+
+                  {/* 종료 시간 필드 */}
+                  {renderSelectField('종료 시간', `schedules.${index + 1}.endTime`, index + 1, {label: '18:00'})}
+
+                  <div className="relative h-16 w-16 cursor-pointer" onClick={() => handleMinusRow(index + 1, 'fields')}>
+                    <Image src={minusBtn} alt="Remove row" fill />
+                  </div>
+                </div>
+
+                {Array.isArray(errors.schedules) && errors.schedules[index + 1]?.date?.message && (
+                  <span className="text-sm text-red-500">{(errors.schedules as ScheduleError[])[index + 1]?.date?.message}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* 수정시 */}
       {type === 'modify' && modifyFields.length !== 0 && (
         <>
+          <hr className="my-4" />
+          <label className="text-xl font-medium text-gray-800">추가</label>
           {modifyFields.map((row, index) => (
             <div key={row.id} className="mb-4">
-              <div className="grid grid-cols-[1fr,auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
+              <div className="grid grid-cols-[minmax(150px,1fr),auto,auto,auto] gap-1 pc:grid-cols-[1fr,auto,auto,auto] pc:gap-4">
                 {/* 날짜 필드 */}
                 {renderDateField('날짜', `schedulesToAdd.${index}.date`, index)}
-
                 {/* 시작 시간 필드 */}
                 {renderSelectField('시작 시간', `schedulesToAdd.${index}.startTime`, index, {label: '09:00'})}
-
                 {/* 종료 시간 필드 */}
                 {renderSelectField('종료 시간', `schedulesToAdd.${index}.endTime`, index, {label: '18:00'})}
-
                 <div className="relative h-16 w-16 cursor-pointer" onClick={() => handleMinusRow(index, 'modifyFields')}>
                   <Image src={minusBtn} alt="Remove row" fill />
                 </div>

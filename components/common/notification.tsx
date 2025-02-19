@@ -1,17 +1,16 @@
+import {Fragment, useCallback, useEffect, useRef, useState} from 'react';
+import Image from 'next/image';
+import {QueryFunctionContext, useMutation, useQueryClient} from '@tanstack/react-query';
+import OverlayContainer from '@/components/common/modal/overlay-container';
+import InfiniteScroll from '@/components/common/lnfiniteScroll';
+import {Notifications} from '@/types/getMynotifications';
+import {deleteMynotifications} from '@/service/api/mynotifications/deleteMyNotifications.api';
+import {CustomInfiniteData, getMynotifications} from '@/service/api/mynotifications/getMynotifications.api';
+import getInitialDevice from '@/utils/initial-device';
 import CloseIcon from '@/public/icon/ic_close_black.svg';
 import NotiBlueIcon from '@/public/icon/ic_noti_blue.svg';
 import NotiRedIcon from '@/public/icon/ic_noti_red.svg';
 import CloseButton from '@/public/icon/ic_close_button.svg';
-
-import Image from 'next/image';
-import {Fragment, useCallback, useEffect, useRef, useState} from 'react';
-import getInitialDevice from '@/utils/initial-device';
-import OverlayContainer from '@/components/common/modal/overlay-container';
-import InfiniteScroll from '@/components/common/lnfiniteScroll';
-import {CustomInfiniteData, getMynotifications} from '@/service/api/mynotifications/getMynotifications.api';
-import {Notifications} from '@/types/getMynotifications';
-import {deleteMynotifications} from '@/service/api/mynotifications/deleteMyNotifications.api';
-import {QueryFunctionContext, useMutation, useQueryClient} from '@tanstack/react-query';
 
 interface NotificationProps {
   onClose: () => void;
@@ -112,7 +111,7 @@ export default function Notification({className = 'w-auto', onClose}: Notificati
                     const status = getStatus(data.content);
                     return (
                       <Fragment key={data.id}>
-                        <div className="w-full bg-white px-3 py-4 tablet:w-335pxr">
+                        <div className="w-full bg-white px-3 py-4">
                           <div className="flex items-center justify-between">
                             <Image
                               src={status === '승인' ? NotiBlueIcon : NotiRedIcon}
