@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
+import { Loader2 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -17,21 +18,33 @@ import signLogo from '@/public/img/img_signlogo.svg';
 import GoogleIcon from '@/public/icon/ic_google.svg';
 import KakaoIcon from '@/public/icon/ic_kakao.svg';
 
+const LoadingSpinner = () => {
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white p-8 rounded-lg flex flex-col items-center gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    </div>
+  );
+};
+
 interface IFormInput {
   email: string;
   password: string;
 }
 
 export default function Page() {
-  const {setLogin} = useAuthStore();
+  const { setLogin } = useAuthStore();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
+  const [saveEmail, setSaveEmail] = useState(false);
   const router = useRouter();
 
   const {
     control,
     handleSubmit,
     formState: {errors, isValid},
+    setValue,
   } = useForm<IFormInput>({
     mode: 'onChange',
     defaultValues: {
@@ -46,24 +59,30 @@ export default function Page() {
 
   const onSubmit = (data: IFormInput) => {
     signinMutation.mutate(data, {
-      // 경고
       onError: () => {
         setModalMessage('비밀번호가 일치하지 않습니다.');
         setIsModalOpen(true);
       },
-      onSuccess: async data => {
+      onSuccess: async (data) => {
         try {
-          // Zustand에 로그인 상태 업데이트
           setLogin(data.accessToken, data.refreshToken, data.user);
-
           sessionStorage.setItem('accessToken', data.accessToken);
           sessionStorage.setItem('refreshToken', data.refreshToken);
 
-          const {id, email, nickname, profileImageUrl, createdAt, updatedAt} = data.user;
-          sessionStorage.setItem('userInfo', JSON.stringify({id, email, nickname, profileImageUrl, createdAt, updatedAt}));
+          const { id, email, nickname, profileImageUrl, createdAt, updatedAt } = data.user;
+          sessionStorage.setItem(
+            'userInfo',
+            JSON.stringify({ id, email, nickname, profileImageUrl, createdAt, updatedAt })
+          );
 
           const refreshedData = await postTokens(data.refreshToken);
           if (refreshedData) sessionStorage.setItem('accessToken', refreshedData.accessToken);
+
+          if (saveEmail) {
+            localStorage.setItem('savedEmail', data.user.email);
+          } else {
+            localStorage.removeItem('savedEmail');
+          }
 
           router.push('/');
         } catch (e) {
@@ -83,8 +102,17 @@ export default function Page() {
     window.location.href = kakaoAuthURL;
   };
 
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('savedEmail');
+    if (savedEmail) {
+      setValue('email', savedEmail);
+      setSaveEmail(true);
+    }
+  }, [setValue]);
+
   return (
     <>
+      {signinMutation.isPending && <LoadingSpinner />}
       <div className="desktop:pt-[7.375rem] desktop:gap-[3.5rem] desktop:w-[640px] desktop:h-[779px] desktop:top-[118px] desktop:left-[640px] m-auto flex max-w-[40rem] flex-col items-center gap-[1.5rem] pt-[6.875rem] tablet:left-[52px] tablet:top-[118px] tablet:h-[779px] tablet:w-[640px] tablet:gap-[2.5rem] tablet:pt-[7.875rem]">
         <Link href="/">
           <Image src={signLogo} alt="로고" />
@@ -92,7 +120,6 @@ export default function Page() {
         <form className="flex w-full flex-col items-center justify-center gap-[2.5rem] tablet:gap-[3rem]" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-[1.625rem] tablet:gap-[2rem]">
             <div className="flex flex-col gap-[1.75rem]">
-              {/* 이메일 입력란 */}
               <Controller
                 name="email"
                 control={control}
@@ -115,7 +142,6 @@ export default function Page() {
                   />
                 )}
               />
-              {/* 비밀번호 입력란 */}
               <Controller
                 name="password"
                 control={control}
@@ -140,6 +166,18 @@ export default function Page() {
                   />
                 )}
               />
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="saveEmail"
+                  checked={saveEmail}
+                  onChange={() => setSaveEmail((prev) => !prev)}
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <label htmlFor="saveEmail" className="text-sm cursor-pointer">
+                  이메일 저장
+                </label>
+              </div>
               <Button
                 className={`h-[3.375rem] w-[21.875rem] gap-[0.5rem] rounded-[0.375rem] text-white sm:px-4 tablet:h-[3rem] tablet:w-[40rem] ${
                   isValid ? 'bg-primary' : 'bg-[#A4A1AA]'
@@ -164,6 +202,7 @@ export default function Page() {
                 </span>
                 <hr className="w-full border border-gray-300" />
               </div>
+              
               <div className="flex justify-center gap-[1rem]">
                 <button type="button" onClick={() => alert('Google 로그인 기능이 일시적으로 제한되어 있습니다')}>
                   <Image src={GoogleIcon} alt="google icon" />

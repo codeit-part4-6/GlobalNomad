@@ -1,6 +1,6 @@
 import React from 'react';
-import OverlayContainer from '@/components/common/modal/overlay-container';
 import DaumPostcodeEmbed from 'react-daum-postcode';
+import OverlayContainer from '@/components/common/modal/overlay-container';
 
 export interface AddressModal {
   onClose: () => void;
