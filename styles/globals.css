@@ -41,6 +41,12 @@ body {
   .white-button-hover {
     @apply border border-nomad-black shadow-[inset_0_0_40px_40px_white,0_0_0_0_white] transition-all duration-150 ease-in-out hover:shadow-[inset_0_0_10px_0_#CED8D5,0_0_10px_4px_#CED8D5] hover:outline-0;
   }
+  .green-button-hover {
+    @apply rounded-xl border border-primary shadow-[inset_0_0_40px_40px_#0B3B2D,0_0_0_0_#0B3B2D] transition-all duration-150 ease-in-out hover:shadow-[inset_0_0_10px_0_#0B3B2D,0_0_10px_4px_#0B3B2D] hover:outline-0;
+  }
+  .green-unrounded-button-hover {
+    @apply border border-primary shadow-[inset_0_0_40px_40px_#0B3B2D,0_0_0_0_#0B3B2D] transition-all duration-150 ease-in-out hover:shadow-[inset_0_0_10px_0_#0B3B2D,0_0_10px_4px_#0B3B2D] hover:outline-0;
+  }
 }
 
 @layer utilities {

@@ -249,7 +249,7 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
                 {renderSelectField('종료 시간', `schedules.${index}.endTime`, index, {label: '18:00'})}
 
                 <div
-                  className={`relative h-16 w-16 cursor-pointer ${index === 0 ? 'mt-26pxr' : ''}`}
+                  className={`relative h-16 w-16 cursor-pointer ${index === 0 ? 'green-button-hover mt-26pxr' : ''}`}
                   onClick={() => (index === 0 ? handleAddRow() : handleMinusRow(index, 'fields'))}
                 >
                   <Image src={index === 0 ? plusBtn : minusBtn} alt={index === 0 ? 'Add row' : 'Remove row'} fill />
