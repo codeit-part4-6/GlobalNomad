@@ -91,7 +91,7 @@ export default function SearchList({keyword}: SearchListProps): JSX.Element {
           <ScaleLoader />
         </div>
       )}
-      <Pagenation page={page} size={searchActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />
+      {searchActivities && <Pagenation page={page} size={searchActivities?.totalCount} showItemCount={pageSize} onChange={handlePageChange} />}
     </div>
   );
 }
