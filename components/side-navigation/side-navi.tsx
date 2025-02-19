@@ -67,7 +67,7 @@ export default function SideNavi({selectedMenu, onSelectMenu, isMobile}: SideNav
   }, [pathname, isModalOpen]);
 
   return (
-    <div className="mb-240pxr min-w-full rounded-xl border border-gray-200 bg-white p-6 tablet:w-[15.6875rem] tablet:min-w-[15.6875rem] pc:w-[24rem] pc:min-w-[24rem] pc:p-6">
+    <div className="mb-240pxr min-w-full rounded-xl border border-gray-200 bg-white p-6 tablet:w-[15.6875rem] tablet:min-w-[15.6875rem] pc:w-[24rem] pc:min-w-[24rem] pc:p-6 dark:bg-gray-800/30">
       <div className="relative mx-auto mb-2 h-40 w-40">
         <Image
           src={preview || defaultProfile}

@@ -71,9 +71,9 @@ export default function Page() {
       {isSuccess ? (
         <div className="container mx-auto tablet:min-w-[43rem] pc:max-w-[75rem]">
           <div className="mx-auto w-full px-24pxr pb-133pxr pt-16pxr tablet:min-w-696pxr tablet:pb-145pxr tablet:pt-24pxr pc:px-0 pc:pb-128pxr pc:pt-78pxr">
-            <h4 className="mb-10pxr text-md font-normal text-nomad-black">{activitiesInfo.category}</h4>
+            <h4 className="dark:text-dark-secondary mb-10pxr text-md font-normal text-nomad-black">{activitiesInfo.category}</h4>
             <div className="relative mb-16pxr flex flex-row justify-between">
-              <div className="flex-row items-center gap-16pxr p-0 text-xl font-bold text-nomad-black tablet:text-3xl pc:text-3xl">
+              <div className="dark:text-dark-primary flex-row items-center gap-16pxr p-0 text-xl font-bold text-nomad-black tablet:text-3xl pc:text-3xl">
                 {activitiesInfo.title}
               </div>
               <ActivitiesUpdate pageID={pageID} userId={activitiesInfo.userId} />
@@ -83,7 +83,7 @@ export default function Page() {
               {`${activitiesInfo.rating} (${activitiesInfo.reviewCount})`}
               <div className="flex">
                 <Image className="m-0 mr-1" src={LocationIcon} alt="Location" width={18} height={18} />
-                <p className="text-sm font-normal text-nomad-black opacity-75">{activitiesInfo.address}</p>
+                <p className="dark:text-dark-secondary text-sm font-normal text-nomad-black opacity-75">{activitiesInfo.address}</p>
               </div>
             </div>
             <BannerFromDivceType device={device} bannerImg={activitiesInfo.bannerImageUrl} subImages={activitiesInfo.subImages} />
@@ -91,7 +91,7 @@ export default function Page() {
               <div className="mb-16pxr mr-24pxr min-w-327pxr tablet:min-w-428pxr pc:min-w-790pxr">
                 <hr />
                 <div>
-                  <div className="w-full pb-16pxr pt-15pxr text-xl font-bold text-nomad-black tablet:pb-16pxr tablet:pt-41pxr pc:pb-34pxr pc:pt-40pxr">
+                  <div className="w-full pb-16pxr pt-15pxr text-xl font-bold text-nomad-black tablet:pb-16pxr tablet:pt-41pxr pc:pb-34pxr pc:pt-40pxr dark:text-green-900">
                     체험 설명
                   </div>
                   <div className="text-nomad mb-16pxr h-auto min-w-327pxr text-xl font-normal opacity-75 tablet:mb-57pxr tablet:min-w-428pxr pc:mb-34pxr pc:min-w-790pxr">

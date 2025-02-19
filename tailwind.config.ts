@@ -11,6 +11,7 @@ const range = (start: number, end: number): number[] => {
 };
 
 export default {
+  darkMode: 'class',
   content: ['./pages/**/*.{js,ts,jsx,tsx,mdx}', './components/**/*.{js,ts,jsx,tsx,mdx}', './app/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
@@ -68,6 +69,57 @@ export default {
         green: {
           50: '#CED8D5',
           100: '#0B3B2D',
+        },
+
+        /*다크모드 */
+        'dark-white': '#EAEAEA',
+        'dark-nomad-black': '#0D1A0D',
+        'dark-primary': '#135546',
+        'dark-secondary': '#A5B2AF',
+        'dark-accent-green': '#00D914',
+        'dark-yellow': '#E0A923',
+
+        'dark-black': {
+          50: '#181818',
+          100: '#222222',
+          200: '#2C2C2C',
+          300: '#3B3B3B',
+          400: '#A8A8A8',
+        },
+
+        'dark-gray': {
+          50: '#252525',
+          100: '#2E2E2E',
+          200: '#3A3A3A',
+          300: '#5A5A5A',
+          400: '#A3A3A3',
+          500: '#B0B0B0',
+          600: '#C5C5C5',
+          700: '#D0D0D0',
+          800: '#E0E0E0',
+          900: '#F5F5F5',
+        },
+
+        'dark-red': {
+          50: '#FF6B6B',
+          100: '#FF3B3B',
+          200: '#C0392B',
+        },
+
+        'dark-orange': {
+          50: '#FF8C42',
+          100: '#D86E30',
+        },
+
+        'dark-blue': {
+          50: '#4A90E2',
+          100: '#2775B6',
+          200: '#1B4F72',
+        },
+
+        'dark-green': {
+          50: '#1D6B50',
+          100: '#144D3B',
         },
       },
 

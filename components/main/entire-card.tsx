@@ -34,7 +34,7 @@ export default function EntireCard({data}: EntireCardProps) {
                     {rating} ({reviewCount})
                   </span>
                 </div>
-                <h3 className="text-lg font-semibold text-black-100 tablet:text-xl">{title}</h3>
+                <h3 className="text-lg font-semibold text-black-100 tablet:text-xl dark:text-gray-500">{title}</h3>
                 <div className="flex items-center gap-2">
                   <span className="text-md font-semibold tablet:text-lg">₩ {price.toLocaleString()}</span>
                   <span className="text-sm font-regular text-gray-600">/ 인</span>
