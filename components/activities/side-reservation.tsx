@@ -139,7 +139,7 @@ const ReservationWindowsType = ({price, person, selectedSchedule, updatePerson, 
           >
             <Image src={Minus} width={20} height={20} alt="minus" />
           </Button>
-          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{person}</p>
+          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr text-black-100">{person}</p>
           <Button
             className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
             onClick={() => updatePerson(1)}
@@ -251,15 +251,7 @@ const ReservationTabletType = ({price, person, selectedSchedule, scheduleModal, 
   );
 };
 
-const ReservationMobileType = ({
-  price,
-  person,
-  selectedSchedule,
-  scheduleModal,
-  personModal,
-  updatePerson,
-  saveReservation,
-}: ReservationProps) => {
+const ReservationMobileType = ({price, person, selectedSchedule, scheduleModal, personModal, updatePerson, saveReservation}: ReservationProps) => {
   const {setScheduleModal: updateScheduleModal, setPersonModal: updatePersonModal} = activitiesStore();
 
   const handleOpenScheduleModal = (status: boolean) => {

@@ -15,6 +15,21 @@ import {ScaleLoader} from 'react-spinners';
 import {useInView} from 'react-intersection-observer';
 import closeButton from '@/public/icon/ic_close_button.svg';
 
+export const statusLabelsColor: Record<string, string> = {
+  pending: 'text-blue-100',
+  confirmed: 'text-orange-100',
+  declined: 'text-red-200',
+  canceled: 'text-gray-700',
+  completed: 'text-gray-700',
+};
+
+export const buttonStyleByStatus: Record<string, string> = {
+  pending:
+    'w-80pxr h-8 py-1 px-2 font-bold text-md text-nomad-black tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-white border border-nomad-black rounded-md dark:bg-gray-50 dark:border-gray-200',
+  completed:
+    'w-80pxr h-8 py-1 px-2 font-bold text-md text-white tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-nomad-black rounded-md',
+};
+
 export default function ReservationList() {
   const router = useRouter();
   const [orderBy, setOrderBy] = useState('');
@@ -81,7 +96,7 @@ export default function ReservationList() {
   return (
     <div className="mb-16 h-full w-full">
       <div className="mb-3 flex w-full items-center justify-between tablet:mb-6 tablet:items-start">
-        <p className="text-3xl font-bold text-black-100">예약 내역</p>
+        <p className="text-3xl font-bold text-black-100 dark:text-gray-500">예약 내역</p>
         <div className="flex items-center gap-1">
           <div className="m-0">
             <CustomSelect orderBy={orderBy} handleOrderBy={(value: string) => setOrderBy(value)} />

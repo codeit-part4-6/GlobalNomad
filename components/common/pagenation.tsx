@@ -39,7 +39,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       const newPage = pageInfo[0].val - defaultShowPageCount;
       onChange(newPage);
     }
-  },[defaultPageInfo, onChange, page, pageInfo]);
+  }, [defaultPageInfo, onChange, page, pageInfo]);
 
   const handleNextPage = useCallback(() => {
     // 다음 pageInfo의 첫번째 값
@@ -59,7 +59,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
     } else {
       onChange(lastPageNum);
     }
-  },[defaultPageInfo, onChange, pageInfo, pageSize, showItemCount]);
+  }, [defaultPageInfo, onChange, pageInfo, pageSize, showItemCount]);
 
   const handleBtnClick = (page: number) => {
     onChange(page);
@@ -83,7 +83,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       <Button
         key={'prevBtn'}
         className={
-          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 pc:h-55pxr pc:w-55pxr'
+          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 pc:h-55pxr pc:w-55pxr dark:bg-slate-200/80'
         }
         onClick={handlePrevPage}
       >
@@ -109,7 +109,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       <Button
         key={'nextBtn'}
         className={
-          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 pc:h-55pxr pc:w-55pxr'
+          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 pc:h-55pxr pc:w-55pxr dark:bg-slate-200/80'
         }
         onClick={handleNextPage}
       >

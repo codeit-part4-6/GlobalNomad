@@ -43,7 +43,7 @@ export default function ReservationCalendar() {
   return (
     <div className="mb-16 h-full w-full">
       <div className="flex items-start justify-between">
-        <p className="mb-8 text-3xl font-bold text-black-50">예약 현황</p>
+        <p className="mb-8 text-3xl font-bold text-black-50 dark:text-gray-500">예약 현황</p>
 
         <div className="relative h-12 w-12 tablet:hidden" onClick={() => router.back()}>
           <Image src={closeButton} alt="모달 닫기 버튼" className="absolute cursor-pointer" fill />

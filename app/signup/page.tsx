@@ -1,26 +1,26 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useMutation } from '@tanstack/react-query';
-import { Loader2 } from 'lucide-react';
+import {useState} from 'react';
+import {useForm, Controller} from 'react-hook-form';
+import {useMutation} from '@tanstack/react-query';
+import {Loader2} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { SignupBody } from '@/types/postSignup.types';
+import {useRouter} from 'next/navigation';
+import {SignupBody} from '@/types/postSignup.types';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/button';
 import Modal from '@/components/common/modal/modal';
-import { postSignup } from '@/service/api/users/postSignup.api';
+import {postSignup} from '@/service/api/users/postSignup.api';
 import signLogo from '@/public/img/img_signlogo.svg';
 import GoogleIcon from '@/public/icon/ic_google.svg';
 import KakaoIcon from '@/public/icon/ic_kakao.svg';
 
 const LoadingSpinner = () => {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-lg flex flex-col items-center gap-4">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+    <div className="bg-black/50 fixed inset-0 z-50 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4 rounded-lg bg-white p-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     </div>
   );

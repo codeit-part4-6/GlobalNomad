@@ -56,7 +56,7 @@ export default function ReservationModal({message, onClose, reservationId}: Moda
           <div className="relative mx-auto mb-4 h-24pxr w-24pxr">
             <Image src={checkConfirm} alt="예약 취소 확인 체크" fill className="absolute" />
           </div>
-          <p className="text-lg font-regular">{message}</p>
+          <p className="text-lg font-regular dark:text-black-100">{message}</p>
         </div>
         <div className="flex gap-2">
           <Button
