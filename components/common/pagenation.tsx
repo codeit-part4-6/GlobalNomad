@@ -79,17 +79,13 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       return {key: idx, val: pagenationFirstNo + idx};
     });
 
-    if (pageInfo.length !== getPageArr.length) {
-      setPageInfo(getPageArr);
-      setDefaultPageInfo(getPageArr);
-    }
-  }, [page, pageInfo.length, pageSize, showItemCount]);
+    setPageInfo(getPageArr);
+    setDefaultPageInfo(getPageArr);
+  }, [page, pageSize, showItemCount]);
 
   useEffect(() => {
     initialPageInfo();
   }, [initialPageInfo, pageInfo, pageSize, showItemCount]);
-
-  console.log('pageInfo', pageInfo, 'pageSize', pageSize, 'showItemCount', showItemCount);
 
   return (
     <div className={'flex flex-row items-center justify-center gap-10pxr p-0'}>
