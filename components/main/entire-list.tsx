@@ -27,8 +27,6 @@ export default function EntireList({activeCategory, selectedSort}: EntireListPro
       }),
   });
 
-  console.log(entireActivities);
-  console.log(page);
   const handlePageChange = (page: number) => {
     setPage(page);
   };
