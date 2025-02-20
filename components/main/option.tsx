@@ -69,7 +69,7 @@ export default function Option({activeCategory, setActiveCategory, selectedSort,
           <SwiperSlide key={category.id}>
             <Button
               type="button"
-              className={`dark:border-dark-primary dark:text-dark-primary flex h-10 w-20 items-center justify-center gap-2 rounded-[0.938rem] border border-primary text-lg font-medium text-primary hover:bg-secondary tablet:h-[3.625rem] tablet:w-[120px] tablet:gap-[0.875rem] tablet:text-2lg pc:w-[7.938rem] pc:gap-6 dark:bg-emerald-900/10 dark:hover:bg-emerald-900/20 ${activeCategory === category.label ? 'bg-primary text-white' : ''} `}
+              className={`flex h-10 w-20 items-center justify-center gap-2 rounded-[0.938rem] border border-primary text-lg font-medium text-primary hover:bg-secondary dark:border-dark-primary dark:bg-emerald-900/10 dark:text-gray-50 dark:hover:bg-emerald-900/40 tablet:h-[3.625rem] tablet:w-[120px] tablet:gap-[0.875rem] tablet:text-2lg pc:w-[7.938rem] pc:gap-6 ${activeCategory === category.label ? 'bg-primary text-white' : ''} `}
               onClick={() => setActiveCategory(category.label)} // 버튼 클릭 시 상태 변경
             >
               {category.label}
