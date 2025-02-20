@@ -89,6 +89,8 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
     initialPageInfo();
   }, [initialPageInfo]);
 
+  if (!size) return null;
+
   return (
     <div className={'flex flex-row items-center justify-center gap-10pxr p-0'}>
       <Button
