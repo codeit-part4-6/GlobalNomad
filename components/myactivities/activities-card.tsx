@@ -30,7 +30,7 @@ export default function ActivitiesCard({data, onClickModify, onClickDelete}: Act
       <div className="relative">
         <div
           key={data.id}
-          className="dark:bg-dark-secondary flex items-center gap-2 overflow-hidden rounded-3xl bg-white shadow-sidenavi-box tablet:gap-3 pc:h-204pxr pc:gap-6"
+          className="flex items-center gap-2 overflow-hidden rounded-3xl bg-white shadow-sidenavi-box dark:bg-sky-100/20 tablet:gap-3 pc:h-204pxr pc:gap-6"
         >
           <div className="relative aspect-[1/1] h-128pxr w-128pxr tablet:h-156pxr tablet:w-156pxr pc:h-204pxr pc:w-204pxr">
             <Image className="absolute rounded-bl-3xl rounded-tl-3xl" src={data.bannerImageUrl} alt="체험관리사진" fill />
