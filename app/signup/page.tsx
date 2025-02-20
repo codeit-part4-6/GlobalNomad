@@ -81,7 +81,7 @@ export default function Page() {
   return (
     <>
       {signupMutation.isPending && <LoadingSpinner />}
-      <div className="desktop:pt-[7.375rem] desktop:gap-[3.5rem] desktop:w-[640px] desktop:h-[1019px] desktop:top-[118px] desktop:left-[640px] m-auto flex max-w-[40rem] flex-col items-center gap-[1.5rem] pt-[6.875rem] tablet:left-[52px] tablet:top-[118px] tablet:h-[1003px] tablet:w-[640px] tablet:gap-[2.5rem] tablet:pt-[7.875rem]">
+      <div className="desktop:pt-[7.375rem] desktop:gap-[3.5rem] desktop:w-[640px] desktop:h-auto desktop:top-[118px] desktop:left-[640px] m-auto flex max-w-[40rem] flex-col items-center gap-[1.5rem] pt-[6.875rem] tablet:left-[52px] tablet:top-[118px] tablet:h-auto tablet:w-[640px] tablet:gap-[2.5rem] tablet:pt-[7.875rem] pb-[118px]">
         <Link href="/">
           <Image src={signLogo} alt="로고" />
         </Link>
