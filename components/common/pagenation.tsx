@@ -21,8 +21,6 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
   const [defaultPageInfo, setDefaultPageInfo] = useState<Array<PageType>>([]);
   const [pageInfo, setPageInfo] = useState<Array<PageType>>([]);
 
-  const pageSize = size ? size : 1;
-
   const handlePrevPage = useCallback(() => {
     // 첫 페이지에서 이전 페이지를 누른다면 1번으로 이동
     // ex) <12345> 에서 < 누른 경우
@@ -42,10 +40,11 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
   }, [defaultPageInfo, onChange, page, pageInfo]);
 
   const handleNextPage = useCallback(() => {
+    if (!size) return;
     // 다음 pageInfo의 첫번째 값
     const nextFirstPage = pageInfo[0].val + defaultShowPageCount;
     // 마지막 페이지 번호
-    const lastPageNum = Math.ceil(pageSize / showItemCount);
+    const lastPageNum = Math.ceil(size / showItemCount);
     if (nextFirstPage <= lastPageNum) {
       // 계산된 페이지 정보
       const prevPageArr = [];
@@ -59,15 +58,16 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
     } else {
       onChange(lastPageNum);
     }
-  }, [defaultPageInfo, onChange, pageInfo, pageSize, showItemCount]);
+  }, [defaultPageInfo, onChange, pageInfo, size, showItemCount]);
 
   const handleBtnClick = (page: number) => {
     onChange(page);
   };
 
   const initialPageInfo = useCallback(() => {
+    if (!size) return;
     // 마지막 페이지 번호
-    const lastPageNo = Math.ceil(pageSize / showItemCount);
+    const lastPageNo = Math.ceil(size / showItemCount);
     // 현재 몇번째 페이지인지
     const pagenationCount = Math.ceil(page / defaultShowPageCount);
     // pagenationCount에서 첫번째 값
@@ -79,13 +79,15 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       return {key: idx, val: pagenationFirstNo + idx};
     });
 
-    setPageInfo(getPageArr);
-    setDefaultPageInfo(getPageArr);
-  }, [page, pageSize, showItemCount]);
+    if (pageInfo.length !== getPageArr.length) {
+      setPageInfo(getPageArr);
+      setDefaultPageInfo(getPageArr);
+    }
+  }, [page, pageInfo, size, showItemCount]);
 
   useEffect(() => {
     initialPageInfo();
-  }, [initialPageInfo, pageInfo, pageSize, showItemCount]);
+  }, [initialPageInfo]);
 
   return (
     <div className={'flex flex-row items-center justify-center gap-10pxr p-0'}>

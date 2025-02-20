@@ -25,17 +25,36 @@ const Reviews = () => {
     setPage(pageNo);
   }, []);
 
+  const checkAverageRating = () => {
+    if (!data) return '평점이 없습니다.';
+    const getAverageRating = Math.round(data.averageRating);
+    switch (getAverageRating) {
+      case 1:
+        return '매우 불만족';
+      case 2:
+        return '불만족';
+      case 3:
+        return '보통';
+      case 4:
+        return '만족';
+      case 5:
+        return '매우 만족';
+      default:
+        return '평점이 없습니다.';
+    }
+  };
+
   return (
     isSuccess && (
       <>
         <div className="w-full pb-34pxr pt-40pxr text-xl font-bold text-nomad-black dark:text-green-900">후기</div>
         <div className="flex flex-row">
-          <p className="dark:text-dark-secondary mr-16pxr text-4xl font-semibold text-nomad-black">{data.averageRating.toFixed(1)}</p>
+          <p className="mr-16pxr text-4xl font-semibold text-nomad-black dark:text-dark-secondary">{data.averageRating.toFixed(1)}</p>
           <div className="flex-col items-start gap-8pxr p-0">
-            <p className="dark:text-dark-secondary text-2lg font-normal text-nomad-black">매우 만족</p>
+            <p className="text-2lg font-normal text-nomad-black dark:text-dark-secondary">{checkAverageRating()}</p>
             <div className="flex flex-row">
               <Image src={Star} alt="별점 이미지" width={16} height={16} priority />
-              <p className="dark:text-dark-secondary ml-5pxr text-md font-normal text-black-100">{`${data.totalCount}개 후기`}</p>
+              <p className="ml-5pxr text-md font-normal text-black-100 dark:text-dark-secondary">{`${data.totalCount}개 후기`}</p>
             </div>
           </div>
         </div>
@@ -56,7 +75,7 @@ const Reviews = () => {
                   </div>
                   <div>
                     <div className="flex flex-row">
-                      <p className="dark:text-dark-primary text-lg font-bold text-nomad-black">{dt.user.nickname}</p>
+                      <p className="text-lg font-bold text-nomad-black dark:text-dark-primary">{dt.user.nickname}</p>
                       <p className="mx-8pxr text-lg font-normal text-nomad-black">|</p>
                       <p className="text-lg font-normal text-gray-500">{FormatDate(dt.createdAt)}</p>
                     </div>

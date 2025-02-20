@@ -9,6 +9,7 @@ import activitiesStore from '@/service/store/activitiesstore';
 import Modal from '@/components/common/modal/modal';
 import Button from '@/components/common/button';
 import OverlayContainer from '@/components/common/modal/overlay-container';
+import InitialDevice from '@/utils/initial-device';
 import FormatNumberWithCommas from '@/utils/format-number';
 import postReservation from '@/service/api/activities/postActivities';
 import Plus from '@/public/icon/icon_plus.png';
@@ -48,7 +49,12 @@ const Reservation = ({device, price}: {device: string; price: number}) => {
 
   const handleClosePostResultModal = () => {
     setIsPostResultModalOpen({message: '', isOpen: false});
-    router.push('/mypage/reserveList');
+    const device = InitialDevice();
+    if (device === 'mobile') {
+      router.push(' /mypage/reserveList?modal=true');
+    } else {
+      router.push('/mypage/reserveList');
+    }
   };
 
   const handleCloseNotiModal = () => {
