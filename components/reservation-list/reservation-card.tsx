@@ -28,7 +28,7 @@ interface ReservationCardProps {
 
 export default function ReservationCard({reservation, onButtonClick}: ReservationCardProps) {
   return (
-    <div className="flex h-32 w-full items-center rounded-3xl bg-white shadow-sidenavi-box tablet:h-156pxr pc:h-204pxr">
+    <div className="flex h-32 w-full items-center rounded-3xl bg-white shadow-sidenavi-box dark:bg-sky-100/20 tablet:h-156pxr pc:h-204pxr">
       <div className="relative aspect-[1/1] h-32 w-32 flex-shrink tablet:h-156pxr tablet:w-156pxr pc:h-204pxr pc:w-204pxr">
         <Image
           className="absolute rounded-bl-3xl rounded-tl-3xl"
@@ -40,14 +40,16 @@ export default function ReservationCard({reservation, onButtonClick}: Reservatio
       </div>
       <div className="flex-grow py-11pxr pl-2 pr-14pxr tablet:py-3 tablet:pl-3 tablet:pr-18pxr pc:px-6 pc:py-21pxr">
         <p className={`${statusLabelsColor[reservation.status]} text-md font-bold tablet:text-lg pc:mb-2`}>{statusLabels[reservation.status]}</p>
-        <p className="line-clamp-1 text-md font-bold text-nomad-black tablet:mb-1 tablet:text-2lg pc:mb-3 pc:text-xl">{reservation.activity.title}</p>
-        <div className="mb-0 flex items-center gap-[0.125rem] text-xs font-regular text-nomad-black tablet:mb-10pxr tablet:text-md pc:mb-4 pc:text-lg">
+        <p className="line-clamp-1 text-md font-bold text-nomad-black dark:text-gray-50 tablet:mb-1 tablet:text-2lg pc:mb-3 pc:text-xl">
+          {reservation.activity.title}
+        </p>
+        <div className="mb-0 flex items-center gap-[0.125rem] text-xs font-regular text-nomad-black dark:text-gray-50 tablet:mb-10pxr tablet:text-md pc:mb-4 pc:text-lg">
           <p>
             {FormatDate(reservation.date)} · {reservation.startTime} - {reservation.endTime} · {reservation.headCount}명
           </p>
         </div>
         <div className="flex items-center justify-between">
-          <p className="text-lg font-medium text-black-100 tablet:text-xl">￦{FormattedPrice(reservation.totalPrice)}</p>
+          <p className="text-lg font-medium text-black-100 dark:text-gray-50 tablet:text-xl">￦{FormattedPrice(reservation.totalPrice)}</p>
           <Button onClick={() => onButtonClick(`${reservation.status}`, reservation.id)} className={`${buttonStyleByStatus[reservation.status]}`}>
             {buttonByStatus[reservation.status]}
           </Button>
