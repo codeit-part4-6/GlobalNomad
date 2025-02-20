@@ -11,6 +11,7 @@ import InfiniteScroll from '@/components/common/lnfiniteScroll';
 import ActivitiesRegister from './activities-register';
 import ActivitiesModify from './activities-modify';
 import ActivitiesCard from './activities-card';
+import getInitialDevice from '@/utils/initial-device';
 import {getActivitiesList} from '@/service/api/myactivities/getActivities';
 import {patchActivities} from '@/service/api/myactivities/patchActivities.api';
 import {deleteActivities} from '@/service/api/myactivities/deleteActivities.api';
@@ -21,6 +22,7 @@ import NonDataPage from './non-data';
 import closeButton from '@/public/icon/ic_close_button.svg';
 
 type ContentType = 'manage' | 'register' | 'modify' | 'delete';
+type InitialDevice = 'mobile' | 'desktop' | 'tablet';
 
 interface MyActivitiesProps {
   contentType: ContentType;
@@ -36,6 +38,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
   const [isValid, setIsValid] = useState(false);
   const [isValidModify, setIsValidModify] = useState(false);
   const [modifyId, setModifyId] = useState(0);
+  const [device, setDevice] = useState<InitialDevice>('mobile');
   const queryClient = useQueryClient();
 
   const postActivitiesMutation = useMutation({
@@ -160,7 +163,11 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
 
   const handleClose = () => {
     setIsOpen(false);
-    updateQueryParams({type: 'manage'});
+    if (device === 'mobile') {
+      router.push('/mypage/treatReservation?modal=true');
+    } else {
+      router.push('/mypage/treatReservation');
+    }
   };
 
   useEffect(() => {
@@ -168,6 +175,11 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
       setContent(contentType);
     }
   }, [contentType, content]);
+
+  useEffect(() => {
+    const getDeviceType = getInitialDevice() as InitialDevice;
+    setDevice(getDeviceType);
+  }, [device]);
 
   return (
     <>
@@ -183,17 +195,17 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
                       updateQueryParams({type: 'register'});
                       setContent('register');
                     }}
-                    className="h-48pxr w-80pxr gap-4pxr rounded-md bg-primary pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr"
+                    className="green-unrounded-button-hover h-48pxr w-80pxr gap-4pxr rounded-md bg-primary px-15pxr py-8pxr font-bold text-white tablet:w-120pxr"
                   >
-                    <span className="hidden tablet:block">등록하기</span>
+                    <span className="hidden tablet:block">체험 등록하기</span>
                     <span className="block tablet:hidden">등록</span>
                   </Button>
                 </>
               ) : content === 'register' ? (
                 <Button
                   onClick={triggerSubmit} // 버튼 클릭 시 자식 컴포넌트의 폼 제출 트리거
-                  className={`h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr ${
-                    isValid ? 'bg-primary' : 'bg-gray-500'
+                  className={`h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr font-bold text-white tablet:w-120pxr ${
+                    isValid ? 'green-unrounded-button-hover bg-primary' : 'bg-gray-500'
                   }`}
                 >
                   <span className="hidden tablet:block">등록하기</span>
@@ -202,7 +214,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
               ) : (
                 <Button
                   onClick={triggerSubmit}
-                  className={`${isValidModify ? 'bg-primary' : 'bg-gray-500'} h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr text-white tablet:w-120pxr`}
+                  className={`${isValidModify ? 'green-unrounded-button-hover bg-primary' : 'bg-gray-500'} h-48pxr w-80pxr gap-4pxr rounded-md pb-8pxr pl-16pxr pr-16pxr pt-8pxr font-bold text-white tablet:w-120pxr`}
                 >
                   <span className="hidden tablet:block">수정하기</span>
                   <span className="block tablet:hidden">수정</span>
@@ -259,7 +271,10 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
         </div>
       </div>
       {isOpen && (
-        <Modal message={`체험 ${content === 'modify' ? '수정' : content === 'register' ? '등록' : '삭제'}이 완료되었습니다`} onClose={handleClose} />
+        <Modal
+          message={`체험 ${content === 'modify' ? '수정이' : content === 'register' ? '등록이' : '삭제가'} 완료되었습니다`}
+          onClose={handleClose}
+        />
       )}
       {isOpenError && <Modal message={errorMessege} onClose={() => setIsOpenError(false)}></Modal>}
     </>

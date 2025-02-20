@@ -28,14 +28,14 @@ const Reviews = () => {
   return (
     isSuccess && (
       <>
-        <div className="w-full pb-34pxr pt-40pxr text-xl font-bold text-nomad-black">후기</div>
+        <div className="w-full pb-34pxr pt-40pxr text-xl font-bold text-nomad-black dark:text-green-900">후기</div>
         <div className="flex flex-row">
-          <p className="mr-16pxr text-4xl font-semibold text-nomad-black">{data.averageRating.toFixed(1)}</p>
+          <p className="dark:text-dark-secondary mr-16pxr text-4xl font-semibold text-nomad-black">{data.averageRating.toFixed(1)}</p>
           <div className="flex-col items-start gap-8pxr p-0">
-            <p className="text-2lg font-normal text-nomad-black">매우 만족</p>
+            <p className="dark:text-dark-secondary text-2lg font-normal text-nomad-black">매우 만족</p>
             <div className="flex flex-row">
               <Image src={Star} alt="별점 이미지" width={16} height={16} priority />
-              <p className="ml-5pxr text-md font-normal text-black-100">{`${data.totalCount}개 후기`}</p>
+              <p className="dark:text-dark-secondary ml-5pxr text-md font-normal text-black-100">{`${data.totalCount}개 후기`}</p>
             </div>
           </div>
         </div>
@@ -56,7 +56,7 @@ const Reviews = () => {
                   </div>
                   <div>
                     <div className="flex flex-row">
-                      <p className="text-lg font-bold text-nomad-black">{dt.user.nickname}</p>
+                      <p className="dark:text-dark-primary text-lg font-bold text-nomad-black">{dt.user.nickname}</p>
                       <p className="mx-8pxr text-lg font-normal text-nomad-black">|</p>
                       <p className="text-lg font-normal text-gray-500">{FormatDate(dt.createdAt)}</p>
                     </div>

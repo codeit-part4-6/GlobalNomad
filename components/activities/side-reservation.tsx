@@ -139,7 +139,7 @@ const ReservationWindowsType = ({price, person, selectedSchedule, updatePerson, 
           >
             <Image src={Minus} width={20} height={20} alt="minus" />
           </Button>
-          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{person}</p>
+          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr text-black-100">{person}</p>
           <Button
             className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
             onClick={() => updatePerson(1)}
@@ -148,7 +148,7 @@ const ReservationWindowsType = ({price, person, selectedSchedule, updatePerson, 
           </Button>
         </div>
         <Button
-          className={`my-24pxr flex h-56pxr w-full flex-row items-center justify-center gap-4pxr rounded-s px-8pxr py-40pxr ${!selectedSchedule?.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
+          className={`my-24pxr flex h-56pxr w-full flex-row items-center justify-center gap-4pxr rounded-s px-8pxr py-40pxr ${!selectedSchedule?.id ? 'bg-gray-400' : 'nomad-button-hover cursor-pointer bg-nomad-black'}`}
           disabled={!selectedSchedule?.id}
           onClick={saveReservation}
         >
@@ -213,7 +213,7 @@ const ReservationTabletType = ({price, person, selectedSchedule, scheduleModal, 
           </Button>
         </div>
         <Button
-          className={`my-24pxr flex h-56pxr w-full flex-row items-center justify-center gap-4pxr rounded-md px-8pxr py-40pxr ${!selectedSchedule.id ? 'bg-gray-400' : 'bg-nomad-black'}`}
+          className={`my-24pxr flex h-56pxr w-full flex-row items-center justify-center gap-4pxr rounded-md px-8pxr py-40pxr ${!selectedSchedule.id ? 'bg-gray-400' : 'nomad-button-hover cursor-pointer bg-nomad-black'}`}
           disabled={selectedSchedule.id === 0}
           onClick={saveReservation}
         >
@@ -251,15 +251,7 @@ const ReservationTabletType = ({price, person, selectedSchedule, scheduleModal, 
   );
 };
 
-const ReservationMobileType = ({
-  price,
-  person,
-  selectedSchedule,
-  scheduleModal,
-  personModal,
-  updatePerson,
-  saveReservation,
-}: ReservationProps) => {
+const ReservationMobileType = ({price, person, selectedSchedule, scheduleModal, personModal, updatePerson, saveReservation}: ReservationProps) => {
   const {setScheduleModal: updateScheduleModal, setPersonModal: updatePersonModal} = activitiesStore();
 
   const handleOpenScheduleModal = (status: boolean) => {

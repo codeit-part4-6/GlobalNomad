@@ -27,13 +27,25 @@ body {
 
 @layer components {
   .review-modal {
-    @apply flex h-full w-full flex-col overflow-y-auto bg-white px-16pxr pb-33pxr pt-35pxr tablet:h-[70%] tablet:max-h-[750px] tablet:w-[480px] tablet:rounded-3xl tablet:px-24pxr tablet:pb-41pxr tablet:pt-23pxr pc:h-[70%] pc:w-[480px] pc:max-w-[750px] pc:rounded-3xl pc:px-24pxr pc:pb-41pxr pc:pt-23pxr;
+    @apply flex h-full w-full flex-col overflow-y-auto bg-white px-16pxr pb-33pxr pt-35pxr tablet:h-[70%] tablet:max-h-[750px] tablet:w-[480px] tablet:rounded-3xl tablet:px-24pxr tablet:pb-41pxr tablet:pt-23pxr pc:h-[70%] pc:w-[480px] pc:max-w-[750px] pc:rounded-3xl pc:px-24pxr pc:pb-41pxr pc:pt-23pxr dark:bg-gray-50;
   }
   .big-button {
-    @apply h-42pxr w-138pxr rounded-lg bg-nomad-black px-56pxr py-12pxr text-center align-middle text-md font-medium leading-none text-white tablet:h-48pxr tablet:w-120pxr tablet:px-46pxr tablet:py-14pxr tablet:text-lg tablet:leading-none pc:h-48pxr pc:w-120pxr pc:px-46pxr pc:py-14pxr pc:text-lg pc:leading-none;
+    @apply h-42pxr w-138pxr rounded-lg bg-nomad-black px-54pxr py-12pxr text-center align-middle text-md font-medium leading-none text-white tablet:h-48pxr tablet:w-120pxr tablet:px-44pxr tablet:py-14pxr tablet:text-lg tablet:leading-none pc:h-48pxr pc:w-120pxr pc:py-14pxr pc:text-lg pc:leading-none;
   }
   .error-message {
     @apply ml-2 mt-2 text-xs text-red-200;
+  }
+  .nomad-button-hover {
+    @apply border border-nomad-black shadow-[inset_0_0_40px_40px_#112211,0_0_0_0_#112211] transition-all duration-150 ease-in-out hover:bg-[#253342] hover:shadow-[inset_0_0_10px_0_#112211,0_0_10px_4px_#112211] hover:outline-0;
+  }
+  .white-button-hover {
+    @apply border border-nomad-black shadow-[inset_0_0_40px_40px_white,0_0_0_0_white] transition-all duration-150 ease-in-out hover:shadow-[inset_0_0_10px_0_#CED8D5,0_0_10px_4px_#CED8D5] hover:outline-0;
+  }
+  .green-button-hover {
+    @apply rounded-xl border border-primary shadow-[inset_0_0_40px_40px_#0B3B2D,0_0_0_0_#0B3B2D] transition-all duration-150 ease-in-out hover:shadow-[inset_0_0_10px_0_#0B3B2D,0_0_10px_4px_#0B3B2D] hover:outline-0;
+  }
+  .green-unrounded-button-hover {
+    @apply border border-primary shadow-[inset_0_0_40px_40px_#0B3B2D,0_0_0_0_#0B3B2D] transition-all duration-150 ease-in-out hover:shadow-[inset_0_0_10px_0_#0B3B2D,0_0_10px_4px_#0B3B2D] hover:outline-0;
   }
 }
 

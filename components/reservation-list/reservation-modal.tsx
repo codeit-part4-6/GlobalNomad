@@ -56,13 +56,13 @@ export default function ReservationModal({message, onClose, reservationId}: Moda
           <div className="relative mx-auto mb-4 h-24pxr w-24pxr">
             <Image src={checkConfirm} alt="예약 취소 확인 체크" fill className="absolute" />
           </div>
-          <p className="text-lg font-regular">{message}</p>
+          <p className="text-lg font-regular dark:text-black-100">{message}</p>
         </div>
         <div className="flex gap-2">
           <Button
             onClick={onClose}
             className={
-              'h-38pxr w-80pxr rounded-md border border-nomad-black px-20pxr py-10pxr text-center text-md font-bold leading-none text-nomad-black'
+              'white-button-hover h-38pxr w-80pxr rounded-md border border-nomad-black px-20pxr py-10pxr text-center text-md font-bold leading-none text-nomad-black'
             }
           >
             아니오
@@ -70,7 +70,9 @@ export default function ReservationModal({message, onClose, reservationId}: Moda
           <Button
             disabled={loading}
             onClick={handleCancelClick}
-            className={'h-38pxr w-80pxr rounded-md bg-nomad-black px-14pxr py-10pxr text-center text-md font-bold leading-none text-white'}
+            className={
+              'nomad-button-hover h-38pxr w-80pxr rounded-md bg-nomad-black px-14pxr py-10pxr text-center text-md font-bold leading-none text-white'
+            }
           >
             {loading ? <ScaleLoader width={3} height={20} color="#ffffff" /> : '취소하기'}
           </Button>
