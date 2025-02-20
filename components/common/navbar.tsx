@@ -51,12 +51,14 @@ export default function Navbar() {
   ];
 
   useEffect(() => {
-    fetchNotifications({
-      queryKey: ['notifications'],
-      signal: new AbortController().signal,
-      meta: undefined,
-    });
-  }, []);
+    if (user) {
+      fetchNotifications({
+        queryKey: ['notifications'],
+        signal: new AbortController().signal,
+        meta: undefined,
+      });
+    }
+  }, [user]);
 
   return (
     <>
