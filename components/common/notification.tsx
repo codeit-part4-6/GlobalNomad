@@ -92,8 +92,8 @@ export default function Notification({className = 'w-auto', onClose}: Notificati
     return (
       <div className="flex flex-col px-5 py-6">
         <div className="flex items-center justify-between pb-4">
-          <div className="text-xl font-bold">알림 {notificationCount}</div>
-          <Image className="" src={CloseIcon} alt="닫기" width={24} height={24} onClick={onClose} />
+          <div className="text-xl font-bold dark:text-gray-50">알림 {notificationCount}</div>
+          <Image className="dark:bg-white" src={CloseIcon} alt="닫기" width={24} height={24} onClick={onClose} />
         </div>
         <InfiniteScroll
           className="h-500pxr w-full tablet:h-280pxr pc:h-398pxr"
@@ -151,13 +151,16 @@ export default function Notification({className = 'w-auto', onClose}: Notificati
       {device === 'mobile' ? (
         <>
           <OverlayContainer>
-            <div className="relative h-full w-full cursor-pointer bg-green-50 px-24pxr pb-40pxr pt-24pxr" onClick={e => e.stopPropagation()}>
+            <div
+              className="relative h-full w-full cursor-pointer bg-green-50 px-24pxr pb-40pxr pt-24pxr dark:bg-stone-800"
+              onClick={e => e.stopPropagation()}
+            >
               {renderField()}
             </div>
           </OverlayContainer>
         </>
       ) : (
-        <div ref={notificationRef} className={`absolute w-400pxr cursor-pointer rounded-xl bg-green-50 ${className}`}>
+        <div ref={notificationRef} className={`absolute w-400pxr cursor-pointer rounded-xl bg-green-50 ${className} dark:bg-stone-800`}>
           {/* 렌더영역 */}
           {renderField()}
         </div>
