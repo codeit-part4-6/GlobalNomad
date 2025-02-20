@@ -21,15 +21,28 @@ interface PopularCardProps {
 export default function PopularCard({data, fetchNextpage, hasNextPage}: PopularCardProps) {
   const [scrollX, setScrollX] = useLocalStorage('places_list_scroll', 0);
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
+  const [isBeginning, setIsBeginning] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
   const router = useRouter();
 
   const onSwiper = (swiper: SwiperType) => {
     setSwiperInstance(swiper);
+    setIsBeginning(swiper.isBeginning);
+    setIsEnd(swiper.isEnd);
   };
 
-  const onSlideChange = () => {
-    if (swiperInstance) {
-      setScrollX(swiperInstance.realIndex);
+  const onSlideChange = (swiper: SwiperType) => {
+    setScrollX(swiper.realIndex);
+  };
+
+  const onSlideChangeTransitionEnd = (swiper: SwiperType) => {
+    setIsBeginning(swiper.isBeginning);
+    setIsEnd(swiper.isEnd);
+  };
+
+  const handleReachEnd = () => {
+    if (hasNextPage) {
+      fetchNextpage();
     }
   };
 
@@ -39,23 +52,34 @@ export default function PopularCard({data, fetchNextpage, hasNextPage}: PopularC
     }
   }, [swiperInstance, scrollX]);
 
-  const handleReachEnd = () => {
-    if (hasNextPage) {
-      fetchNextpage();
+  useEffect(() => {
+    if (swiperInstance && hasNextPage) {
+      setIsEnd(false);
     }
-  };
+  }, [data, swiperInstance, hasNextPage]);
 
   return (
     <>
       <div className="relative flex w-full items-center justify-between px-4 tablet:px-6 pc:px-0">
         <h2 className="text-[1.125rem]/[1.313rem] font-bold text-black-100 tablet:text-[2.25rem]/[2.625rem] dark:text-gray-500">🔥 인기 체험</h2>
         <div className="absolute right-9 hidden pc:flex pc:items-center pc:gap-3">
-          <button className="font-medium !text-gray-800" onClick={() => swiperInstance?.slidePrev()}>
+          {/* 왼쪽 버튼 */}
+          <button
+            className={`cursor-pointer font-medium !text-gray-800 ${isBeginning ? 'cursor-not-allowed opacity-50' : ''}`}
+            onClick={() => swiperInstance?.slidePrev()}
+            disabled={isBeginning}
+          >
             <div className="relative h-9 w-9">
               <Image src={leftButton} alt="슬라이드 좌측 버튼" fill className="absolute" />
             </div>
           </button>
-          <button className="font-medium !text-gray-800" onClick={() => swiperInstance?.slideNext()}>
+
+          {/* 오른쪽 버튼 */}
+          <button
+            className={`cursor-pointer font-medium !text-gray-800 ${isEnd ? 'cursor-not-allowed opacity-50' : ''}`}
+            onClick={() => swiperInstance?.slideNext()}
+            disabled={isEnd}
+          >
             <div className="relative h-9 w-9">
               <Image src={rightButton} alt="슬라이드 우측 버튼" fill className="absolute" />
             </div>
@@ -69,6 +93,7 @@ export default function PopularCard({data, fetchNextpage, hasNextPage}: PopularC
           modules={[Navigation]}
           onSwiper={onSwiper}
           onSlideChange={onSlideChange}
+          onSlideChangeTransitionEnd={onSlideChangeTransitionEnd}
           onReachEnd={handleReachEnd}
           breakpoints={{
             374: {slidesPerView: 1.5, spaceBetween: 8},
@@ -102,8 +127,8 @@ export default function PopularCard({data, fetchNextpage, hasNextPage}: PopularC
                     sizes="(max-width: 744px) 186px, (max-width: 1199px) 384px, 50vw"
                   />
                 </div>
-                {/* 어두운 오버레이 추가 */}
-                <div className="absolute inset-0 rounded-3xl bg-black-50 opacity-20"></div> {/* 어두운 오버레이 */}
+                {/* 어두운 오버레이 */}
+                <div className="absolute inset-0 rounded-3xl bg-black-50 opacity-20"></div>
                 {/* 카드 내용 */}
                 <div className="relative z-10 p-4 text-white tablet:p-6">
                   <div className="flex items-center gap-2">

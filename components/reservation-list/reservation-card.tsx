@@ -19,6 +19,8 @@ export const buttonStyleByStatus: Record<string, string> = {
     'white-button-hover w-80pxr h-8 py-1 px-2 font-bold text-md text-nomad-black tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-white border border-nomad-black rounded-md',
   completed:
     'w-80pxr h-8 py-1 px-2 font-bold text-md text-white tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-nomad-black rounded-md nomad-button-hover',
+  submitted:
+    'w-80pxr h-8 py-1 px-2 font-bold text-md text-white tablet:text-lg tablet:w-112pxr tablet:h-40pxr tablet:px-3 tablet:py-2 bg-gray-700 rounded-md pointer-events-none ',
 };
 
 interface ReservationCardProps {
@@ -50,8 +52,12 @@ export default function ReservationCard({reservation, onButtonClick}: Reservatio
         </div>
         <div className="flex items-center justify-between">
           <p className="text-lg font-medium text-black-100 dark:text-gray-50 tablet:text-xl">￦{FormattedPrice(reservation.totalPrice)}</p>
-          <Button onClick={() => onButtonClick(`${reservation.status}`, reservation.id)} className={`${buttonStyleByStatus[reservation.status]}`}>
-            {buttonByStatus[reservation.status]}
+          <Button
+            disabled={reservation.reviewSubmitted}
+            onClick={() => onButtonClick(`${reservation.status}`, reservation.id)}
+            className={`${reservation.reviewSubmitted ? buttonStyleByStatus['submitted'] : buttonStyleByStatus[reservation.status]}`}
+          >
+            {reservation.reviewSubmitted ? '작성 완료' : buttonByStatus[reservation.status]}
           </Button>
         </div>
       </div>
