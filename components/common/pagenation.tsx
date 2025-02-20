@@ -96,7 +96,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       <Button
         key={'prevBtn'}
         className={
-          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 dark:bg-slate-200/80 pc:h-55pxr pc:w-55pxr'
+          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 pc:h-55pxr pc:w-55pxr dark:bg-slate-200/80'
         }
         onClick={handlePrevPage}
       >
@@ -122,7 +122,7 @@ function Pagenation({page, size, showItemCount, onChange}: PagenationType) {
       <Button
         key={'nextBtn'}
         className={
-          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 dark:bg-slate-200/80 pc:h-55pxr pc:w-55pxr'
+          'relative h-40pxr w-40pxr flex-row items-center justify-center gap-10pxr rounded-2xl border border-solid border-gray-500 bg-white p-0 pc:h-55pxr pc:w-55pxr dark:bg-slate-200/80'
         }
         onClick={handleNextPage}
       >

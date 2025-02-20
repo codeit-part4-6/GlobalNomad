@@ -2,10 +2,12 @@
 import React from 'react';
 import {useSearchParams} from 'next/navigation';
 import OverlayContainer from '@/components/common/modal/overlay-container';
+import DisableScroll from '@/utils/disable-scroll';
 
 export default function MyPageLayout({side, menu}: {side: React.ReactNode; menu: React.ReactNode}) {
   const searchParams = useSearchParams();
   const isModalOpen = searchParams.get('modal') === 'true';
+  DisableScroll(isModalOpen);
   return (
     <>
       {/* pc, 태블릿 */}

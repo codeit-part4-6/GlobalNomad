@@ -14,7 +14,6 @@ export default function ActivitySelector({
   onToggle: () => void;
   onSelect: (activity: {title: string; id: number}) => void;
 }) {
-  console.log(activities);
   return (
     <div className="relative mb-8">
       <button onClick={onToggle} className="relative h-14 min-h-14 w-full cursor-pointer rounded border border-gray-700 px-5 text-left">
