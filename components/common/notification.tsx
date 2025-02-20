@@ -1,11 +1,11 @@
 import {Fragment, useCallback, useEffect, useRef, useState} from 'react';
 import Image from 'next/image';
-import {InfiniteData, QueryFunctionContext, useMutation, useQueryClient} from '@tanstack/react-query';
+import {QueryFunctionContext, useMutation, useQueryClient} from '@tanstack/react-query';
 import OverlayContainer from '@/components/common/modal/overlay-container';
 import InfiniteScroll from '@/components/common/lnfiniteScroll';
 import {Notifications} from '@/types/getMynotifications';
 import {deleteMynotifications} from '@/service/api/mynotifications/deleteMyNotifications.api';
-import {CustomInfiniteData, getMynotifications} from '@/service/api/mynotifications/getMynotifications.api';
+import {CustomInfiniteData} from '@/service/api/mynotifications/getMynotifications.api';
 import getInitialDevice from '@/utils/initial-device';
 import CloseIcon from '@/public/icon/ic_close_black.svg';
 import NotiBlueIcon from '@/public/icon/ic_noti_blue.svg';
