@@ -96,7 +96,7 @@ export default function ReservationList() {
   return (
     <div className="mb-16 h-full w-full">
       <div className="mb-3 flex w-full items-center justify-between tablet:mb-6 tablet:items-start">
-        <p className="text-3xl font-bold text-black-100 dark:text-gray-500">예약 내역</p>
+        <p className="text-3xl font-bold text-black-100 dark:text-gray-50">예약 내역</p>
         <div className="flex items-center gap-1">
           <div className="m-0">
             <CustomSelect orderBy={orderBy} handleOrderBy={(value: string) => setOrderBy(value)} />
