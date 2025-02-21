@@ -146,6 +146,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
       category: data.category,
       description: data.description,
       price: data.price,
+      address: data.address,
       bannerImageUrl: data.bannerImageUrl.toString(),
       subImageIdsToRemove: data.subImageIdsToRemove,
       subImageUrlsToAdd: data.subImageUrlsToAdd || [],
