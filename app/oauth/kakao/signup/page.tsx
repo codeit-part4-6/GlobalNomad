@@ -28,7 +28,6 @@ export default function SignUpPage() {
         token,
       });
 
-      console.log('회원가입 성공:', signupResponse);
       saveSession(signupResponse.accessToken, signupResponse.refreshToken, signupResponse.user);
 
       router.push('/signin');

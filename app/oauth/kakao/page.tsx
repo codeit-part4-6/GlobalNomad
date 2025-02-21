@@ -21,7 +21,6 @@ export default function Page() {
     },
     onSuccess: async (oauthData) => {
       const token = searchParams.get('code');
-      console.log("받은 인가 토큰", token);
 
       if (token) {
         sessionStorage.setItem('userInfo', JSON.stringify(oauthData));
@@ -33,7 +32,6 @@ export default function Page() {
             token: token,
           });
 
-          console.log('로그인 성공:', signinResponse);
           const { setLogin } = useAuthStore.getState();
           setLogin(
             signinResponse.accessToken,
@@ -44,20 +42,16 @@ export default function Page() {
           router.push('/');
         } catch (error: unknown) {
           if (error instanceof AxiosError && (error.response?.status === 403 || error.response?.status === 404)) {
-            console.log('회원가입이 필요합니다. /signup 페이지로 이동합니다.');
             router.push(`/signup?code=${token}`);
           } else {
-            console.log('로그인 에러:', error);
             router.push('/signin');
           }
         }
       } else {
-        console.log('URL에서 토큰을 찾을 수 없음');
         router.push('/signin');
       }
     },
-    onError: (error: AxiosError) => {
-      console.log('OAuth 로그인 실패', error);
+    onError: () => {
       router.push('/signin');
     },
     onSettled: () => {
