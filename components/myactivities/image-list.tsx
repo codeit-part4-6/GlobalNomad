@@ -130,7 +130,6 @@ export default function ImageList<T extends FieldValues>({maxImages = 5, name = 
     if (id != null) {
       const prevIds = getValues('subImageIdsToRemove') || [];
       setValue('subImageIdsToRemove', [...prevIds, id], {shouldValidate: false});
-      console.log(prevIds);
     }
   };
 
