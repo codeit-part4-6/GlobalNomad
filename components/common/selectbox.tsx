@@ -79,7 +79,7 @@ export default function SelectBox({className = '', options, value, onChange, sel
 
       {/* 드롭다운 */}
       {isOpen && (
-        <div ref={dropdownRef} className="absolute left-0 right-0 top-full z-10 mt-2 rounded-lg border bg-white shadow-lg">
+        <div ref={dropdownRef} className="absolute left-0 right-0 top-full z-10 mt-2 rounded-lg border bg-white shadow-lg dark:bg-black-50">
           <ul className="max-h-60 overflow-y-auto">
             {options.map(option => (
               <li

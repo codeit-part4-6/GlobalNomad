@@ -146,6 +146,7 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
       category: data.category,
       description: data.description,
       price: data.price,
+      address: data.address,
       bannerImageUrl: data.bannerImageUrl.toString(),
       subImageIdsToRemove: data.subImageIdsToRemove,
       subImageUrlsToAdd: data.subImageUrlsToAdd || [],
@@ -225,38 +226,39 @@ export default function MyActivities({contentType}: MyActivitiesProps) {
               </div>
             </div>
           </div>
+          <div className="h-full">
+            {content === 'manage' && (
+              <InfiniteScroll
+                className="h-[calc(100vh-100px)] w-full pc:h-700pxr"
+                queryKey="myactivities"
+                fetchData={context => getActivitiesList({...context, meta: {size: 8}})}
+                render={group => {
+                  if (!group.pages || group.pages.length === 0) {
+                    return <NonDataPage />;
+                  }
 
-          {content === 'manage' && (
-            <InfiniteScroll
-              className="h-700pxr w-full pc:h-700pxr"
-              queryKey="myactivities"
-              fetchData={context => getActivitiesList({...context, meta: {size: 8}})}
-              render={group => {
-                if (!group.pages || group.pages.length === 0) {
-                  return <NonDataPage />;
-                }
-
-                const activities = group.pages.flatMap(page => page);
-                return (
-                  <div className="flex flex-col gap-2 tablet:gap-4 pc:gap-6">
-                    {activities.length > 0 ? (
-                      activities.map((data: Activity) => (
-                        <Fragment key={data.id}>
-                          <ActivitiesCard
-                            data={data}
-                            onClickModify={() => handleClickModify(data.id)}
-                            onClickDelete={() => handleClickDelete(data.id)}
-                          />
-                        </Fragment>
-                      ))
-                    ) : (
-                      <NonDataPage />
-                    )}
-                  </div>
-                );
-              }}
-            ></InfiniteScroll>
-          )}
+                  const activities = group.pages.flatMap(page => page);
+                  return (
+                    <div className="flex flex-col gap-2 tablet:gap-4 pc:gap-6">
+                      {activities.length > 0 ? (
+                        activities.map((data: Activity) => (
+                          <Fragment key={data.id}>
+                            <ActivitiesCard
+                              data={data}
+                              onClickModify={() => handleClickModify(data.id)}
+                              onClickDelete={() => handleClickDelete(data.id)}
+                            />
+                          </Fragment>
+                        ))
+                      ) : (
+                        <NonDataPage />
+                      )}
+                    </div>
+                  );
+                }}
+              ></InfiniteScroll>
+            )}
+          </div>
 
           {content === 'register' && (
             <>

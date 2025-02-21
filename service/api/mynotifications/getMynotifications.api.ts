@@ -14,7 +14,6 @@ export interface CustomInfiniteData<TData, TPageParam = unknown> extends Infinit
 }
 
 export async function getMynotifications({pageParam, meta}: QueryFunctionContext): Promise<CustomInfiniteData<Notifications[], number>> {
-  // ✅ CustomInfiniteData 타입 적용
   const size = meta?.size || 20;
   const cursorId = pageParam;
 
@@ -24,16 +23,16 @@ export async function getMynotifications({pageParam, meta}: QueryFunctionContext
     });
 
     return {
-      pages: [response.data.notifications], // 기존 데이터
-      pageParams: [response.data.cursorId], // 기존 데이터
-      meta: {totalCount: response.data.totalCount}, // ✅ totalCount 추가
+      pages: [response.data.notifications],
+      pageParams: [response.data.cursorId],
+      meta: {totalCount: response.data.totalCount},
     };
   } catch (error) {
     console.error('에러 발생', error);
     return {
       pages: [[]],
       pageParams: [],
-      meta: {totalCount: 0}, // ✅ 오류 발생 시 기본값 설정
+      meta: {totalCount: 0},
     };
   }
 }
