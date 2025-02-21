@@ -94,17 +94,17 @@ export default function Notification({className = 'w-auto', onClose, notificatio
           fetchData={fetchNotifications}
           render={(group: CustomInfiniteData<Notifications[], unknown>) => {
             const notifications = group.pages.flatMap(page => page);
-            if (notifications.length === 0) {
+            if (notificationCount === 0) {
               return <div className="flex h-[280px] items-center justify-center text-xl text-gray-600">모든 알림을 확인하셨어요.</div>;
             } else {
               return (
                 <div className="flex flex-col">
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col">
                     {notifications.map((data: Notifications) => {
                       const status = getStatus(data.content);
                       return (
                         <Fragment key={data.id}>
-                          <div className="w-full bg-white px-3 py-4">
+                          <div className="my-2 w-full bg-white px-3 py-4">
                             <div className="flex items-center justify-between">
                               <Image
                                 src={status === '승인' ? NotiBlueIcon : NotiRedIcon}

@@ -337,7 +337,7 @@ const ReservationMobileType = ({price, person, selectedSchedule, scheduleModal, 
                 >
                   <Image src={Minus} width={20} height={20} alt="minus" />
                 </Button>
-                <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{person}</p>
+                <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr dark:text-black-50">{person}</p>
                 <Button
                   className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
                   onClick={() => updatePerson(1)}

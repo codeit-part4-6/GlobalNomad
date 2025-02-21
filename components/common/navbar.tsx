@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import Dropbox from '@/components/common/dropbox';
 import Notification from '@/components/common/notification';
-import SelectingMode from './theme-button';
+import SelectingMode from '@/components/common/theme-button';
 import {useAuthStore} from '@/service/store/authStore';
 import {QueryFunctionContext} from '@tanstack/react-query';
 import {CustomInfiniteData, getMynotifications} from '@/service/api/mynotifications/getMynotifications.api';
@@ -86,7 +86,7 @@ export default function Navbar() {
                   <div className="relative flex items-center justify-center gap-10pxr">
                     <div onClick={toggleDropdown} className="flex cursor-pointer items-center gap-2">
                       <div className="relative h-8 w-8 overflow-hidden rounded-full">
-                        <Image src={user.profileImageUrl || defaultProfileImage} alt="프로필 이미지" layout="fill" objectFit="cover" />
+                        <Image src={user.profileImageUrl || defaultProfileImage} alt="프로필 이미지" layout="fill" style={{objectFit: 'cover'}} />
                       </div>
                       <div className="dark:text-white">{user.nickname}</div>
                     </div>

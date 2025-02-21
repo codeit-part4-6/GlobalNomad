@@ -118,7 +118,7 @@ export default function KakaoMap({address, houseName}: KakaoMapType) {
       </div>
       <div className={'flex flex-wrap'}>
         <Image className="m-0 mr-1" src={LocationIcon} alt="Location" width={18} height={18} />
-        <div className="text-md font-normal text-nomad-black opacity-75">{address}</div>
+        <div className="text-md font-normal text-nomad-black opacity-75 dark:text-gray-500">{address}</div>
       </div>
       {isModalOpen.isOpen && <Modal message={isModalOpen.message} onClose={handleCloseModal} />}
       <style>

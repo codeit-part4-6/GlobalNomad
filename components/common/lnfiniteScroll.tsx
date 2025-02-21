@@ -45,8 +45,6 @@ const InfiniteScroll = <T,>({queryKey, fetchData, render, className}: InfiniteSc
           {data?.pages.map((group, i) => (
             <div key={i} className="relative">
               {render(group)}
-              {/* 페이지 추가 트리거 */}
-              <div ref={ref} className="m-1 h-3"></div>
             </div>
           ))}
           {/* 로딩 */}
@@ -55,6 +53,8 @@ const InfiniteScroll = <T,>({queryKey, fetchData, render, className}: InfiniteSc
               <ScaleLoader color="#0b3b2d" />
             </div>
           )}
+          {/* 페이지 추가 트리거 */}
+          <div ref={ref} style={{height: '1px'}}></div>
         </div>
         {/* 하단 트리거로딩 */}
         {isFetchingNextPage && (
