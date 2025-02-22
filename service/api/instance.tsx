@@ -24,7 +24,6 @@ INSTANCE_URL.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 토큰 갱신 진행 중 여부를 추적
 let isRefreshing = false;
 
 INSTANCE_URL.interceptors.response.use(
@@ -39,7 +38,6 @@ INSTANCE_URL.interceptors.response.use(
       if (refreshToken) {
         try {
           isRefreshing = true;
-          console.log('Refreshing access token...');
           const refreshedData = await postTokens(refreshToken);
 
           if (!refreshedData || !refreshedData.accessToken) {
@@ -51,7 +49,7 @@ INSTANCE_URL.interceptors.response.use(
           isRefreshing = false;
           return INSTANCE_URL(originalRequest);
         } catch (refreshError) {
-          console.log('Refresh token expired or invalid:', refreshError);
+          console.error('Refresh token expired or invalid:', refreshError);
           isRefreshing = false;
           setLogout();
           window.location.href = '/signin';
