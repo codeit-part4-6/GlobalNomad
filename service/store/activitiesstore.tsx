@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import {create} from 'zustand';
-import {PageType} from '@/types/common/alert-modal.types';
 import {SchedulesType, SchedulesDateType} from '@/types/activities-info';
 
 interface ActivitiesState {

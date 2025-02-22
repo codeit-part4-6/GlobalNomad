@@ -190,7 +190,7 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
                 onChange={e => handleChange(field, e, index)}
                 options={selectProps.options || generateTimeOptions()}
                 selectButtonImage={arrowDown}
-                className="w-full max-w-79pxr bg-white tablet:max-w-none"
+                className="w-full max-w-79pxr bg-white dark:bg-black-50 tablet:max-w-none"
                 label={selectProps.label || '00:00'}
               />
             </>
@@ -215,7 +215,7 @@ export default function TimeList({type}: {type: 'register' | 'modify'}) {
                   {value: 'weekly', label: '주간 생성'},
                 ]}
                 selectButtonImage={arrowDown}
-                className="w-full max-w-130pxr bg-white tablet:max-w-none"
+                className="w-full max-w-130pxr bg-white dark:bg-black-50 tablet:max-w-none"
                 label="반복 설정"
               />
             </div>

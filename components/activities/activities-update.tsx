@@ -66,7 +66,7 @@ const ActivitiesUpdate = ({pageID, userId}: {pageID: string; userId: number}) =>
           <Dropbox
             onClick={handleActivitiesUpdate}
             onClose={() => setIsDropboxOpen(false)}
-            className="right-0 top-10 z-10 mb-4 mr-4 h-115pxr w-160pxr"
+            className="right-0 top-10 z-10 mb-4 mr-4 h-115pxr w-160pxr dark:bg-black-50"
             items={DropboxItems}
           />
         )}

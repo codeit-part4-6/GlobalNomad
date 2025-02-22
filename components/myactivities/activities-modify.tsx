@@ -182,7 +182,7 @@ const ActivitiesModify = forwardRef<{submitForm: () => void}, ActivitiesModifyPr
                   label="카테고리"
                   selectButtonImage={arrowDown}
                   value={value}
-                  className="w-full bg-white"
+                  className="w-full bg-white dark:bg-black-50"
                   onChange={onChange}
                   options={catagoryOptions}
                 />

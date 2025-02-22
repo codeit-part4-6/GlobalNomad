@@ -53,7 +53,6 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
   };
 
   const onSubmit: SubmitHandler<PostActivitiesBody> = data => {
-    console.log('Form Data:', data);
     if (onSubmitParent) {
       onSubmitParent(data);
     }
@@ -117,7 +116,7 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
                   label="카테고리"
                   selectButtonImage={arrowDown}
                   value={value}
-                  className="w-full bg-white"
+                  className="dd w-full bg-white dark:bg-black-50"
                   onChange={onChange}
                   options={options}
                 />

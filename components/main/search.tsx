@@ -23,7 +23,7 @@ export default function Search({onClick, keyword, setKeyword}: SearchProps): JSX
   };
 
   return (
-    <div className="flex h-auto w-full flex-col gap-12pxr rounded-2xl bg-white px-18pxr py-16pxr shadow-lg tablet:gap-8 tablet:px-6 tablet:py-8 dark:bg-slate-600">
+    <div className="flex h-auto w-full flex-col gap-12pxr rounded-2xl bg-white px-18pxr py-16pxr shadow-lg dark:bg-[rgb(60,60,60)] tablet:gap-8 tablet:px-6 tablet:py-8">
       <h2 className="text-lg font-bold text-nomad-black tablet:text-xl">무엇을 체험하고 싶으신가요?</h2>
       <div className="relative flex justify-between gap-10pxr">
         <div className="relative flex w-full items-center rounded border border-solid border-gray-700 pl-2.5">
@@ -43,7 +43,7 @@ export default function Search({onClick, keyword, setKeyword}: SearchProps): JSX
           </label>
         </div>
         {keyword && (
-          <div className="absolute -top-3 left-7 bg-white px-2 text-lg font-regular text-gray-500 dark:bg-slate-600">
+          <div className="absolute -top-3 left-7 bg-white px-2 text-lg font-regular text-gray-500 dark:bg-[rgb(60,60,60)]">
             <span>내가 원하는 체험은</span>
           </div>
         )}
