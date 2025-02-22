@@ -138,18 +138,12 @@ const ReservationWindowsType = ({price, person, selectedSchedule, updatePerson, 
       <hr />
       <div className="mb-24pxr mt-12pxr">
         <p className="mt-16pxr w-full text-xl font-bold text-nomad-black">참여 인원수</p>
-        <div className="shadow-[0px_2px_4px_rgba(5, 16, 55, 0.06)] inset-shadow-[0px_0px_0px_1px_#CDD0DC] flex h-42pxr w-120pxr flex-row items-start gap-10pxr rounded-md border bg-white p-0">
-          <Button
-            className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
-            onClick={() => updatePerson(-1)}
-          >
+        <div className="shadow-[0px_2px_4px_rgba(5, 16, 55, 0.06)] inset-shadow-[0px_0px_0px_1px_#CDD0DC] flex h-43pxr w-120pxr flex-row items-start gap-10pxr rounded-md border bg-white p-0">
+          <Button className="relative h-40pxr w-40pxr flex-auto items-start justify-center bg-white p-10pxr" onClick={() => updatePerson(-1)}>
             <Image src={Minus} width={20} height={20} alt="minus" />
           </Button>
-          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr text-black-100">{person}</p>
-          <Button
-            className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
-            onClick={() => updatePerson(1)}
-          >
+          <p className="flex h-40pxr w-40pxr items-start justify-center bg-white p-10pxr text-black-100">{person}</p>
+          <Button className="relative h-40pxr w-40pxr flex-auto items-start justify-center bg-white p-10pxr" onClick={() => updatePerson(1)}>
             <Image src={Plus} width={20} height={20} alt="plus" />
           </Button>
         </div>
@@ -203,18 +197,12 @@ const ReservationTabletType = ({price, person, selectedSchedule, scheduleModal, 
       <hr />
       <div className="mb-24pxr mt-12pxr">
         <p className="mt-16pxr w-full text-xl font-bold text-nomad-black">참여 인원수</p>
-        <div className="shadow-[0px_2px_4px_rgba(5, 16, 55, 0.06)] inset-shadow-[0px_0px_0px_1px_#CDD0DC] flex h-42pxr w-120pxr flex-row items-start gap-10pxr rounded-md border bg-white p-0">
-          <Button
-            className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
-            onClick={() => updatePerson(-1)}
-          >
+        <div className="shadow-[0px_2px_4px_rgba(5, 16, 55, 0.06)] inset-shadow-[0px_0px_0px_1px_#CDD0DC] flex h-43pxr w-120pxr flex-row items-start gap-10pxr rounded-md border bg-white p-0">
+          <Button className="relative h-40pxr w-40pxr flex-auto items-start justify-center bg-white p-10pxr" onClick={() => updatePerson(-1)}>
             <Image src={Minus} width={20} height={20} alt="minus" />
           </Button>
-          <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr">{person}</p>
-          <Button
-            className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
-            onClick={() => updatePerson(1)}
-          >
+          <p className="flex h-40pxr w-40pxr items-center justify-center bg-white text-black-50">{person}</p>
+          <Button className="relative h-40pxr w-40pxr flex-auto items-start justify-center bg-white p-10pxr" onClick={() => updatePerson(1)}>
             <Image src={Plus} width={20} height={20} alt="plus" />
           </Button>
         </div>
@@ -330,18 +318,12 @@ const ReservationMobileType = ({price, person, selectedSchedule, scheduleModal, 
             </div>
             <div className="flex flex-col">
               <p className="mb-24pxr">예약할 인원을 선택해주세요.</p>
-              <div className="shadow-[0px_2px_4px_rgba(5, 16, 55, 0.06)] inset-shadow-[0px_0px_0px_1px_#CDD0DC] flex h-42pxr w-120pxr flex-row items-start gap-10pxr rounded-md border bg-white p-0">
-                <Button
-                  className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
-                  onClick={() => updatePerson(-1)}
-                >
+              <div className="shadow-[0px_2px_4px_rgba(5, 16, 55, 0.06)] inset-shadow-[0px_0px_0px_1px_#CDD0DC] flex h-43pxr w-120pxr flex-row items-start gap-10pxr rounded-md border bg-white p-0">
+                <Button className="relative h-40pxr w-40pxr flex-auto items-start justify-center bg-white p-10pxr" onClick={() => updatePerson(-1)}>
                   <Image src={Minus} width={20} height={20} alt="minus" />
                 </Button>
-                <p className="h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr dark:text-black-50">{person}</p>
-                <Button
-                  className="relative h-40pxr w-40pxr flex-row items-start justify-center rounded-s-md bg-white p-10pxr"
-                  onClick={() => updatePerson(1)}
-                >
+                <p className="flex h-40pxr w-40pxr items-start justify-center bg-white p-10pxr dark:text-black-50">{person}</p>
+                <Button className="relative h-40pxr w-40pxr flex-auto items-start justify-center bg-white p-10pxr" onClick={() => updatePerson(1)}>
                   <Image src={Plus} width={20} height={20} alt="plus" />
                 </Button>
               </div>
