@@ -53,7 +53,6 @@ const ActivitiesRegister = forwardRef<{submitForm: () => void}, ActivitiesRegist
   };
 
   const onSubmit: SubmitHandler<PostActivitiesBody> = data => {
-    console.log('Form Data:', data);
     if (onSubmitParent) {
       onSubmitParent(data);
     }

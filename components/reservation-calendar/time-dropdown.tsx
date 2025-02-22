@@ -3,7 +3,6 @@ import {TimeDropdownProps} from '@/types/reservation-list';
 import arrowDown from '@/public/icon/icon_arrow_down.svg';
 
 export default function TimeDropDown({times, selectedTime, isOpen, setIsOpen, onSelectTime}: TimeDropdownProps) {
-  console.log(times);
   return (
     <div className="relative mb-30pxr min-h-53pxr w-full rounded-2xl border border-gray-700 px-5 py-4 tablet:rounded-md">
       <div className="flex cursor-pointer items-center justify-between" onClick={() => setIsOpen(!isOpen)}>
