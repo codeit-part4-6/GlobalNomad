@@ -89,12 +89,12 @@ const ReviewDetail = ({data}: {data: ActivitiesReviewsType | undefined}) => {
             {data.reviews.map((dt, idx) => {
               return (
                 <div className="flex flex-row" key={dt.id}>
-                  <div className="mr-16pxr h-138pxr w-61pxr">
+                  <div className="mr-16pxr w-61pxr">
                     <div className="relative h-45pxr w-45pxr">
                       <Image src={dt.user.profileImageUrl || DefaultProfile} alt="기본 프로필" className="absolute" fill priority />
                     </div>
                   </div>
-                  <div>
+                  <div className="w-full">
                     <div className="flex flex-row">
                       <p className="text-lg font-bold text-nomad-black dark:text-dark-primary">{dt.user.nickname}</p>
                       <p className="mx-8pxr text-lg font-normal text-nomad-black">|</p>
