@@ -85,7 +85,7 @@ const ReviewDetail = ({data}: {data: ActivitiesReviewsType | undefined}) => {
               </div>
             </div>
           </div>
-          <div className="mb-40pxr h-430pxr tablet:mb-72pxr pc:mb-90pxr">
+          <div className="mb-40pxr min-h-430pxr tablet:mb-72pxr pc:mb-90pxr">
             {data.reviews.map((dt, idx) => {
               return (
                 <div className="flex flex-row" key={dt.id}>
