@@ -3,6 +3,9 @@ import '@/styles/globals.css';
 import Script from 'next/script';
 import ClientSideLayout from './ClientSideLayout';
 import {ThemeProvider} from '@/components/common/theme-provider';
+import {postTokens} from '@/service/api/auth/postTokens.api';
+import {useAuthStore} from '@/service/store/authStore';
+import Cookies from 'js-cookie';
 
 export const metadata: Metadata = {
   title: {
@@ -17,6 +20,19 @@ export const metadata: Metadata = {
     apple: '/logo.svg',
   },
 };
+
+useEffect(() => {
+  const fetchAccessToken = async () => {
+    const refreshToken = Cookies.get('refreshToken');
+    if (refreshToken) {
+      const data = await postTokens(refreshToken);
+      if (data?.accessToken) {
+        useAuthStore.getState().setLogin(data.accessToken, refreshToken, user);
+      }
+    }
+  };
+  fetchAccessToken();
+}, []);
 
 export default function RootLayout({children}: Readonly<{children: React.ReactNode}>) {
   return (
