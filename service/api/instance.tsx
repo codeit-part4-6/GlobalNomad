@@ -9,16 +9,6 @@ const INSTANCE_URL = axios.create({
 INSTANCE_URL.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const { accessToken } = useAuthStore.getState();
-
-    if (config.headers['exclude-access-token']) {
-      delete config.headers['exclude-access-token'];
-      return config;
-    }
-
-    if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
-    }
-
     return config;
   },
   (error) => Promise.reject(error)
@@ -26,43 +16,28 @@ INSTANCE_URL.interceptors.request.use(
 
 let isRefreshing = false;
 
-INSTANCE_URL.interceptors.response.use(
-  (response) => response,
+INSTANCE_URL.interceptors.response.use((response) => response,
   async (error) => {
-    const originalRequest = error.config;
-
-    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshing) {
-      originalRequest._retry = true;
-      const { refreshToken, setLogin, setLogout, user } = useAuthStore.getState();
-
+    const { refreshToken, setLogin, setLogout, user } = useAuthStore.getState();
       if (refreshToken) {
         try {
           isRefreshing = true;
           const refreshedData = await postTokens(refreshToken);
-
-          if (!refreshedData || !refreshedData.accessToken) {
-            throw new Error('Failed to refresh token');
-          }
-
           setLogin(refreshedData.accessToken, refreshedData.refreshToken, user);
-          originalRequest.headers['Authorization'] = `Bearer ${refreshedData.accessToken}`;
           isRefreshing = false;
           return INSTANCE_URL(originalRequest);
-        } catch (refreshError) {
-          console.error('Refresh token expired or invalid:', refreshError);
+        } catch (e) {
+          console.error('Refresh token 오류:', e);
           isRefreshing = false;
           setLogout();
           window.location.href = '/signin';
           return Promise.reject(refreshError);
         }
       }
-      
-      console.warn('⚠ No refresh token found. Logging out...');
+      console.error('refresh token 찾을 수 없음');
       setLogout();
       window.location.href = '/signin';
-      return Promise.reject(new Error('No refresh token'));
     }
-
     return Promise.reject(error);
   }
 );
