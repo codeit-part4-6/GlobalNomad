@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import Cookies from 'js-cookie';
 
 interface AuthState {
   accessToken: string | null;
@@ -19,39 +20,32 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>(set => {
   let storedUser = null;
-  let storedAccessToken = null;
-  let storedRefreshToken = null;
 
   if (typeof window !== 'undefined') {
     try {
       storedUser = sessionStorage.getItem('userInfo');
       storedUser = storedUser ? JSON.parse(storedUser) : null;
-      storedAccessToken = sessionStorage.getItem('accessToken') || null;
-      storedRefreshToken = sessionStorage.getItem('refreshToken') || null;
     } catch (error) {
-      console.error('Failed to parse sessionStorage data:', error);
+      console.error('sessionStorage data 파싱 실패:', error);
     }
   }
 
   return {
     accessToken: storedAccessToken,
-    refreshToken: storedRefreshToken,
     user: storedUser,
     setLogin: (accessToken, refreshToken, user) => {
       if (typeof window !== 'undefined') {
-        sessionStorage.setItem('accessToken', accessToken);
-        sessionStorage.setItem('refreshToken', refreshToken);
+        Cookies.set('refreshToken', refreshToken, { secure: true, sameSite: 'strict' });
         sessionStorage.setItem('userInfo', JSON.stringify(user));
       }
-      set({accessToken, refreshToken, user});
+      set({accessToken, user});
     },
     setLogout: () => {
       if (typeof window !== 'undefined') {
-        sessionStorage.removeItem('accessToken');
-        sessionStorage.removeItem('refreshToken');
+        Cookies.remove('refreshToken');
         sessionStorage.removeItem('userInfo');
       }
-      set({accessToken: null, refreshToken: null, user: null});
+      set({accessToken: null, user: null});
     },
     updateNickname: nickname =>
       set(state => {
