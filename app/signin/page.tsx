@@ -66,14 +66,11 @@ export default function Page() {
       onSuccess: async data => {
         try {
           setLogin(data.accessToken, data.refreshToken, data.user);
-          sessionStorage.setItem('accessToken', data.accessToken);
-          sessionStorage.setItem('refreshToken', data.refreshToken);
-
           const {id, email, nickname, profileImageUrl, createdAt, updatedAt} = data.user;
           sessionStorage.setItem('userInfo', JSON.stringify({id, email, nickname, profileImageUrl, createdAt, updatedAt}));
 
           const refreshedData = await postTokens(data.refreshToken);
-          if (refreshedData) sessionStorage.setItem('accessToken', refreshedData.accessToken);
+          if (refreshedData) setLogin(refreshedData.accessToken, refreshedData.refreshToken);
 
           if (saveEmail) {
             localStorage.setItem('savedEmail', data.user.email);
